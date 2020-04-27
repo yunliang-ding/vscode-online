@@ -79,6 +79,7 @@ class Explorer extends React.Component<any, any> {
     const { cacheFiles, expandFolder, setExpandFolder } = this.props.FileSystem
     let theme = Window.config.dark ? '-dark' : ''
     let currentFile = cacheFiles.find(item => item.selected) || {}
+    console.log('render')
     return <div className={`app-explorer${theme}`}>
       <Tree
         style={{
