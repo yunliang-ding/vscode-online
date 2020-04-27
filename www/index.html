@@ -1,7 +1,7 @@
-<meta id="viewport" name="viewport" content="width=320; initial-scale=1.0;maximum-scale=1.0; user-scalable=no;"/>
+<meta id="viewport" name="viewport" content="width=320; initial-scale=1.0;maximum-scale=1.0; user-scalable=no;" />
 <title id="title">vscode-online</title>
 <script>
-  window.config = {
+	window.config = {
     model: 'development',
     dark: true
   }
@@ -10,8 +10,12 @@
 <script src='https://unpkg.com/react-dom@16/umd/react-dom.production.min.js'></script>
 <script src='https://unpkg.com/react-router@3.2.4/umd/ReactRouter.min.js'></script>
 <link rel="shortcut icon" href="https://www.html.cn/create-react-app/img/favicon/favicon.ico">
+<link rel="stylesheet" href='//at.alicdn.com/t/font_1784674_f85hh857oi9.css'>
 <script src="/static/js/prism.js"></script>
-<div id='app'></div>
-<link rel="stylesheet" href="./skin/dark.css" id='style-theme'>
+<div id='app'>
+  <div class='load-spin'>
+    <i class='iconfont icon-react load-spin-iconfont'></i>
+  </div>
+</div>
+<link rel="stylesheet" href='./skin/dark.css' id='style-theme'>
 <script src='./app.js'></script>
-

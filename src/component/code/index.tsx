@@ -16,7 +16,7 @@ class Code extends React.Component<any, any> {
       <Monaco
         visabled
         path={`/app/klop`}
-        theme={Window.config.dark ? 'vs-dark' : 'vs'}
+        theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
         language='javascript'
         value={`import * as React from "react"
 import { observer, inject } from 'mobx-react'

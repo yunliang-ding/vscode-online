@@ -12,7 +12,7 @@ class Footer extends React.Component<any, any> {
   render() {
     let theme = Window.config.dark ? '-dark' : ''
     return <div className={`app-footer${theme}`}>
-      app-footer
+      master
     </div>
   }
 }
