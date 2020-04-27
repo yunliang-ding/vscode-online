@@ -1,7 +1,7 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { toJS } from 'mobx'
-import { Tree } from 'ryui'
+import { Tree, Popover } from 'ryui'
 import './index.less'
 const Window: any = window
 @inject('UI', 'FileSystem', 'Mapping')
@@ -11,26 +11,74 @@ class Explorer extends React.Component<any, any> {
   constructor(props) {
     super(props)
   }
+  menu = (item) => {
+    let arr = [
+      <div className='app-explorer-menu-item'>
+        <span>Rename</span>
+        <i className='iconfont icon-rename'></i>
+      </div>,
+      <div className='app-explorer-menu-item'>
+        <span>Delete File</span>
+        <i className='iconfont icon-shanchu'></i>
+      </div>
+    ]
+    if(item.type !== 'file'){
+      arr.unshift(
+        <div className='app-explorer-menu-item'>
+          <span>New File</span>
+          <i className='iconfont icon-tianjiawenjian'></i>
+        </div>,
+        <div className='app-explorer-menu-item'>
+          <span>New Folder</span>
+          <i className='iconfont icon-jiemu_jiemu_tianjiawenjianjia'></i>
+        </div>
+      )
+    }
+    return <div className='app-explorer-menu'>
+      {
+        arr
+      }
+    </div>
+  }
   renderExplorer = (node) => {
     return node.map(item => {
       let obj: any = {
         key: item.path,
-        label: item.children ? item.name : <div style={{ display: 'flex', alignItem: 'center' }}>
-          <i
-            className={'iconfont ' + this.props.Mapping.IconMapping[item.extension]}
-            style={{ color: this.props.Mapping.IconColorMapping[item.extension], marginRight:8 }}></i>
-          <span>{item.name}</span>
-        </div>
+        label: <Popover
+          style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
+          dark={Window.config.dark}
+          content={this.menu(item)}
+          trigger='contextMenu'
+          placement='bottom'
+        >
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onClick={
+            () => {
+              item.type === 'file' && this.props.FileSystem.openFile(item)
+            }
+          }>
+            {
+              item.children ? item.name : <div style={{ display: 'flex', alignItem: 'center' }}>
+                <i
+                  className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
+                  style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}></i>
+                <span>{item.name}</span>
+              </div>
+            }
+          </div>
+        </Popover>
       }
       if (item.children) {
         obj.children = this.renderExplorer(item.children)
       }
-      return obj
+      Object.assign(item, obj)
+      return item
     })
   }
   render() {
     const data = this.renderExplorer(toJS(this.props.FileSystem.files.children))
+    const { cacheFiles, expandFolder, setExpandFolder } = this.props.FileSystem
     let theme = Window.config.dark ? '-dark' : ''
+    let currentFile = cacheFiles.find(item => item.selected) || {}
     return <div className={`app-explorer${theme}`}>
       <Tree
         style={{
@@ -38,17 +86,12 @@ class Explorer extends React.Component<any, any> {
           height: '100%'
         }}
         dark={Window.config.dark}
-        defaultExpandedKeys={['1', '1-3']}
-        defaultCheckedKeys={['1-2']}
+        defaultExpandedKeys={expandFolder}
+        defaultCheckedKeys={[currentFile.key]}
         treeData={data}
-        onCheck={
-          (e, node) => {
-            console.log(e, node)
-          }
-        }
         onExpand={
           (e) => {
-            console.log(e)
+            setExpandFolder(e)
           }
         }
       />

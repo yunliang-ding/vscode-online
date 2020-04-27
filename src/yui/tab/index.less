@@ -1,0 +1,102 @@
+.yui-tabs, .yui-tabs-dark{
+  display:flex;
+  justify-content: flex-start;
+  user-select: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+  width:100%;
+  height:100%;
+  .yui-tabs-compont{
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+    background: #232323;
+    .yui-tabs-item,.yui-tabs-item-active{
+      height:100%;
+      transition: all .5s;
+      -webkit-transition: all .5s;
+      color:#888;
+      cursor: pointer;
+      background:#232323;
+      .yui-tabs-item-header{
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 36px;
+        padding: 0 8px;
+        position: relative;
+        z-index:1;
+        font-size:12px;
+        .yui-tabs-item-label{
+          align-items: center;
+          display: flex;
+          width:100%;
+        }
+        .icon-guanbi{
+          color:#fff;
+          font-size:13px;
+          font-weight: 700;
+          right:4;
+        }
+      }
+      .yui-tabs-item-content{
+        position: absolute;
+        left:0;
+        background: #1e1e1e;
+        font-size:12px;
+      }
+    }
+    .yui-tabs-item-active{
+      background: #1e1e1e;
+      color:#fff;
+    }
+    .yui-tabs-item-header:hover{
+      transition: all .5s;
+      -webkit-transition: all .5s;
+      .icon-guanbi{
+        visibility: visible !important;
+      }
+    }
+  }
+}
+.yui-tabs::-webkit-scrollbar {/*滚动条整体样式*/
+  width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+  height: 4px;
+}
+.yui-tabs::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+  border-radius: 0;
+  background: rgb(146, 144, 144)
+}
+.yui-tabs::-webkit-scrollbar-track {/*滚动条里面轨道*/
+  border-radius: 0;
+  background: rgba(199, 196, 196, 0.1);
+}
+.yui-tabs{
+  .yui-tabs-compont{
+    background: #dcdcdc;
+    .yui-tabs-item{
+      background: #dcdcdc;
+      color: #555;
+      .icon-guanbi{
+        color:#555 !important;
+      }
+    }
+    .yui-tabs-item-active{
+      background: #ededed;
+      color: #333;
+      .icon-guanbi{
+        color:#333 !important;
+      }
+      .yui-tabs-item-content{
+        position: absolute;
+        left:0;
+        background: #ededed;
+        font-size:12px;
+        padding: 6px;
+      }
+    }
+  }
+}

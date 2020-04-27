@@ -35,7 +35,6 @@ class Tree extends React.Component {
     index > -1
       ? this.state.expandedKeys.splice(index, 1)
       : this.state.expandedKeys.push(key)
-    console.log(this.state.expandedKeys)
     this.setState({
       expandedKeys: this.state.expandedKeys
     }, () => {
@@ -85,7 +84,7 @@ class Tree extends React.Component {
               checkedKeys: [node.key]
             }, () => {
               if (this.props.onCheck) {
-                this.props.onCheck(this.state.checkedKeys)
+                this.props.onCheck(this.state.checkedKeys, node)
               }
             })
           }

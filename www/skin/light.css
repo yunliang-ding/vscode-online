@@ -10,10 +10,9 @@ body{
   display:flex;
   align-items: center;
   justify-content: center;
-  filter:blur(1px);
 }
 .load-spin-iconfont{
-  font-size:216px;
+  font-size:160px;
   color:#2ccab5;
   animation:load-spin-move 3s linear infinite;
 }

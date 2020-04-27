@@ -1,16 +1,42 @@
 .app-explorer, .app-explorer-dark{
   height:100%;
   width:100%;
+  min-width: 200px;
   overflow: auto;
   .yui-tree-node{
     color: #ccc;
   }
+  .yui-tree-node:hover{
+    background-color: #333;
+  }
   .yui-tree-leaf-active{
     background-color: #333;
   }
+  .app-explorer-menu{
+    width: 160px;
+    padding: 0 8px;
+    .app-explorer-menu-item:hover{
+      transition: .5s;
+      opacity: 1;
+    }
+    .app-explorer-menu-item{
+      display: flex;
+      opacity: .6;
+      width: 100%;
+      height: 30px;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
 }
 .app-explorer{
+  .yui-tree-node{
+    color: #333;
+  }
+  .yui-tree-node:hover{
+    background-color: #eee;
+  }
   .yui-tree-leaf-active{
-    background-color: #aaa;
+    background-color: #eee;
   }
 }

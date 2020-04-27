@@ -5,7 +5,7 @@ import { monacoService as Monaco } from '../monaco/index'
 import { git } from '../git/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 const $: any = document.querySelector.bind(document)
-class FileSystem{
+class FileSystem {
   @observable baseUrl = '/home/development/music.163.app'
   @observable mustRender = 0
   @observable loadstate = false
@@ -62,7 +62,7 @@ class FileSystem{
       }
       let node = new FileNode(_node, false, '', gitignores, level.concat(_index), children)
       const fileStatus = this.queryFileStatus(node)
-      if(fileStatus){
+      if (fileStatus) {
         node.status = node.type === 'file' ? fileStatus.status : '.'
         node.color = fileStatus.color
       }
@@ -79,13 +79,13 @@ class FileSystem{
     this.files = { ...this.files }
   }
   @action closeAllDirectory = (fileNode) => { // 收起项目
-    return fileNode && fileNode.map(_fileNode => {
-      _fileNode.type === 'directory' && (
-        _fileNode.isOpen = false,
-        _fileNode.children = this.closeAllDirectory(_fileNode.children),
-        _fileNode.icon = 'icon-collapse'
+    return fileNode && fileNode.map(fileNode => {
+      fileNode.type === 'directory' && (
+        fileNode.isOpen = false,
+        fileNode.children = this.closeAllDirectory(fileNode.children),
+        fileNode.icon = 'icon-collapse'
       )
-      return _fileNode
+      return fileNode
     })
   }
   @action collapseExplorer = () => { // 收起项目
@@ -102,8 +102,8 @@ class FileSystem{
     this.files = { ...this.files }
   }
   @action openStagesFile = async () => {
-    const currentFile = this.cacheFiles.filter(_fileNode => {
-      return _fileNode.selected
+    const currentFile = this.cacheFiles.filter(fileNode => {
+      return fileNode.selected
     })[0] || null
     let node = { ...currentFile }
     if (node.status !== '') {
@@ -119,79 +119,36 @@ class FileSystem{
       path
     })
   }
-  @action openFile = async (_fileNode: FileNode) => { // 打开文件
-    if(!_fileNode){
-      return
-    }
-    let res = {
-      isError: true,
-      data: ''
-    }
+  @action openFile = async (fileNode: FileNode) => { // 打开文件
+    if (!fileNode) { return }
     if (!this.cacheFiles.some(_cacheFile => { // 不在缓存就发送请求
-      return _cacheFile.id === _fileNode.id
+      return _cacheFile.id === fileNode.id
     })) {
-      res = await this.getFile(_fileNode.path)
-      if (res.isError) {
-        console.log(`Open file ${_fileNode.name} exception.`)
+      const { isError, data } = await this.getFile(fileNode.path)
+      if (isError) {
+        console.log(`Open file ${fileNode.name} exception.`)
       } else {
         // 不拷贝一下 会有问题
         runInAction(() => {
-          let cacheFile = Object.assign({}, _fileNode, {
-            content: res.data,
+          this.cacheFiles.forEach(cacheFile => cacheFile.selected = false) // 清空选中态
+          let cacheFile = Object.assign({}, fileNode, {
+            content: data,
             selected: true,
-            notSave: false,
-            key: Math.random() // monaco 唯一的key
+            notSave: false
           })
           this.cacheFiles.push(cacheFile)
-          this.cacheFiles.forEach(_cacheFile => { // 选中当前
-            _cacheFile.selected = _cacheFile.id === _fileNode.id
-          })
         })
       }
     } else {
-      let _cacheFile = this.cacheFiles.find(_tab => { // 找到这个已经打开的节点
-        return _tab.path === _fileNode.path
-      })
-      let cacheFile = { ..._cacheFile } // simple deep
-      let find = this.cacheFiles.find(_tab => { // 判断是否已经在普通类型中打开
-        return _tab.id === _fileNode.id
-      })
-      if (find === undefined) { // 没有就添加一个到普通
-        cacheFile.key = Math.random()
-        cacheFile.selected = true
-        this.cacheFiles.push(cacheFile)
-      }
-      this.cacheFiles.forEach(_cacheFile => { // 选中当前
-        _cacheFile.selected = _cacheFile.id === _fileNode.id
-      })
+      this.cacheFiles.forEach(item => item.selected = item.id === fileNode.id)
     }
     runInAction(() => {
-      // 自动展开父节点的文件夹
-      let level = [..._fileNode.level || []]
-      level.pop()
-      this.autoOpenDirectory(level)
       this.mustRender = Math.random()
-      Monaco.updateModelOptions() // 更新modelOptions
-      setTimeout(() => {
-        this.autoScrollToSelectNode() // 自动定位到当前文件位置
-      }, 100)
     })
   }
-  @action autoScrollToSelectNode = () => {
-    let selectNode = $('.app-explorer-files-node-selected')
-    let filesNode = $('.app-explorer-files')
-    if (selectNode && filesNode) {
-      if (
-        filesNode.scrollTop > selectNode.offsetTop ||
-        selectNode.offsetTop > filesNode.clientHeight
-      ) {
-        filesNode.scrollTop = selectNode.offsetTop
-      }
-    }
-  }
   @action openSplitPanel = async () => {
-    const currentFile = this.cacheFiles.filter(_fileNode => {
-      return _fileNode.selected
+    const currentFile = this.cacheFiles.filter(fileNode => {
+      return fileNode.selected
     })[0] || null
     this.openFile(currentFile)
   }
@@ -222,15 +179,15 @@ class FileSystem{
     // 关闭文件
   }
   @action toBeSave = (save: boolean, path: string) => {
-    this.cacheFiles.forEach(_fileNode => {
-      if (_fileNode.path === path) { // 按照路径匹配
-        _fileNode.notSave = save
+    this.cacheFiles.forEach(fileNode => {
+      if (fileNode.path === path) { // 按照路径匹配
+        fileNode.notSave = save
       }
     })
   }
   @action saveFile = async (path: string) => {
-    const currentFile = this.cacheFiles.filter(_fileNode => {
-      return _fileNode.path === path && _fileNode.content !== _fileNode.editorMonaco.getValue() // 只有文件发生了变化才保存
+    const currentFile = this.cacheFiles.filter(fileNode => {
+      return fileNode.path === path && fileNode.content !== fileNode.editorMonaco.getValue() // 只有文件发生了变化才保存
     })
     let file = currentFile[0]
     if (file) {
@@ -500,11 +457,11 @@ class FileSystem{
   }
   @action recursionFileNodeByPath = (children, path: string): FileNode => {
     let fileNode: FileNode = null
-    children.some(_fileNode => {
-      if (_fileNode.path === path) {
-        fileNode = _fileNode
-      } else if (_fileNode.type === 'directory') {
-        fileNode = this.recursionFileNodeByPath(_fileNode.children, path)
+    children.some(fileNode => {
+      if (fileNode.path === path) {
+        fileNode = fileNode
+      } else if (fileNode.type === 'directory') {
+        fileNode = this.recursionFileNodeByPath(fileNode.children, path)
       }
       return Boolean(fileNode)
     })
@@ -515,6 +472,10 @@ class FileSystem{
    */
   @action queryFileNodeByPath = (path: string): FileNode => {
     return this.recursionFileNodeByPath(this.files.children, path)
+  }
+  @observable expandFolder = []
+  @action setExpandFolder = (expandFolder) => {
+    this.expandFolder = expandFolder
   }
 }
 const fileSystem = new FileSystem()
