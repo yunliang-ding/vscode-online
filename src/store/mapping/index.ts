@@ -132,7 +132,7 @@ const StatusColorMapping = new Proxy({
     return target[key] || '#1e1e1e'
   }
 })
-export {
+export default{
   IconMapping,
   IconColorMapping,
   LanguageMapping,

@@ -6,7 +6,7 @@ import { git } from '../git/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 const $: any = document.querySelector.bind(document)
 class FileSystem{
-  @observable baseUrl = ''
+  @observable baseUrl = '/home/development/music.163.app'
   @observable mustRender = 0
   @observable loadstate = false
   @observable storageLoading = false
@@ -273,17 +273,17 @@ class FileSystem{
       runInAction(() => {
         this.files = data
         this.refreshWt()
-        let currentNode = this.cacheFiles.find(_item => {
-          return _item.selected
-        })
-        if (currentNode) {
-          let level = [...currentNode.level]
-          level.pop()
-          this.autoOpenDirectory(level)
-        }
-        if (data.children.length === 0) {
-          this.files.errorMessage = 'Project is Empty.'
-        }
+        // let currentNode = this.cacheFiles.find(_item => {
+        //   return _item.selected
+        // })
+        // if (currentNode) {
+        //   let level = [...currentNode.level]
+        //   level.pop()
+        //   this.autoOpenDirectory(level)
+        // }
+        // if (data.children.length === 0) {
+        //   this.files.errorMessage = 'Project is Empty.'
+        // }
       })
     }
   }

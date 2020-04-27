@@ -1,11 +1,12 @@
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
 import { StandaloneCodeEditorServiceImpl } from 'monaco-editor/esm/vs/editor/standalone/browser/standaloneCodeServiceImpl.js'
-import { LanguageMapping } from '../mapping/index'
+import Mapping from '../mapping/index'
 import { fileSystem } from '../filesystem/index'
 import { observable, action, runInAction, toJS } from 'mobx'
 import { textMateService } from './syntaxHighlighter'
 import { get } from '../../axios/index'
+const { LanguageMapping } = Mapping
 const Window: any = window
 // const { typescriptDefaults, javascriptDefaults }: any = monaco.languages.typescript
 class MonacoService {
@@ -43,7 +44,6 @@ class MonacoService {
    * 负责一个文件打开之后 所有 Monaco初始化的工作
    */
   init = (dom, options, onChange): monaco.editor.IStandaloneCodeEditor => {
-    console.log('monaco-init')
     let oldDecorations = []
     let model = monaco.editor.getModel(this.getUri(options.path)) || monaco.editor.createModel(options.value, options.language, this.getUri(options.path))
     model.setValue(options.value)

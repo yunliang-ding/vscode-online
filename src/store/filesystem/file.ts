@@ -1,5 +1,6 @@
-import { IconColorMapping, IconMapping, LanguageMapping } from "../mapping/index";
+import Mapping from "../mapping/index";
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+const { IconColorMapping, IconMapping, LanguageMapping } = Mapping
 class FileNode{
   id:string // 节点唯一标识
   path: string // 节点对应的文件路径

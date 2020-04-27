@@ -10,8 +10,9 @@
 */
 import { observable, action, runInAction, toJS } from 'mobx'
 import { get } from '../../axios/index'
-import { IconMapping, IconColorMapping, StatusMapping, StatusColorMapping, LanguageMapping } from '../mapping/index'
+import Mapping from '../mapping/index'
 import { fileSystem } from '../filesystem/index'
+const { IconMapping, IconColorMapping, StatusMapping, StatusColorMapping, LanguageMapping } = Mapping
 class GitServices{
   @observable git = {
     isGitProject: true,

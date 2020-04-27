@@ -4,7 +4,7 @@ import { ActivityBar, SiderBar, Code, Footer } from 'component'
 import { observer, inject } from 'mobx-react'
 import './index.less'
 const Window: any = window
-@inject('UI')
+@inject('UI', 'FileSystem')
 @observer
 class Layout extends React.Component<any, any> {
   props: any
@@ -19,6 +19,7 @@ class Layout extends React.Component<any, any> {
     }
   }
   componentWillMount() {
+    this.props.FileSystem.queryFiles() // 加载项目
   }
   render() {
     return <div className='app-layout'>

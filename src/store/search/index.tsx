@@ -1,7 +1,8 @@
 import { observable, action, runInAction } from 'mobx'
 import { fileSystem } from '../filesystem/index'
-import { IconMapping, IconColorMapping , LanguageMapping } from '../mapping/index'
+import Mapping from '../mapping/index'
 import { monacoService } from '../monaco/index'
+const { IconMapping, IconColorMapping , LanguageMapping } = Mapping
 class Search{
   @observable searchText: string = ''
   @observable replaceText: string = ''

@@ -24,7 +24,8 @@ const config = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
     alias: {
-      component: path.join(__dirname, './src/component')
+      component: path.join(__dirname, './src/component'),
+      ryui: path.join(__dirname, './src/yui')
     }
   },
   externals: {
@@ -85,7 +86,14 @@ const config = {
     port: 8080,
     hot: true,
     compress: true,
-    contentBase: './www'
+    contentBase: './www',
+     proxy: [{
+      context: ['/api'],
+      target: `http://49.233.85.54:8360`,
+      pathRewrite: { '^/api': '' },
+      changeOrigin: true,
+      secure: true
+    }]
   },
   optimization: process.env.NODE_ENV === "production" ? {
     minimize: false
