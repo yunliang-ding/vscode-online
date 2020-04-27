@@ -12,7 +12,7 @@ class SiderBar extends React.Component<any, any> {
   render() {
     let theme = Window.config.dark ? '-dark' : ''
     return <div className={`app-sider-bar${theme}`}>
-      app-sider-bar
+      
     </div>
   }
 }

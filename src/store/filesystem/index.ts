@@ -101,9 +101,9 @@ class FileSystem{
     })
     this.files = { ...this.files }
   }
-  @action openStagesFile = async (sider?: boolean) => {
+  @action openStagesFile = async () => {
     const currentFile = this.cacheFiles.filter(_fileNode => {
-      return _fileNode.selected && _fileNode.sider === Boolean(sider)
+      return _fileNode.selected
     })[0] || null
     let node = { ...currentFile }
     if (node.status !== '') {
@@ -111,7 +111,7 @@ class FileSystem{
       node.id = node.path + node.prefix
       node.diffEditor = true
       await git.queryStagedText(node)
-      await this.openFile(node, sider)
+      await this.openFile(node)
     }
   }
   @action getFile = async (path: string) => {// 查询文件
@@ -119,7 +119,7 @@ class FileSystem{
       path
     })
   }
-  @action openFile = async (_fileNode: FileNode, sider?: boolean) => { // 打开文件
+  @action openFile = async (_fileNode: FileNode) => { // 打开文件
     if(!_fileNode){
       return
     }
@@ -139,24 +139,13 @@ class FileSystem{
           let cacheFile = Object.assign({}, _fileNode, {
             content: res.data,
             selected: true,
-            sider: Boolean(sider), // 转boolean
             notSave: false,
             key: Math.random() // monaco 唯一的key
           })
           this.cacheFiles.push(cacheFile)
-          if (sider) { //如果侧边打开
-            this.cacheFiles.forEach(_cacheFile => { // 选中当前
-              if (_cacheFile.sider) {
-                _cacheFile.selected = _cacheFile.id === _fileNode.id
-              }
-            })
-          } else {
-            this.cacheFiles.forEach(_cacheFile => { // 选中当前
-              if (!_cacheFile.sider) {
-                _cacheFile.selected = _cacheFile.id === _fileNode.id
-              }
-            })
-          }
+          this.cacheFiles.forEach(_cacheFile => { // 选中当前
+            _cacheFile.selected = _cacheFile.id === _fileNode.id
+          })
         })
       }
     } else {
@@ -164,37 +153,17 @@ class FileSystem{
         return _tab.path === _fileNode.path
       })
       let cacheFile = { ..._cacheFile } // simple deep
-      if (sider) { // 如果侧边打开
-        let find = this.cacheFiles.find(_tab => { // 判断是否已经在侧边
-          return _tab.path === _fileNode.path && _tab.sider === true
-        })
-        if (find === undefined) { // 没有就添加一个到侧边
-          cacheFile.sider = true
-          cacheFile.selected = true
-          cacheFile.key = Math.random()
-          this.cacheFiles.push(cacheFile)
-        }
-        this.cacheFiles.forEach(_cacheFile => { // 选中当前
-          if (_cacheFile.sider) {
-            _cacheFile.selected = _cacheFile.id === _fileNode.id //  只会管理sider
-          }
-        })
-      } else {
-        let find = this.cacheFiles.find(_tab => { // 判断是否已经在普通类型中打开
-          return _tab.id === _fileNode.id && _tab.sider === false
-        })
-        if (find === undefined) { // 没有就添加一个到普通
-          cacheFile.sider = false
-          cacheFile.key = Math.random()
-          cacheFile.selected = true
-          this.cacheFiles.push(cacheFile)
-        }
-        this.cacheFiles.forEach(_cacheFile => { // 选中当前
-          if (!_cacheFile.sider) {
-            _cacheFile.selected = _cacheFile.id === _fileNode.id //  只会管理非sider
-          }
-        })
+      let find = this.cacheFiles.find(_tab => { // 判断是否已经在普通类型中打开
+        return _tab.id === _fileNode.id
+      })
+      if (find === undefined) { // 没有就添加一个到普通
+        cacheFile.key = Math.random()
+        cacheFile.selected = true
+        this.cacheFiles.push(cacheFile)
       }
+      this.cacheFiles.forEach(_cacheFile => { // 选中当前
+        _cacheFile.selected = _cacheFile.id === _fileNode.id
+      })
     }
     runInAction(() => {
       // 自动展开父节点的文件夹
@@ -222,9 +191,9 @@ class FileSystem{
   }
   @action openSplitPanel = async () => {
     const currentFile = this.cacheFiles.filter(_fileNode => {
-      return _fileNode.selected && _fileNode.sider === false
+      return _fileNode.selected
     })[0] || null
-    this.openFile(currentFile, true) //sider 打开
+    this.openFile(currentFile)
   }
   @action setWebTitle = (title: string) => {
     $('#title').innerHTML = title
@@ -236,7 +205,7 @@ class FileSystem{
       console.log('有没有保存的')
     } else {
       this.cacheFiles = [this.cacheFiles[_index]]
-      this.openFile(this.cacheFiles[_index], false)
+      this.openFile(this.cacheFiles[_index])
       Monaco.updateModelOptions() // 更新modelOptions
     }
   }
@@ -250,39 +219,7 @@ class FileSystem{
     }
   }
   @action closeFile = (_closeFile, _index) => {
-    if (_closeFile.editorMonaco && _closeFile.editorMonaco.getValue() !== _closeFile.content) {
-      _closeFile.editorMonaco.setValue(_closeFile.content) // 保持和本地文件内容同步
-    }
-    let _newIndex = -1
-    let _newSiderIndex = -1
-    this.cacheFiles = this.cacheFiles.filter(_cacheFile => {
-      return _cacheFile.id !== _closeFile.id || _cacheFile.sider !== _closeFile.sider
-    })
-    if (_closeFile.sider) {
-      this.cacheFiles.some((_tab, _index) => {
-        if (_tab.sider) {
-          _newSiderIndex = _index
-          return true
-        }
-      })
-    } else {
-      this.cacheFiles.some((_tab, _index) => {
-        if (!_tab.sider) {
-          _newIndex = _index
-          return true
-        }
-      })
-    }
-    if (_closeFile.selected && this.cacheFiles.length > 0) {
-      if (_closeFile.sider && _newSiderIndex !== -1) {
-        this.openFile(this.cacheFiles[_newSiderIndex], true)
-      } else if (_newIndex !== -1) {
-        this.openFile(this.cacheFiles[_newIndex], false)
-        this.cacheFiles[_newIndex].selected = true
-      }
-      // Monaco.focus() // 得到焦点 bug
-      Monaco.updateModelOptions() // 更新modelOptions
-    }
+    // 关闭文件
   }
   @action toBeSave = (save: boolean, path: string) => {
     this.cacheFiles.forEach(_fileNode => {
@@ -305,7 +242,7 @@ class FileSystem{
         if (!isError) {
           file.content = file.editorMonaco.getValue() // 更新节点的content
           if (currentFile[1]) {
-            currentFile[1].content = file.editorMonaco.getValue() // 可能打开的sider
+            currentFile[1].content = file.editorMonaco.getValue()
           }
           await this.toBeSave(false, file.path)
           await git.queryStatus()
@@ -434,7 +371,6 @@ class FileSystem{
             })
             cacheFile[0] && FileNode.ReNameNode(newName, cacheFile[0])
           }
-          // this.cacheFiles = [...this.cacheFiles]
         })
       } else {
         runInAction(() => {
@@ -527,7 +463,7 @@ class FileSystem{
     return editor && editor.editorMonaco || null
   }
   @action setFileNodeEditorMonacoByPath = (editorMonaco: monaco.editor.IStandaloneCodeEditor, path: string) => {
-    const editor: any = this.cacheFiles.filter(_cacheFile => { // 可能sider也打开了
+    const editor: any = this.cacheFiles.filter(_cacheFile => {
       return _cacheFile.path === path
     })
     editor.map(_editor => {
@@ -535,7 +471,7 @@ class FileSystem{
     })
   }
   @action getFileNodeEditorMonacoByPath = (path: string): monaco.editor.IStandaloneCodeEditor => {
-    const editor = this.cacheFiles.find(_cacheFile => { // 可能sider也打开了
+    const editor = this.cacheFiles.find(_cacheFile => {
       return _cacheFile.path === path
     })
     return editor && editor.editorMonaco

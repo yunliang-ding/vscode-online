@@ -7,7 +7,7 @@ import { observable, action, runInAction, toJS } from 'mobx'
 import { textMateService } from './syntaxHighlighter'
 import { get } from '../../axios/index'
 const Window: any = window
-const { typescriptDefaults, javascriptDefaults }: any = monaco.languages.typescript
+// const { typescriptDefaults, javascriptDefaults }: any = monaco.languages.typescript
 class MonacoService {
   diffEditor: monaco.editor.IStandaloneDiffEditor;
   options: monaco.editor.IEditorConstructionOptions = {
@@ -43,6 +43,7 @@ class MonacoService {
    * 负责一个文件打开之后 所有 Monaco初始化的工作
    */
   init = (dom, options, onChange): monaco.editor.IStandaloneCodeEditor => {
+    console.log('monaco-init')
     let oldDecorations = []
     let model = monaco.editor.getModel(this.getUri(options.path)) || monaco.editor.createModel(options.value, options.language, this.getUri(options.path))
     model.setValue(options.value)
@@ -52,7 +53,6 @@ class MonacoService {
     editorMonaco.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => { // ctrl + s
       // fileSystem.saveFile(options.path)
     })
-    // editorMonaco.focus() // 得到焦点 bug
     this.updateModelOptions() // 更新 modelOptions
     editorMonaco.onDidChangeModelContent(() => { // onChange 事件
       onChange(editorMonaco.getValue())
@@ -147,7 +147,7 @@ class MonacoService {
  */
   setCompilerOptions = (compilerOptions) => {
     compilerOptions = compilerOptions.replace(/\n/g, '')
-    typescriptDefaults._compilerOptions = JSON.parse(compilerOptions)
+    // typescriptDefaults._compilerOptions = JSON.parse(compilerOptions)
     this.compilerOptions = JSON.parse(compilerOptions)
   }
   /**
@@ -183,7 +183,7 @@ class MonacoService {
           editorMonaco.focus()
         }
       }
-      fileSystem.openFile(fileNode, false) // 打开这个文件
+      fileSystem.openFile(fileNode) // 打开这个文件
     }
   }
   /**
@@ -200,8 +200,8 @@ class MonacoService {
       options.data = options.data.replace(/\n/g, '')
       this.options = JSON.parse(options.data)
     }
-    typescriptDefaults._compilerOptions = this.compilerOptions
-    javascriptDefaults._compilerOptions = this.compilerOptions
+    // typescriptDefaults._compilerOptions = this.compilerOptions
+    // javascriptDefaults._compilerOptions = this.compilerOptions
   }
   createModelByContent = (content, language) => {
     return monaco.editor.createModel(content, language)
