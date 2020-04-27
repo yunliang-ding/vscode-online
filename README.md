@@ -1,2 +1,2 @@
-# cc-studio
-cc-studio
+# vscode-online
+vscode-online

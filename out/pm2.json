@@ -1,0 +1,28 @@
+{
+  "apps": [
+    {
+      "name": "vscode-online.backend",
+      "script": "backend/www/production.js",
+      "ignore-watch": "node_modules",
+      "exec_mode": "cluster",
+      "instances": "1",
+      "autorestart": true,
+      "max_memory_restart": "1G",
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "out_file": "log/backend.stdout.log",
+      "error_file": "log/backend.error.log"
+    },
+    {
+      "name": "vscode-online.frontend",
+      "script": "frontend/production.js",
+      "ignore-watch": "node_modules",
+      "exec_mode": "cluster",
+      "instances": "1",
+      "autorestart": true,
+      "max_memory_restart": "1G",
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "out_file": "log/frontend.stdout.log",
+      "error_file": "log/frontend.error.log"
+    }
+  ]
+}
