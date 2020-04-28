@@ -1,33 +1,53 @@
 'use strict';
 import Base from './base.js';
 const { exec } = require('child_process')
+const statusMapping = new Proxy({
+  'A ': {
+    inWorkingTree: 0,
+    status: ["INDEX_NEW"]
+  },
+  '??': {
+    inWorkingTree: 1,
+    status: ["WT_NEW"]
+  },
+  'M ': {
+    inWorkingTree: 0,
+    status: ["INDEX_MODIFIED"]
+  },
+  ' M': {
+    inWorkingTree: 1,
+    status: ["WT_MODIFIED"]
+  },
+  'D ': {
+    inWorkingTree: 0,
+    status: ["INDEX_DELETED"]
+  },
+  ' D': {
+    inWorkingTree: 1,
+    status: ["WT_DELETED"]
+  }
+}, {
+  get: (target, key, receiver) => {
+    return target[key] || {
+      inWorkingTree: 0,
+      status: 0
+    }
+  }
+})
 export default class extends Base {
   async statusAction() {
     try {
-      // const status = await Git.Repository.open(this.get('path')).then((_repository) => {
-      //   return _repository.getStatus().then(_status => {
-      //     return _status.map(_item => {
-      //       return {
-      //         path: _item.path(),
-      //         isTypechange: _item.isTypechange(),
-      //         statusBit: _item.statusBit(),
-      //         status: _item.status(),
-      //         isNew: _item.isNew(),
-      //         isModified: _item.isModified(),
-      //         isDeleted: _item.isDeleted(),
-      //         inWorkingTree: _item.inWorkingTree(),
-      //         isConflicted: _item.isConflicted(),
-      //         isIgnored: _item.isIgnored(),
-      //         isRenamed: _item.isRenamed(),
-      //         inIndex:_item.inIndex(),
-      //         indexToWorkdir: _item.indexToWorkdir(),
-      //         headToIndex: _item.headToIndex()
-      //       }
-      //     })
-      //   })
-      // })
+      let data = await this.gitCommand(`cd ${this.get('path')};git status -s`)
+      let status = []
+      data.data.map(item => {
+        status.push({
+          path: item.substr(2),
+          inWorkingTree: statusMapping[item.substring(0, 2)].inWorkingTree,
+          status: statusMapping[item.substring(0, 2)].status
+        })
+      })
       this.json({
-        data: {},
+        data: status,
         isError: false
       })
     } catch (error) {
@@ -63,8 +83,8 @@ export default class extends Base {
     try {
       const { data } = await this.gitCommand(`cd ${this.get('path')};git ls-files -s`);
       let stagedId = ''
-      data && data.some(_file=>{
-        if(this.get('name') === _file.split('\t')[1]){
+      data && data.some(_file => {
+        if (this.get('name') === _file.split('\t')[1]) {
           stagedId = _file.split('\t')[0].split(' ')[1]
           return true // 结束循环
         }
@@ -193,13 +213,13 @@ export default class extends Base {
         exec(cmd, (err, stdout, stderr) => {
           console.log('err==>', err)
           if (err === null) {
-            if(stderr !== ""){
+            if (stderr !== "") {
               stdout = stderr + stdout
             }
             resolve({
               isError: false,
               message: null,
-              data: stdout && stdout.split('\n').filter(_stdout=>{
+              data: stdout && stdout.split('\n').filter(_stdout => {
                 return _stdout !== ''
               }),
               stderr

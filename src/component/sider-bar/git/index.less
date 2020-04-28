@@ -1,0 +1,111 @@
+.app-git, .app-git-dark{
+  height:100%;
+  width:100%;
+  min-width: 200px;
+  overflow: auto;
+  .app-git-title{
+    padding: 10px 8px;
+    height: 40px;
+    user-select: none;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    color:#fff;
+    font-size:12px;
+    .app-git-title-name{
+      text-transform: uppercase;
+      width:200px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .app-git-title-tools{
+      height: 40px;
+      display:flex;
+      align-items: center;
+      .iconfont{
+        font-size:18px;
+        cursor: pointer;
+        margin-left:16px;
+      }
+      .iconfont:active{
+        transform: scale(1.2)
+      }
+    }
+  }
+  .app-git-body{
+    width:100%;
+    height:calc(~'100% - 40px');
+    .app-git-body-commit{
+      width:100%;
+      height:40px;
+      padding: 0 8px;
+      display:flex;
+      align-items: center;
+      justify-content: center;
+      input{
+        width:100%;
+        background: var(--theme-background-explorer-node-selected);
+        border: 1px solid transparent;
+        outline: none;
+        height:25px;
+        padding: 0 6px;
+        color:#fff;
+        transition: .5s;
+        &:focus{
+          transition: .5s;
+          border: 1px solid var(--theme-color);
+        }
+      }
+    }
+    .app-git-body-change{
+      height:calc(~'100% - 40px');
+      overflow: auto;
+    }
+    .app-git-body-change-staged, .app-git-body-change-workspace{
+      .app-git-body-change-title{
+        height:30px;
+        display:flex;
+        align-items: center;
+        padding:0 8px;
+        font-size:12px;
+        color:#fff;
+      }
+    }
+  }
+  .yui-tree-node{
+    color: #ccc;
+  }
+  .yui-tree-node:hover{
+    background-color: #222;
+  }
+  .yui-tree-leaf-active{
+    background-color: #1e1e1e;
+  }
+  .app-git-menu{
+    width: 160px;
+    padding: 0 8px;
+    .app-git-menu-item:hover{
+      opacity: 1;
+    }
+    .app-git-menu-item{
+      display: flex;
+      opacity: .6;
+      width: 100%;
+      height: 30px;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+}
+.app-git{
+  .yui-tree-node{
+    color: #333;
+  }
+  .yui-tree-node:hover{
+    background-color: #eee;
+  }
+  .yui-tree-leaf-active{
+    background-color: #eee;
+  }
+}

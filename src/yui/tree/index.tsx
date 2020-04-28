@@ -97,6 +97,7 @@ class Tree extends React.Component {
         }
         {
           this.props.checkable ? <CheckBox
+            dark={this.props.dark}
             value={checkedKeys.includes(node.key) ? [node.key] : []}
             dataList={[{ label: node.label, value: node.key, disabled: node.disabled }]}
             onChange={

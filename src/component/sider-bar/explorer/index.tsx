@@ -75,8 +75,8 @@ class Explorer extends React.Component<any, any> {
     })
   }
   render() {
-    const data = this.renderExplorer(toJS(this.props.FileSystem.files.children))
-    const { cacheFiles, expandFolder, setExpandFolder } = this.props.FileSystem
+    const { cacheFiles, expandFolder, setExpandFolder, files: { children } } = this.props.FileSystem
+    const data = this.renderExplorer(toJS(children))
     let theme = Window.config.dark ? '-dark' : ''
     let currentFile = cacheFiles.find(item => item.selected) || {}
     console.log('render')

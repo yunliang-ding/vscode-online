@@ -1,6 +1,8 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { Explorer } from './explorer/index'
+import { Search } from './search/index'
+import { Git } from './git/index'
 import './index.less'
 const Window: any = window
 @inject('UI')
@@ -12,8 +14,11 @@ class SiderBar extends React.Component<any, any> {
   }
   render() {
     let theme = Window.config.dark ? '-dark' : ''
+    const { currentTab } = this.props.UI
     return <div className={`app-sider-bar${theme}`}>
-      <Explorer />
+      {
+        currentTab === 'Explorer' ? <Explorer /> :  currentTab === 'Git' ? <Git /> : <Search />
+      }
     </div>
   }
 }

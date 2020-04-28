@@ -13,7 +13,7 @@ body{
 }
 .load-spin-iconfont{
   font-size:160px;
-  color:#2ccab5;
+  color:var(--theme-color);
   animation:load-spin-move 3s linear infinite;
 }
 @keyframes load-spin-move{

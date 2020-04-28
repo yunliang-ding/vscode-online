@@ -6,7 +6,7 @@ import { git } from '../git/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 const $: any = document.querySelector.bind(document)
 class FileSystem {
-  @observable baseUrl = '/home/development/music.163.app'
+  @observable baseUrl = '/home/development/music.163.app/'
   @observable mustRender = 0
   @observable loadstate = false
   @observable storageLoading = false
