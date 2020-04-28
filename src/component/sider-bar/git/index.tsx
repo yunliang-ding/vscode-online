@@ -93,7 +93,7 @@ class Git extends React.Component<any, any> {
         </div>
       </div>
       <div className='app-git-body'>
-        <div className='app-git-body-commit'>
+        <div className='app-git-input'>
           <input autoFocus autoComplete='off' id='commit-info' placeholder='Message (press Enter to commit)' onKeyDown={
             (e: any) => {
               if (e.keyCode === 13) {
