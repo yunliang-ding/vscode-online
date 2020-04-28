@@ -3,7 +3,7 @@
   width:100%;
   min-width: 200px;
   overflow: auto;
-  .app-git-title{
+  .app-git-header{
     padding: 10px 8px;
     height: 40px;
     user-select: none;
@@ -12,14 +12,14 @@
     justify-content: space-between;
     color:#fff;
     font-size:12px;
-    .app-git-title-name{
+    .app-git-header-left{
       text-transform: uppercase;
       width:200px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
-    .app-git-title-tools{
+    .app-git-header-right{
       height: 40px;
       display:flex;
       align-items: center;
@@ -107,5 +107,16 @@
   }
   .yui-tree-leaf-active{
     background-color: #eee;
+  }
+  .app-git-header-left{
+    color:#1e1e1e !important;
+  }
+  .app-git-header-right{
+    .iconfont{
+      color:#1e1e1e !important;
+    }
+  }
+  .app-git-body-change-title{
+    color:#1e1e1e !important;
   }
 }

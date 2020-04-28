@@ -2,7 +2,44 @@
   height:100%;
   width:100%;
   min-width: 200px;
-  overflow: auto;
+  overflow: hidden;
+  .app-explorer-header{
+    height:40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding:0 10px;
+    .app-explorer-header-left{
+      text-transform: uppercase;
+      width:200px;
+      overflow: hidden;
+      font-size:12px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color:#fff;
+    }
+    .app-explorer-header-right{
+      height: 40px;
+      display:flex;
+      align-items: center;
+      .iconfont{
+        font-size:18px;
+        cursor: pointer;
+        margin-left:16px;
+        color:#fff;
+      }
+      .icon-zhankai{
+        font-size:16px;
+      }
+      .iconfont:active{
+        transform: scale(1.1)
+      }
+    }
+  }
+  .app-explorer-body{
+    overflow: auto;
+    height:calc(~'100% - 40px');
+  }
   .yui-tree-node{
     color: #ccc;
   }
@@ -37,5 +74,13 @@
   }
   .yui-tree-leaf-active{
     background-color: #eee;
+  }
+  .app-explorer-header-left{
+    color:#1e1e1e !important;
+  }
+  .app-explorer-header-right{
+    .iconfont{
+      color:#1e1e1e !important;
+    }
   }
 }

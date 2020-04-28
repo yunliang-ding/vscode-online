@@ -75,27 +75,40 @@ class Explorer extends React.Component<any, any> {
     })
   }
   render() {
-    const { cacheFiles, expandFolder, setExpandFolder, files: { children } } = this.props.FileSystem
+    const { cacheFiles, expandFolder, setExpandFolder, files: { children, name} } = this.props.FileSystem
     const data = this.renderExplorer(toJS(children))
     let theme = Window.config.dark ? '-dark' : ''
     let currentFile = cacheFiles.find(item => item.selected) || {}
     console.log('render')
     return <div className={`app-explorer${theme}`}>
-      <Tree
-        style={{
-          width: '100%',
-          height: '100%'
-        }}
-        dark={Window.config.dark}
-        defaultExpandedKeys={expandFolder}
-        defaultCheckedKeys={[currentFile.key]}
-        treeData={data}
-        onExpand={
-          (e) => {
-            setExpandFolder(e)
+      <div className='app-explorer-header'>
+        <div className='app-explorer-header-left'>
+          explorer: {name}
+        </div>
+        <div className='app-explorer-header-right'>
+          <i className='iconfont icon-tianjiawenjian'></i>
+          <i className='iconfont icon-jiemu_jiemu_tianjiawenjianjia'></i>
+          <i className='iconfont icon-shuaxin'></i>
+          <i className='iconfont icon-zhankai'></i>
+        </div>
+      </div>
+      <div className='app-explorer-body'>
+        <Tree
+          style={{
+            width: '100%',
+            height: '100%'
+          }}
+          dark={Window.config.dark}
+          defaultExpandedKeys={expandFolder}
+          defaultCheckedKeys={[currentFile.key]}
+          treeData={data}
+          onExpand={
+            (e) => {
+              setExpandFolder(e)
+            }
           }
-        }
-      />
+        />
+      </div>
     </div>
   }
 }

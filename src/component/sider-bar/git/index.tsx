@@ -70,11 +70,11 @@ class Git extends React.Component<any, any> {
     const stagedChangesData = this.renderTreeData(stagedChanges)
     let theme = Window.config.dark ? '-dark' : ''
     return <div className={`app-git${theme}`}>
-      <div className='app-git-title'>
-        <div className='app-git-title-name'>
+      <div className='app-git-header'>
+        <div className='app-git-header-left'>
           source control : git
         </div>
-        <div className='app-git-title-tools'>
+        <div className='app-git-header-right'>
           <i title='commit' className='iconfont icon-tijiao' onClick={
             () => {
               this.commit($('#commit-info').value.trim())

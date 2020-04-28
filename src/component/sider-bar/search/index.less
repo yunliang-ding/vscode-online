@@ -1,3 +1,69 @@
 .app-search, .app-search-dark{
-  color:#fff;
+  .app-search-header{
+    height:40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding:0 10px;
+    .app-search-header-left{
+      text-transform: uppercase;
+      width:200px;
+      overflow: hidden;
+      font-size:12px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color:#fff;
+    }
+    .app-search-header-right{
+      height: 40px;
+      display:flex;
+      align-items: center;
+      .iconfont{
+        font-size:18px;
+        cursor: pointer;
+        margin-left:16px;
+        color:#fff;
+      }
+      .icon-shanchu{
+        font-size:15px;
+      }
+      .iconfont:active{
+        transform: scale(1.1)
+      }
+    }
+  }
+  .app-search-body{
+    overflow: auto;
+    height:calc(~'100% - 40px');
+    .app-search-input{
+      width:100%;
+      height:40px;
+      padding: 0 8px;
+      display:flex;
+      align-items: center;
+      justify-content: center;
+      input{
+        width:100%;
+        background: var(--theme-background-explorer-node-selected);
+        border: 1px solid transparent;
+        outline: none;
+        height:25px;
+        padding: 0 6px;
+        color:#fff;
+        transition: .5s;
+        &:focus{
+          transition: .5s;
+          border: 1px solid var(--theme-color);
+        }
+      }
+    }
+  }
+  .app-search-header-left{
+    color:#1e1e1e !important;
+  }
+  .app-search-header-right{
+    .iconfont{
+      color:#1e1e1e !important;
+    }
+  }
 }
