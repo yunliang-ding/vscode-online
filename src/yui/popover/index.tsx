@@ -134,7 +134,11 @@ class Popover extends React.Component {
       >
         <div className='yui-popover-inner-layer' />
         {showAllow && <div className='yui-popover-inner-allow' ref={(allowNode) => { this.allowNode = allowNode }} />}
-        <div className='yui-popover-inner-content'>
+        <div className='yui-popover-inner-content' onClick={
+          () => {
+            this.setVisable(false)
+          }
+        }>
           {this.props.content}
         </div>
       </div>

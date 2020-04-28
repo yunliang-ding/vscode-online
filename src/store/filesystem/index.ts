@@ -20,36 +20,21 @@ class FileSystem {
     errorMessage: ''
   }
   @observable cacheFiles: any = []
-  @action setBaseUrl = (baseUrl: string): void => {
+  @action setBaseUrl = (baseUrl: string): void => { // 按照路由设置 项目基本信息
     this.baseUrl = baseUrl
     this.files.path = baseUrl
     this.files.name = baseUrl.split('/').pop()
-    this.setWebTitle(`${this.files.name} - cc-studio`)
   }
-  @action setDragFile = (dragFile: FileNode): void => {
-    this.dragFile = dragFile
-  }
-  @action switchCacheFiles = (startIndex: number, endIndex: number): void => {
-    this.cacheFiles.splice(
-      startIndex,
-      1,
-      ...this.cacheFiles.splice(
-        endIndex,
-        1,
-        this.cacheFiles[startIndex]
-      )
-    )
-  }
-  @action queryFileStatus = (_node) => {
-    const { stagedChanges, workspaceChanges } = git
-    return stagedChanges.concat(workspaceChanges).find(_statusFile => {
-      return _statusFile.path === _node.path
-    })
-  }
-  @action refreshWt = async () => {
+  // @action queryFileStatus = (_node) => {
+  //   const { stagedChanges, workspaceChanges } = git
+  //   return stagedChanges.concat(workspaceChanges).find(_statusFile => {
+  //     return _statusFile.path === _node.path
+  //   })
+  // }
+  @action refreshWt = async () => { // 渲染状态树
     this.files.children = this.tansformFiles(this.files.children, [])
   }
-  @action tansformFiles = (node, level) => {
+  @action tansformFiles = (node, level) => { // 数据排序 + 转换
     let dir = node.filter(_item => _item.type === 'directory').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
     let files = node.filter(_item => _item.type === 'file').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
     let newNode = dir.concat(files)
@@ -61,59 +46,27 @@ class FileSystem {
         children = this.tansformFiles(_node.children, level.concat(_index))
       }
       let node = new FileNode(_node, false, '', gitignores, level.concat(_index), children)
-      const fileStatus = this.queryFileStatus(node)
-      if (fileStatus) {
-        node.status = node.type === 'file' ? fileStatus.status : '.'
-        node.color = fileStatus.color
-      }
+      // const fileStatus = this.queryFileStatus(node)
+      // if (fileStatus) {
+      //   node.status = node.type === 'file' ? fileStatus.status : '.'
+      //   node.color = fileStatus.color
+      // }
       return node
     })
   }
-  @action openDirectory = async (level) => { // 按照层级打开指定目录
-    let fileNode = this.files
-    level.map(_level => {
-      fileNode = fileNode.children[_level]
-    })
-    fileNode.isOpen = !fileNode.isOpen
-    fileNode.icon = fileNode.isOpen ? 'icon-expand' : 'icon-collapse'
-    this.files = { ...this.files }
-  }
-  @action closeAllDirectory = (fileNode) => { // 收起项目
-    return fileNode && fileNode.map(fileNode => {
-      fileNode.type === 'directory' && (
-        fileNode.isOpen = false,
-        fileNode.children = this.closeAllDirectory(fileNode.children),
-        fileNode.icon = 'icon-collapse'
-      )
-      return fileNode
-    })
-  }
-  @action collapseExplorer = () => { // 收起项目
-    this.files.children = this.closeAllDirectory(this.files.children)
-    this.files = { ...this.files }
-  }
-  @action autoOpenDirectory = async (level) => { //  自动按照层级展开
-    let obj = this.files
-    level.map(_level => {
-      obj = obj.children[_level]
-      obj.isOpen = true
-      obj.icon = 'icon-expand'
-    })
-    this.files = { ...this.files }
-  }
-  @action openStagesFile = async () => {
-    const currentFile = this.cacheFiles.filter(fileNode => {
-      return fileNode.selected
-    })[0] || null
-    let node = { ...currentFile }
-    if (node.status !== '') {
-      node.prefix = ' (WorkTree)'
-      node.id = node.path + node.prefix
-      node.diffEditor = true
-      await git.queryStagedText(node)
-      await this.openFile(node)
-    }
-  }
+  // @action openStagesFile = async () => {
+  //   const currentFile = this.cacheFiles.filter(fileNode => {
+  //     return fileNode.selected
+  //   })[0] || null
+  //   let node = { ...currentFile }
+  //   if (node.status !== '') {
+  //     node.prefix = ' (WorkTree)'
+  //     node.id = node.path + node.prefix
+  //     node.diffEditor = true
+  //     await git.queryStagedText(node)
+  //     await this.openFile(node)
+  //   }
+  // }
   @action getFile = async (path: string) => {// 查询文件
     return await get('/api/file/getfile', {
       path
@@ -146,37 +99,38 @@ class FileSystem {
       this.mustRender = Math.random()
     })
   }
-  @action openSplitPanel = async () => {
-    const currentFile = this.cacheFiles.filter(fileNode => {
-      return fileNode.selected
-    })[0] || null
-    this.openFile(currentFile)
-  }
-  @action setWebTitle = (title: string) => {
-    $('#title').innerHTML = title
-  }
-  @action closeOther = (_index) => {
-    if (this.cacheFiles.some((_tab, index) => {
-      return _tab.notSave && _index !== index
+  // @action openSplitPanel = async () => {
+  //   const currentFile = this.cacheFiles.filter(fileNode => {
+  //     return fileNode.selected
+  //   })[0] || null
+  //   this.openFile(currentFile)
+  // }
+  @action closeOther = (node) => {
+    if (this.cacheFiles.some(tab => {
+      return tab.notSave && node.key !== tab.key
     })) {
-      console.log('有没有保存的')
+      alert('没有保存的')
     } else {
-      this.cacheFiles = [this.cacheFiles[_index]]
-      this.openFile(this.cacheFiles[_index])
+      node.selected = true
+      this.cacheFiles = [node]
       Monaco.updateModelOptions() // 更新modelOptions
     }
   }
   @action closeAll = () => {
-    if (this.cacheFiles.some(_tab => {
-      return _tab.notSave
+    if (this.cacheFiles.some(tab => {
+      return tab.notSave
     })) {
-      console.log('有未保存的设置')
+      alert('未保存的设置')
     } else {
       this.cacheFiles.length = 0
     }
   }
-  @action closeFile = (_closeFile, _index) => {
-    // 关闭文件
+  @action closeFile = (fileNode, _index) => {
+    this.cacheFiles = this.cacheFiles.filter(file => {
+      file.selected = false // 清空选中
+      return file.key !== fileNode.key
+    })
+    this.cacheFiles[0] && (this.cacheFiles[0].selected = true) // 默认选中第一个
   }
   @action toBeSave = (save: boolean, path: string) => {
     this.cacheFiles.forEach(fileNode => {
@@ -244,13 +198,13 @@ class FileSystem {
       })
     }
   }
-  @action toLogin = async (username, passward) => {
-    const res = await get('/api/file/login', {
-      username,
-      passward
-    })
-    return res
-  }
+  // @action toLogin = async (username, passward) => {
+  //   const res = await get('/api/file/login', {
+  //     username,
+  //     passward
+  //   })
+  //   return res
+  // }
   /**
    * 文件树操作
    */
@@ -284,7 +238,6 @@ class FileSystem {
       if (!isError) {
         await git.queryStatus()
         await this.queryFiles()
-        _node.level && await this.autoOpenDirectory(_node.level)
       }
     }
     runInAction(() => {
@@ -308,7 +261,6 @@ class FileSystem {
       if (!isError) {
         await git.queryStatus()
         await this.queryFiles()
-        pNode.level && await this.autoOpenDirectory(pNode.level)
         runInAction(() => {
           // 同步已经打开的 cacheFiles
           if (_node.type === 'directory') {
@@ -369,7 +321,6 @@ class FileSystem {
       if (!isError) {
         await git.queryStatus()
         await this.queryFiles()
-        _node.level && await this.autoOpenDirectory(_node.level)
       } else {
         console.log(`create folder error.`)
         _node.children = _node.children.filter(_item => {
@@ -402,7 +353,6 @@ class FileSystem {
       })
       await git.queryStatus()
       await this.queryFiles()
-      _node.level && await this.autoOpenDirectory(_node.level)
     } else {
       console.log(error)
     }
@@ -411,9 +361,9 @@ class FileSystem {
    * 获取当前节点等操作
    */
   @action queryCurrentNode = (): FileNode => {
-    return this.cacheFiles.find(_cacheFile => {
-      return _cacheFile.selected
-    })
+    return this.cacheFiles.find(cacheFile => {
+      return cacheFile.selected
+    }) || {}
   }
   @action getFileNodeEditorMonaco = (): monaco.editor.IStandaloneCodeEditor => {
     const editor: FileNode = this.queryCurrentNode()

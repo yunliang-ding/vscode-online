@@ -34,7 +34,7 @@ class GitServices{
       })
       if (!isError) {
         runInAction(() => {
-          this.git.isGitProject = !isError
+          this.git.isGitProject = true
           this.countChange = data && data.length || 0
           this.stagedChanges = []
           this.workspaceChanges = []

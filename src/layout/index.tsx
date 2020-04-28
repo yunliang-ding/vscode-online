@@ -22,7 +22,11 @@ class Layout extends React.Component<any, any> {
     this.props.FileSystem.queryFiles() // 加载项目
   }
   render() {
-    return <div className='app-layout'>
+    return <div className='app-layout' onContextMenu={
+      (e) => {
+        e.preventDefault()
+      }
+    }>
         <div className='app-layout-body'>
           <ActivityBar />
           <SplitPane

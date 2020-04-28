@@ -1,5 +1,8 @@
 node_modules/
 
+node/node_modules/
+node/app/
+
 out/log
 out/backend/node_modules
 out/backend/app

@@ -2,6 +2,7 @@ import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { Monaco } from '../monaco/index'
 import { Tabs, Popover } from 'ryui'
+import { toJS } from 'mobx'
 import './index.less'
 const Window: any = window
 @inject('UI', 'Mapping', 'FileSystem')
@@ -13,17 +14,28 @@ class Code extends React.Component<any, any> {
   }
   menu = (item) => {
     return <div className='app-tabs-menu'>
-      <div className='app-tabs-menu-item'>
+      <div className='app-tabs-menu-item' onClick={
+        () => {
+          this.props.FileSystem.closeFile(item)
+        }
+      }>
         <span>close</span>
       </div>
-      <div className='app-tabs-menu-item'>
+      <div className='app-tabs-menu-item' onClick={
+        () => {
+          this.props.FileSystem.closeOther(item)
+        }
+      }>
+        <span>close other</span>
+      </div>
+      <div className='app-tabs-menu-item' onClick={this.props.FileSystem.closeAll}>
         <span>close all</span>
       </div>
     </div>
   }
   render() {
-    const { cacheFiles, openFile } = this.props.FileSystem
-    const currentFile = cacheFiles.find(item => item.selected) || {}
+    const { cacheFiles, openFile, closeFile, queryCurrentNode } = this.props.FileSystem
+    const currentFile = queryCurrentNode()
     let tabs = cacheFiles.map(item => {
       return Object.assign({}, item, {
         key: item.key,
@@ -63,6 +75,11 @@ class Code extends React.Component<any, any> {
         onClick={
           (node) => {
             openFile(node)
+          }
+        }
+        onRemove={
+          (node) => {
+            closeFile(node)
           }
         }
       />
