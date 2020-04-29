@@ -21,6 +21,10 @@ class FileSystem {
   @action setExpandFolder = (expandFolder) => {
     this.expandFolder = expandFolder
   }
+  @action setCacheFileValue = (cacheFile, value) => { // 更新内容
+    cacheFile.value = value
+    this.cacheFiles = [...this.cacheFiles]
+  }
   @observable cacheFiles: any = []
   @action setBaseUrl = (baseUrl: string): void => { // 按照路由设置 项目基本信息
     this.baseUrl = baseUrl
@@ -88,6 +92,7 @@ class FileSystem {
           this.cacheFiles.forEach(cacheFile => cacheFile.selected = false) // 清空选中态
           let cacheFile = Object.assign({}, fileNode, {
             content: data,
+            value: data,
             selected: true,
             notSave: false
           })
@@ -340,6 +345,7 @@ class FileSystem {
       return cacheFile.path === path
     })
     cacheFile && (cacheFile.editorMonaco = editorMonaco)
+    this.mustRender = Math.random()
   }
   @action getFileNodeEditorMonacoByPath = (path: string): monaco.editor.IStandaloneCodeEditor => {
     const editor = this.cacheFiles.find(_cacheFile => {

@@ -25,6 +25,7 @@ class Monaco extends React.Component<any, any> {
   render() {
     return <div
       className={`app-monaco-editor`}
+      key={this.props.path}
       ref={(node) => { this.monacoNode = node }}
       style={{
         display: this.props.visabled ? 'block' : 'none'

@@ -159,7 +159,7 @@ class MonacoService {
       // 获取引用文件路径
       const path = input.resource.fsPath
       // 不在项目就调用外部路径生成 FileNode
-      let fileNode = fileSystem.queryFileNodeByPath(path) || fileSystem.getFileNodeByPath(path, '', '')
+      let fileNode = fileSystem.getFileNodeByPath(path, '', '')
       let selection = input.options.selection
       if (selection) {
         const editorMonaco = fileSystem.getFileNodeEditorMonacoByPath(path)

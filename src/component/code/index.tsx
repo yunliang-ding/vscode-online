@@ -34,7 +34,7 @@ class Code extends React.Component<any, any> {
     </div>
   }
   render() {
-    const { cacheFiles, openFile, closeFile, queryCurrentNode, toBeSave } = this.props.FileSystem
+    const { cacheFiles, openFile, closeFile, queryCurrentNode, toBeSave, setCacheFileValue } = this.props.FileSystem
     const currentFile = queryCurrentNode()
     let tabs = cacheFiles.map(item => {
       return Object.assign({}, item, {
@@ -59,10 +59,11 @@ class Code extends React.Component<any, any> {
           path={item.path}
           theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
           language={this.props.Mapping.LanguageMapping[item.extension || item.name]}
-          value={item.content}
+          value={item.value}
           onChange={
-            () => {
-              toBeSave(true, item)
+            (value) => {
+              setCacheFileValue(item, value) // 同步内容
+              toBeSave(value !== item.content, item)
             }
           }
         />
