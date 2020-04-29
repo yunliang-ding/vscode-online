@@ -109,13 +109,6 @@ class Git extends React.Component<any, any> {
               <Tree
                 dark={Window.config.dark}
                 treeData={stagedChangesData}
-                defaultCheckedKeys={[]}
-                checkable
-                onCheck={
-                  (e) => {
-                    console.log(e)
-                  }
-                }
               />
             </div>
           }
@@ -124,14 +117,7 @@ class Git extends React.Component<any, any> {
               <div className='app-git-body-change-title'>Change</div>
               <Tree
                 dark={Window.config.dark}
-                defaultCheckedKeys={[]}
                 treeData={workspaceChangesData}
-                checkable
-                onCheck={
-                  (e) => {
-                    console.log(e)
-                  }
-                }
               />
             </div>
           }

@@ -49,7 +49,7 @@ class Code extends React.Component<any, any> {
           <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
             style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}
           ></i>
-          <span>{item.name}</span>
+          <span title={item.path}>{item.name}</span>
           {
             item.notSave && <i className='iconfont icon-dian' style={{ color: '#fff' }}></i>
           }

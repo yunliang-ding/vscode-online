@@ -5,7 +5,7 @@ import { monacoService as Monaco } from '../monaco/index'
 import { git } from '../git/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 class FileSystem {
-  @observable baseUrl = '/home/development/es6-base/'
+  @observable baseUrl = ''
   @observable mustRender = 0
   @observable dragFile: FileNode
   @observable loading: boolean = false
@@ -256,18 +256,21 @@ class FileSystem {
             let cache = this.cacheFiles.filter(_file => {
               return _file.path.startsWith(_node.path)
             })
+            let newPath = _node.path.substr(0, _node.path.lastIndexOf('/')) + '/' + newName // 最新路径
             cache.map(_item => {
-              // 修改路径
-              let behindPath = _item.path.substr(_node.path.length) // 分割得到后面的路径
-              let frontPath = _node.path.substr(0, _node.path.lastIndexOf('/')) + '/' + newName
-              _item.path = frontPath + behindPath
+              _item.path =  newPath + '/' + _item.name
+              _item.key = _item.path
               _item.id = _item.path
             })
+            this.cacheFiles = [...this.cacheFiles]
+            /** 保持文件夹打开状态 */
+            if(this.expandFolder.indexOf(_node.path) > -1){
+              this.expandFolder.push(newPath)
+            }
           } else {
-            let cacheFile = this.cacheFiles.filter(_file => {
-              return _file.id === _node.id
-            })
-            cacheFile[0] && FileNode.ReNameNode(newName, cacheFile[0])
+            let cacheFile = this.cacheFiles.find(item => item.path === _node.path)
+            FileNode.ReNameNode(newName, cacheFile)
+            this.cacheFiles = [...this.cacheFiles]
           }
         })
       } else {

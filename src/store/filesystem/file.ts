@@ -82,6 +82,7 @@ class FileNode{
     node.extension = '.' + extension
     node.path = node.path.substr(0, node.path.lastIndexOf('/')) + '/' + newName
     node.id = node.path + node.prefix
+    node.key = node.path + node.prefix
     node.name = newName
     node.language = LanguageMapping[node.extension || newName] // 节点对应的语言
     node.icon = node.type === 'directory' ? (node.isOpen ? 'icon-expand': 'icon-collapse') : IconMapping[node.extension || newName] // 节点对应的icon,

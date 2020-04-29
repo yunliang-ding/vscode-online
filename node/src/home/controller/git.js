@@ -1,6 +1,7 @@
 'use strict';
 import Base from './base.js';
 const { exec } = require('child_process')
+const Git = require("nodegit");
 const statusMapping = new Proxy({
   'A ': {
     inWorkingTree: 0,
@@ -37,16 +38,37 @@ const statusMapping = new Proxy({
 export default class extends Base {
   async statusAction() {
     try {
-      let data = await this.gitCommand(`cd ${this.get('path')};git status -s`)
-      let status = []
-      data.data.map(item => {
-        status.push({
-          path: item.substr(2),
-          inWorkingTree: statusMapping[item.substring(0, 2)].inWorkingTree,
-          status: statusMapping[item.substring(0, 2)].status
+      const status = await Git.Repository.open(this.get('path')).then((_repository) => {
+        return _repository.getStatus().then(_status => {
+          return _status.map(_item => {
+            return {
+              path: _item.path(),
+              isTypechange: _item.isTypechange(),
+              statusBit: _item.statusBit(),
+              status: _item.status(),
+              isNew: _item.isNew(),
+              isModified: _item.isModified(),
+              isDeleted: _item.isDeleted(),
+              inWorkingTree: _item.inWorkingTree(),
+              isConflicted: _item.isConflicted(),
+              isIgnored: _item.isIgnored(),
+              isRenamed: _item.isRenamed(),
+              inIndex:_item.inIndex(),
+              indexToWorkdir: _item.indexToWorkdir(),
+              headToIndex: _item.headToIndex()
+            }
+          })
         })
       })
-      console.log('data.data', data.data)
+      // let data = await this.gitCommand(`cd ${this.get('path')};git status -s`)
+      // let status = []
+      // data.data.map(item => {
+      //   status.push({
+      //     path: item.substr(2),
+      //     inWorkingTree: statusMapping[item.substring(0, 2)].inWorkingTree,
+      //     status: statusMapping[item.substring(0, 2)].status
+      //   })
+      // })
       this.json({
         data: status,
         isError: false

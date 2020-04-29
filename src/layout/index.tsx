@@ -19,6 +19,11 @@ class Layout extends React.Component<any, any> {
     }
   }
   init = async () => {
+    let hash = location.hash.substr(1)
+    if (hash.endsWith('/')) {
+      hash = hash.substr(0, hash.length - 1)
+    }
+    await this.props.FileSystem.setBaseUrl(hash) // 设置项目path
     await this.props.FileSystem.queryFiles() // 加载项目
     await this.props.Git.queryStatus() // 加载项目
   }

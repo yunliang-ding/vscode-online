@@ -117,8 +117,10 @@ class Explorer extends React.Component<any, any> {
       </div>
     } else if (item.rename) {
       return <div style={{ display: 'flex', alignItem: 'center', width: '100%' }}>
-        <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
+        {
+          item.newFile && <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
           style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}></i>
+        }
         <input
           autoFocus
           autoComplete='off'
@@ -140,7 +142,7 @@ class Explorer extends React.Component<any, any> {
           onKeyDown={
             (e: any) => {
               if (e.keyCode === 13) {
-                let path = item.substr(0, item.lastIndexOf('/'))
+                let path = item.path.substr(0, item.path.lastIndexOf('/'))
                 this.props.FileSystem.renameSave(path, item, e.target.value.trim())
               }
             }
