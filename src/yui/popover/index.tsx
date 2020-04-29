@@ -11,7 +11,8 @@ class Popover extends React.Component {
     trigger?: string,
     content?: any,
     children?: any,
-    style?: any
+    style?: any,
+    onContext?:any
   }
   state: any
   node: any
@@ -87,6 +88,7 @@ class Popover extends React.Component {
       }
       onContextMenu={
         (e) => {
+          this.props.onContext && this.props.onContext(e)
           this.setVisable(true)
           e.preventDefault()
         }

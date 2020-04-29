@@ -34,7 +34,7 @@ class Code extends React.Component<any, any> {
     </div>
   }
   render() {
-    const { cacheFiles, openFile, closeFile, queryCurrentNode } = this.props.FileSystem
+    const { cacheFiles, openFile, closeFile, queryCurrentNode, toBeSave } = this.props.FileSystem
     const currentFile = queryCurrentNode()
     let tabs = cacheFiles.map(item => {
       return Object.assign({}, item, {
@@ -50,6 +50,9 @@ class Code extends React.Component<any, any> {
             style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}
           ></i>
           <span>{item.name}</span>
+          {
+            item.notSave && <i className='iconfont icon-dian' style={{ color: '#fff' }}></i>
+          }
         </Popover>,
         content: <Monaco
           visabled
@@ -58,8 +61,8 @@ class Code extends React.Component<any, any> {
           language={this.props.Mapping.LanguageMapping[item.extension || item.name]}
           value={item.content}
           onChange={
-            (value) => {
-              console.log(value)
+            () => {
+              toBeSave(true, item)
             }
           }
         />

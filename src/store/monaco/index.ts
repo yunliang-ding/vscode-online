@@ -50,8 +50,9 @@ class MonacoService {
     let editorMonaco: monaco.editor.IStandaloneCodeEditor = monaco.editor.create(dom, Object.assign({}, options, this.options, { model }), {
       textModelService: this.getTextModelService()
     })
+    fileSystem.setFileNodeEditorMonacoByPath(editorMonaco, options.path)  // 挂在到 cacheFiles 中
     editorMonaco.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => { // ctrl + s
-      // fileSystem.saveFile(options.path)
+      fileSystem.saveCurrentFile()
     })
     this.updateModelOptions() // 更新 modelOptions
     editorMonaco.onDidChangeModelContent(() => { // onChange 事件
@@ -112,12 +113,6 @@ class MonacoService {
         })
       }
     }
-  }
-  /**
-   * 更新主题
-   */
-  setTheme = (theme) => {
-    monaco.editor.setTheme(theme)
   }
   /**
    * 创建diff

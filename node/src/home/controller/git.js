@@ -46,6 +46,7 @@ export default class extends Base {
           status: statusMapping[item.substring(0, 2)].status
         })
       })
+      console.log('data.data', data.data)
       this.json({
         data: status,
         isError: false

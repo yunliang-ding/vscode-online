@@ -4,13 +4,11 @@ import { FileNode } from './file'
 import { monacoService as Monaco } from '../monaco/index'
 import { git } from '../git/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-const $: any = document.querySelector.bind(document)
 class FileSystem {
-  @observable baseUrl = '/home/development/music.163.app/'
+  @observable baseUrl = '/home/development/es6-base/'
   @observable mustRender = 0
-  @observable loadstate = false
-  @observable storageLoading = false
   @observable dragFile: FileNode
+  @observable loading: boolean = false
   @observable files: any = {
     children: [],
     name: '',
@@ -18,6 +16,10 @@ class FileSystem {
     size: 0,
     type: '',
     errorMessage: ''
+  }
+  @observable expandFolder = []
+  @action setExpandFolder = (expandFolder) => {
+    this.expandFolder = expandFolder
   }
   @observable cacheFiles: any = []
   @action setBaseUrl = (baseUrl: string): void => { // 按照路由设置 项目基本信息
@@ -40,7 +42,7 @@ class FileSystem {
     let newNode = dir.concat(files)
     return newNode && newNode.map((_node, _index) => {
       _node.isOpen = _node.isOpen || false
-      let gitignores = git.gitignores.includes(_node.path.replace(this.files.path + '/', '') + '/')
+      let gitignores = false // 暂时不做
       let children = null
       if (_node.type === 'directory') {
         children = this.tansformFiles(_node.children, level.concat(_index))
@@ -99,15 +101,9 @@ class FileSystem {
       this.mustRender = Math.random()
     })
   }
-  // @action openSplitPanel = async () => {
-  //   const currentFile = this.cacheFiles.filter(fileNode => {
-  //     return fileNode.selected
-  //   })[0] || null
-  //   this.openFile(currentFile)
-  // }
   @action closeOther = (node) => {
     if (this.cacheFiles.some(tab => {
-      return tab.notSave && node.key !== tab.key
+      return tab.notSave && node.path !== tab.path
     })) {
       alert('没有保存的')
     } else {
@@ -125,25 +121,51 @@ class FileSystem {
       this.cacheFiles.length = 0
     }
   }
-  @action closeFile = (fileNode, _index) => {
-    this.cacheFiles = this.cacheFiles.filter(file => {
-      file.selected = false // 清空选中
-      return file.key !== fileNode.key
+  @action closeFile = (fileNode) => {
+    let index = this.cacheFiles.findIndex(file => { // 找到关闭的文件
+      return file.path === fileNode.path
     })
-    this.cacheFiles[0] && (this.cacheFiles[0].selected = true) // 默认选中第一个
+    if(index > -1){
+      this.cacheFiles.splice(index, 1)
+      this.cacheFiles.forEach((file, index) => file.selected = index === 0) // 默认选中第一个
+    }
   }
-  @action toBeSave = (save: boolean, path: string) => {
-    this.cacheFiles.forEach(fileNode => {
-      if (fileNode.path === path) { // 按照路径匹配
-        fileNode.notSave = save
-      }
+  @action queryFiles = async () => {
+    this.loading = true
+    const { isError, data } = await get('/api/file/filelist', {
+      path: this.baseUrl
     })
+    if (data === null) {
+      runInAction(() => {
+        this.files.errorMessage = 'File Path Error.'
+        this.loading = false
+      })
+    }
+    if (!isError && data) {
+      runInAction(() => {
+        this.files = data
+        this.refreshWt()
+        this.loading = false
+      })
+    }
+  }
+  @action queryCurrentNode = (): FileNode => {
+    return this.cacheFiles.find(cacheFile => {
+      return cacheFile.selected
+    }) || {}
+  }
+  @action toBeSave = (save: boolean, cacheFile) => {
+    cacheFile.notSave = save
+    this.cacheFiles = [...this.cacheFiles]
+  }
+  @action saveCurrentFile = () => {
+    console.log('saveCurrentFile')
+    this.saveFile(this.queryCurrentNode().path)
   }
   @action saveFile = async (path: string) => {
-    const currentFile = this.cacheFiles.filter(fileNode => {
+    const file = this.cacheFiles.find(fileNode => {
       return fileNode.path === path && fileNode.content !== fileNode.editorMonaco.getValue() // 只有文件发生了变化才保存
     })
-    let file = currentFile[0]
     if (file) {
       const { isError, error } = await post('/api/file/savefile', {
         path: file.path,
@@ -152,11 +174,8 @@ class FileSystem {
       runInAction(async () => {
         if (!isError) {
           file.content = file.editorMonaco.getValue() // 更新节点的content
-          if (currentFile[1]) {
-            currentFile[1].content = file.editorMonaco.getValue()
-          }
-          await this.toBeSave(false, file.path)
-          await git.queryStatus()
+          await this.toBeSave(false, file)
+          await git.queryStatus() // 查询git状态
           await this.refreshWt() // 更新状态树
           // 更新设置
           if (this.baseUrl + '/' + '.vscode/settings.json' === file.path) {
@@ -170,41 +189,6 @@ class FileSystem {
       })
     }
   }
-  @action queryFiles = async () => {
-    const { isError, data } = await get('/api/file/filelist', {
-      path: this.baseUrl
-    })
-    if (data === null) {
-      console.log(`query path: ${this.baseUrl} error.`)
-      runInAction(() => {
-        this.files.errorMessage = 'File Path Error.'
-      })
-    }
-    if (!isError && data) {
-      runInAction(() => {
-        this.files = data
-        this.refreshWt()
-        // let currentNode = this.cacheFiles.find(_item => {
-        //   return _item.selected
-        // })
-        // if (currentNode) {
-        //   let level = [...currentNode.level]
-        //   level.pop()
-        //   this.autoOpenDirectory(level)
-        // }
-        // if (data.children.length === 0) {
-        //   this.files.errorMessage = 'Project is Empty.'
-        // }
-      })
-    }
-  }
-  // @action toLogin = async (username, passward) => {
-  //   const res = await get('/api/file/login', {
-  //     username,
-  //     passward
-  //   })
-  //   return res
-  // }
   /**
    * 文件树操作
    */
@@ -221,8 +205,8 @@ class FileSystem {
       type: 'file',
     }, isRoot, '', false, [], null)
     node.newFile = true
-    node.id = Math.random().toString(),
-      fileNode.children.push(node)
+    fileNode.children.push(node)
+    this.expandFolder.push(fileNode.path) // open
     this.mustRender = Math.random()
   }
   @action newFileSave = async (_node, node, filename) => {
@@ -248,13 +232,13 @@ class FileSystem {
     _node.rename = true
     this.mustRender = Math.random()
   }
-  @action renameSave = async (pNode, _node, newName) => {
+  @action renameSave = async (path, _node, newName) => {
     if (newName === '' || _node.name === newName) {
       _node.rename = false
       this.mustRender = Math.random()
     } else {
       const { isError, error } = await post('/api/file/rename', {
-        path: pNode.path,
+        path,
         oldName: _node.name,
         newName
       }, {})
@@ -302,10 +286,9 @@ class FileSystem {
       isOpen: false,
       type: 'directory',
     }, isRoot, '', false, [], [])
-    node.newFile = true
-    node.id = Math.random().toString()
-    node.icon = 'icon-collapse'
+    node.newFolder = true
     fileNode.children.push(node)
+    this.expandFolder.push(fileNode.path) // open
     this.mustRender = Math.random()
   }
   @action newFolderSave = async (_node, node, foldername) => {
@@ -332,25 +315,13 @@ class FileSystem {
       this.mustRender = Math.random()
     })
   }
-  @action deleteFile = async (_node, filename, fileId) => {
+  @action deleteFile = async (fileNode) => {
     const { isError, error } = await post('/api/file/delete', {
-      path: _node.path,
-      filename
+      path: fileNode.path.substr(0, fileNode.path.lastIndexOf('/')),
+      filename: fileNode.name
     }, {})
     if (!isError) {
-      /**
-       * 同步 close cacheFile
-       */
-      runInAction(() => {
-        let _closeFile, _index
-        this.cacheFiles.map((_item, _index) => {
-          if (_item.id === fileId) {
-            _closeFile = _item
-            _index = _index
-          }
-        })
-        _closeFile && this.closeFile(_closeFile, _index)
-      })
+      this.closeFile(fileNode)
       await git.queryStatus()
       await this.queryFiles()
     } else {
@@ -358,24 +329,17 @@ class FileSystem {
     }
   }
   /**
-   * 获取当前节点等操作
+    monaco相关
    */
-  @action queryCurrentNode = (): FileNode => {
-    return this.cacheFiles.find(cacheFile => {
-      return cacheFile.selected
-    }) || {}
-  }
   @action getFileNodeEditorMonaco = (): monaco.editor.IStandaloneCodeEditor => {
     const editor: FileNode = this.queryCurrentNode()
     return editor && editor.editorMonaco || null
   }
   @action setFileNodeEditorMonacoByPath = (editorMonaco: monaco.editor.IStandaloneCodeEditor, path: string) => {
-    const editor: any = this.cacheFiles.filter(_cacheFile => {
-      return _cacheFile.path === path
+    const cacheFile: FileNode = this.cacheFiles.find(cacheFile => {
+      return cacheFile.path === path
     })
-    editor.map(_editor => {
-      _editor.editorMonaco = editorMonaco
-    })
+    cacheFile && (cacheFile.editorMonaco = editorMonaco)
   }
   @action getFileNodeEditorMonacoByPath = (path: string): monaco.editor.IStandaloneCodeEditor => {
     const editor = this.cacheFiles.find(_cacheFile => {
@@ -404,28 +368,6 @@ class FileSystem {
     }
     let node = new FileNode(_node, false, '', false, level, null)
     return node
-  }
-  @action recursionFileNodeByPath = (children, path: string): FileNode => {
-    let fileNode: FileNode = null
-    children.some(fileNode => {
-      if (fileNode.path === path) {
-        fileNode = fileNode
-      } else if (fileNode.type === 'directory') {
-        fileNode = this.recursionFileNodeByPath(fileNode.children, path)
-      }
-      return Boolean(fileNode)
-    })
-    return fileNode
-  }
-  /**
-   * 查询该项目文件并打开
-   */
-  @action queryFileNodeByPath = (path: string): FileNode => {
-    return this.recursionFileNodeByPath(this.files.children, path)
-  }
-  @observable expandFolder = []
-  @action setExpandFolder = (expandFolder) => {
-    this.expandFolder = expandFolder
   }
 }
 const fileSystem = new FileSystem()

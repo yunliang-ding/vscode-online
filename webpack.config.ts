@@ -87,7 +87,7 @@ const config = {
     hot: true,
     compress: true,
     contentBase: './www',
-     proxy: [{
+    proxy: [{
       context: ['/api'],
       target: `http://49.233.85.54:8090`,
       pathRewrite: { '^/api': '' },
