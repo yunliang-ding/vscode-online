@@ -83,15 +83,15 @@ export default class extends Base {
   }
   async branchAction() {
     try {
-      // const branch = await Git.Repository.open(this.get('path')).then((_repository) => {
-      //   return _repository.getCurrentBranch().then(res=>{
-      //     return Git.Branch.name(res).then((_branch) => {
-      //       return _branch
-      //     })
-      //   })
-      // })
+      const branch = await Git.Repository.open(this.get('path')).then((_repository) => {
+        return _repository.getCurrentBranch().then(res=>{
+          return Git.Branch.name(res).then((_branch) => {
+            return _branch
+          })
+        })
+      })
       this.json({
-        data: {},
+        data: branch,
         isError: false
       })
     } catch (error) {
@@ -142,7 +142,7 @@ export default class extends Base {
   }
   async addAction() {
     try {
-      const { data, isError } = await this.gitCommand(`cd ${this.get('path')};git add ${this.get('filePath')} -all`)
+      const { data, isError } = await this.gitCommand(`cd ${this.get('path')};git add ${this.get('filePath')}`)
       this.json({
         data,
         isError

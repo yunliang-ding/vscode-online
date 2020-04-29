@@ -14,6 +14,7 @@ import Mapping from '../mapping/index'
 import { fileSystem } from '../filesystem/index'
 const { IconMapping, IconColorMapping, StatusMapping, StatusColorMapping, LanguageMapping } = Mapping
 class GitServices{
+  @observable loading:boolean = false
   @observable git = {
     isGitProject: true,
     branch: '',
@@ -29,8 +30,12 @@ class GitServices{
   @observable stagedChanges = []
   @action queryStatus = async () => {
     if(this.git.isGitProject){
+      this.loading = true
       const { data, isError } = await get('/api/git/status', {
         path: fileSystem.files.path
+      })
+      runInAction(() => {
+        this.loading = false
       })
       if (!isError) {
         runInAction(() => {
@@ -115,7 +120,7 @@ class GitServices{
       })
     }
   }
-  @action checkoutFile = async (filePath, sync) => {
+  @action checkoutFile = async (filePath) => {
     const { isError } = await get('/api/git/checkout', {
       path: fileSystem.files.path,
       filePath
@@ -139,9 +144,13 @@ class GitServices{
     }
   }
   @action commitFile = async (commitInfo) => {
+    this.loading = true
     const res = await get('/api/git/commit', {
       path: fileSystem.files.path,
       commitInfo
+    })
+    runInAction(() => {
+      this.loading = false
     })
     runInAction(async () => {
       await this.queryStatus()
@@ -154,8 +163,12 @@ class GitServices{
     return res
   }
   @action pushFile = async () => {
+    this.loading = true
     const { isError } = await get('/api/git/push', {
       path: fileSystem.files.path
+    })
+    runInAction(() => {
+      this.loading = false
     })
     if (isError) {
       console.log('git push error.')

@@ -1,10 +1,10 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
-import { Tree, Popover } from 'ryui'
+import { Tree, Popover, Loading } from 'ryui'
 import './index.less'
 const Window: any = window
 const $: any = document.querySelector.bind(document)
-@inject('UI', 'FileSystem', 'Mapping', 'Git')
+@inject('UI', 'FileSystem', 'Git')
 @observer
 class Git extends React.Component<any, any> {
   props: any
@@ -19,44 +19,107 @@ class Git extends React.Component<any, any> {
     if (commitInfo === '') {
       alert(`commit message not allow empty.`)
     } else {
-      // this.props.Git.commitFile(commitInfo)
+      this.props.Git.commitFile(commitInfo)
     }
   }
-  menu = (item) => {
-    return <div className='app-git-menu'>
-      <div className='app-git-menu-item'>
-        <span>Restore</span>
-        <i className='iconfont icon-rename'></i>
+  workSpaceChangeMenu = (item) => {
+    const statusTree = {
+      'U': <div className='app-git-menu'>
+        <div className='app-git-menu-item' onClick={
+          () => {
+            this.props.FileSystem.deleteFile(item)
+          }
+        }>
+          <span>删除文件</span>
+          <i className='iconfont icon-shanchu'></i>
+        </div>
+        <div className='app-git-menu-item' onClick={
+          () => {
+            this.props.Git.addFile(item.path)
+          }
+        }>
+          <span>添加暂存区</span>
+          <i className='iconfont icon-jia-copy-copy'></i>
+        </div>
+      </div>,
+      'D': <div className='app-git-menu'>
+        <div className='app-git-menu-item' onClick={
+          () => {
+            this.props.Git.checkoutFile(item.path)
+          }
+        }>
+          <span>恢复文件</span>
+          <i className='iconfont icon-chexiao-sys-iconF'></i>
+        </div>
+        <div className='app-git-menu-item' onClick={
+          () => {
+            this.props.Git.addFile(item.path)
+          }
+        }>
+          <span>添加暂存区</span>
+          <i className='iconfont icon-jia-copy-copy'></i>
+        </div>
+      </div>,
+      'M': <div className='app-git-menu'>
+        <div className='app-git-menu-item' onClick={
+          () => {
+            this.props.Git.checkoutFile(item.path)
+          }
+        }>
+          <span>撤销修改</span>
+          <i className='iconfont icon-chexiao-sys-iconF'></i>
+        </div>
+        <div className='app-git-menu-item' onClick={
+          () => {
+            this.props.Git.addFile(item.path)
+          }
+        }>
+          <span>添加暂存区</span>
+          <i className='iconfont icon-jia-copy-copy'></i>
+        </div>
       </div>
-      <div className='app-git-menu-item'>
-        <span>Delete File</span>
-        <i className='iconfont icon-shanchu'></i>
+    }
+    return statusTree[item.status]
+  }
+  stagedChangeMenu = (item) => {
+    return <div className='app-git-menu'>
+      <div className='app-git-menu-item' onClick={
+        () => {
+          this.props.Git.resetFile(item.path)
+        }
+      }>
+        <span>撤销暂存区</span>
+        <i className='iconfont icon-chexiao-sys-iconF'></i>
       </div>
     </div>
   }
-  renderTreeData = (node) => {
+  renderTreeData = (node, staged) => {
     return node.map(item => {
       let obj: any = {
         key: item.path,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
           dark={Window.config.dark}
-          content={this.menu(item)}
+          content={staged ? this.stagedChangeMenu(item) : this.workSpaceChangeMenu(item)}
           trigger='contextMenu'
           placement='bottom'
         >
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onClick={
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} onClick={
             () => {
               item.type === 'file' && this.props.FileSystem.openFile(item)
             }
           }>
-            <div style={{ display: 'flex', alignItem: 'center' }}>
-              <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
-                style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}></i>
+            <div style={{ display: 'flex', alignItem: 'center', width: 'calc(100% - 20px)' }}>
+              <i className={'iconfont ' + item.icon}
+                style={{ color: item.iconColor, marginRight: 8 }}></i>
               <span>
-                <span style={{ opacity: 0.6 }}>{item.name}</span>  {item.dir}
+                <span style={{ marginRight: 8, opacity: 0.6, textDecoration: item.status === 'D' ? 'line-through' : 'unset' }}>
+                  {item.name}
+                </span>
+                <span>{item.dir}</span>
               </span>
             </div>
+            <span style={{ width: 20, textAlign: 'center', color: item.color }}>{item.status}</span>
           </div>
         </Popover>
       }
@@ -65,65 +128,69 @@ class Git extends React.Component<any, any> {
     })
   }
   render() {
-    const { git: { isGitProject }, workspaceChanges, stagedChanges } = this.props.Git
-    const workspaceChangesData = this.renderTreeData(workspaceChanges)
-    const stagedChangesData = this.renderTreeData(stagedChanges)
+    const { git: { isGitProject }, workspaceChanges, stagedChanges, loading } = this.props.Git
+    const workspaceChangesData = this.renderTreeData(workspaceChanges, false)
+    const stagedChangesData = this.renderTreeData(stagedChanges, true)
     let theme = Window.config.dark ? '-dark' : ''
-    return <div className={`app-git${theme}`}>
-      <div className='app-git-header'>
-        <div className='app-git-header-left'>
-          source control : git
+    return <Loading
+      style={{ height: '100%', width: '100%' }}
+      loading={loading}>
+      <div className={`app-git${theme}`}>
+        <div className='app-git-header'>
+          <div className='app-git-header-left'>
+            source control : git
         </div>
-        <div className='app-git-header-right'>
-          <i title='commit' className='iconfont icon-tijiao' onClick={
-            () => {
-              this.commit($('#commit-info').value.trim())
-            }
-          }></i>
-          <i title='refresh' className='iconfont icon-shuaxin' onClick={
-            () => {
-              this.props.Git.queryStatus()
-            }
-          }></i>
-          <i title='push' className='iconfont icon-jsontijiao' onClick={
-            () => {
-              this.props.Git.pushFile()
-            }
-          }></i>
-        </div>
-      </div>
-      <div className='app-git-body'>
-        <div className='app-git-input'>
-          <input autoFocus autoComplete='off' id='commit-info' placeholder='Message (press Enter to commit)' onKeyDown={
-            (e: any) => {
-              if (e.keyCode === 13) {
-                this.commit(e.target.value.trim())
+          <div className='app-git-header-right'>
+            <i title='commit' className='iconfont icon-tijiao' onClick={
+              () => {
+                this.commit($('#commit-info').value.trim())
               }
-            }
-          } />
+            }></i>
+            <i title='refresh' className='iconfont icon-shuaxin' onClick={
+              () => {
+                this.props.Git.queryStatus()
+              }
+            }></i>
+            <i title='push' className='iconfont icon-jsontijiao' onClick={
+              () => {
+                this.props.Git.pushFile()
+              }
+            }></i>
+          </div>
         </div>
-        <div className='app-git-body-change'>
-          {
-            stagedChangesData.length > 0 && <div className='app-git-body-change-staged'>
-              <div className='app-git-body-change-title'>Staged Change</div>
-              <Tree
-                dark={Window.config.dark}
-                treeData={stagedChangesData}
-              />
-            </div>
-          }
-          {
-            workspaceChangesData.length > 0 && <div className='app-git-body-change-workspace'>
-              <div className='app-git-body-change-title'>Change</div>
-              <Tree
-                dark={Window.config.dark}
-                treeData={workspaceChangesData}
-              />
-            </div>
-          }
+        <div className='app-git-body'>
+          <div className='app-git-input'>
+            <input autoFocus autoComplete='off' id='commit-info' placeholder='Message (press Enter to commit)' onKeyDown={
+              (e: any) => {
+                if (e.keyCode === 13) {
+                  this.commit(e.target.value.trim())
+                }
+              }
+            } />
+          </div>
+          <div className='app-git-body-change'>
+            {
+              stagedChangesData.length > 0 && <div className='app-git-body-change-staged'>
+                <div className='app-git-body-change-title'>Staged Change</div>
+                <Tree
+                  dark={Window.config.dark}
+                  treeData={stagedChangesData}
+                />
+              </div>
+            }
+            {
+              workspaceChangesData.length > 0 && <div className='app-git-body-change-workspace'>
+                <div className='app-git-body-change-title'>Change</div>
+                <Tree
+                  dark={Window.config.dark}
+                  treeData={workspaceChangesData}
+                />
+              </div>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    </Loading>
   }
 }
 export { Git }
