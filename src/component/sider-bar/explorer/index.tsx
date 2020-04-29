@@ -118,7 +118,7 @@ class Explorer extends React.Component<any, any> {
     } else if (item.rename) {
       return <div style={{ display: 'flex', alignItem: 'center', width: '100%' }}>
         {
-          item.newFile && <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
+          item.type === 'file' && <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
           style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}></i>
         }
         <input

@@ -130,7 +130,7 @@ class FileSystem {
     let index = this.cacheFiles.findIndex(file => { // 找到关闭的文件
       return file.path === fileNode.path
     })
-    if(index > -1){
+    if (index > -1) {
       this.cacheFiles.splice(index, 1)
       this.cacheFiles.forEach((file, index) => file.selected = index === 0) // 默认选中第一个
     }
@@ -252,25 +252,27 @@ class FileSystem {
         await this.queryFiles()
         runInAction(() => {
           // 同步已经打开的 cacheFiles
-          if (_node.type === 'directory') {
-            let cache = this.cacheFiles.filter(_file => {
-              return _file.path.startsWith(_node.path)
-            })
-            let newPath = _node.path.substr(0, _node.path.lastIndexOf('/')) + '/' + newName // 最新路径
-            cache.map(_item => {
-              _item.path =  newPath + '/' + _item.name
-              _item.key = _item.path
-              _item.id = _item.path
-            })
-            this.cacheFiles = [...this.cacheFiles]
-            /** 保持文件夹打开状态 */
-            if(this.expandFolder.indexOf(_node.path) > -1){
-              this.expandFolder.push(newPath)
+          let cacheFile = this.cacheFiles.find(item => item.path === _node.path)
+          if (cacheFile) {
+            if (_node.type === 'directory') {
+              let cache = this.cacheFiles.filter(_file => {
+                return _file.path.startsWith(_node.path)
+              })
+              let newPath = _node.path.substr(0, _node.path.lastIndexOf('/')) + '/' + newName // 最新路径
+              cache.map(_item => {
+                _item.path = newPath + '/' + _item.name
+                _item.key = _item.path
+                _item.id = _item.path
+              })
+              this.cacheFiles = [...this.cacheFiles]
+              /** 保持文件夹打开状态 */
+              if (this.expandFolder.indexOf(_node.path) > -1) {
+                this.expandFolder.push(newPath)
+              }
+            } else {
+              FileNode.ReNameNode(newName, cacheFile)
+              this.cacheFiles = [...this.cacheFiles]
             }
-          } else {
-            let cacheFile = this.cacheFiles.find(item => item.path === _node.path)
-            FileNode.ReNameNode(newName, cacheFile)
-            this.cacheFiles = [...this.cacheFiles]
           }
         })
       } else {
