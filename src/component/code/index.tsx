@@ -37,7 +37,6 @@ class Code extends React.Component<any, any> {
   render() {
     const { cacheFiles, openFile, closeFile, queryCurrentNode, toBeSave, setCacheFileValue } = this.props.FileSystem
     const currentFile = queryCurrentNode()
-    console.log(toJS(cacheFiles))
     let tabs = cacheFiles.map(item => {
       return Object.assign({}, item, {
         key: item.diffEditor ? item.path + 'diff' : item.path,

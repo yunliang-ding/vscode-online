@@ -62,8 +62,7 @@ class GitServices{
               extension,
               icon: IconMapping[extension],
               iconColor: IconColorMapping[extension],
-              language: LanguageMapping[extension],
-              level: []
+              language: LanguageMapping[extension]
             }
             if (node.isStaged) {
               this.stagedChanges.push(node)
@@ -200,6 +199,9 @@ class GitServices{
         })
       )
     }
+  }
+  @action getStatusFiles = () => {
+    return this.workspaceChanges.concat(this.stagedChanges)
   }
 }
 const git = new GitServices()

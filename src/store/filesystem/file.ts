@@ -32,36 +32,34 @@ class FileNode {
   content: string;
   selected: boolean;
   notSave: boolean;
-  constructor(node: any, isRoot: boolean, prefix: string, gitignore: boolean, level: any, children: any) {
+  constructor(node: any, isRoot: boolean, prefix: string, gitignore: boolean, children: any) {
     this.path = node.path // 节点对应的文件路径
     this.extension = node.extension // 节点后缀
     this.name = node.name // 节点文件名
     this.size = node.size // 节点文件大小
     this.type = node.type // 节点是目录还是文件
     this.isOpen = node.isOpen // 节点是否处于展开状态
-    /** default value */
-    this.dir = '' // 文件对应的目录
+    this.dir = node.label || '' // 文件对应的目录
     this.isRoot = isRoot // 文件是否在根节点
-    this.label = '' // 文件查找之后显示的内容
+    this.label = node.label // 文件查找之后显示的内容
     this.rename = false // 节点是否在重命名
     this.newFile = false // 节点是是新建文件
     this.newFolder = false // 节点是是新建目录
     this.prefix = prefix // 区分文件状态 ['WorkTree'] ..前缀
     this.gitignore = gitignore //节点是否别git忽略
     this.children = children // 节点的孩子 目录类型才会有
-    this.status = ''// 对应文件的 git status
+    this.status = node.status // 对应文件的 git status
     this.diffEditor = false// 是否对比的形式打开
-    this.level = level // 该节点对应的层级关系
     this.language = LanguageMapping[node.extension || node.name] // 节点对应的语言
-    this.color = '' // 节点对应的颜色
+    this.color = node.color // 节点对应的颜色
     this.icon = node.type === 'directory' ? (node.isOpen ? 'icon-expand' : 'icon-collapse') : IconMapping[node.extension || node.name] // 节点对应的icon
     this.iconColor = IconColorMapping[node.extension || node.name] // 节点对应的icon颜色
     this.iconFontSize = 16 // 节点对应的icon字体大小
-    this.range = null // 查找的范围
-    this.model = null // 文件对应的 monaco Model
+    this.range = node.range || null // 查找的范围
+    this.model = node.model || null // 文件对应的 monaco Model
     this.editorMonaco = node.editorMonaco || null // 文件对应的 monaco editor
     this.diffEditorMonaco = null // 文件对应的 monaco editor
-    this.content = ''
+    this.content = node.content || ''
     this.selected = false
     this.notSave = false
   }

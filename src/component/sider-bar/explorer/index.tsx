@@ -119,7 +119,7 @@ class Explorer extends React.Component<any, any> {
       return <div style={{ display: 'flex', alignItem: 'center', width: '100%' }}>
         {
           item.type === 'file' && <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
-          style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}></i>
+            style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}></i>
         }
         <input
           autoFocus
@@ -176,13 +176,29 @@ class Explorer extends React.Component<any, any> {
             }
           }
         >
-          <div title={item.path + ' (' + Math.ceil(item.size / 1024) + 'kb)'} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onClick={
-            () => {
-              item.type === 'file' && this.props.FileSystem.openFile(item)
-            }
-          }>
+          <div
+            title={item.path + ' (' + Math.ceil(item.size / 1024) + 'kb)'}
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              color: item.color
+            }} onClick={
+              () => {
+                item.type === 'file' && this.props.FileSystem.openFile(item)
+              }
+            }>
             {
               this.renderNode(item)
+            }
+            {
+              item.status && <div style={{
+                color: item.color,
+                width: 20,
+                textAlign: 'center'
+              }}>{item.status}</div>
             }
           </div>
         </Popover>

@@ -28,7 +28,6 @@ class Layout extends React.Component<any, any> {
     }
     await this.props.FileSystem.setBaseUrl(hash) // 设置项目path
     await this.props.FileSystem.queryFiles() // 加载项目
-    await this.props.Git.queryStatus() // 加载项目
     await this.props.Git.queryBranch() // 加载分支
     await this.props.Git.waitCommited() // 等待push
   }

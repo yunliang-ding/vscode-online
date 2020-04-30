@@ -31,32 +31,44 @@ class FileSystem {
     this.files.path = baseUrl
     this.files.name = baseUrl.split('/').pop()
   }
-  // @action queryFileStatus = (fileNode) => {
-  //   const { stagedChanges, workspaceChanges } = git
-  //   return stagedChanges.concat(workspaceChanges).find(_statusFile => {
-  //     return _statusFile.path === fileNode.path
-  //   })
-  // }
-  @action refreshWt = async () => { // 渲染状态树
-    this.files.children = this.tansformFiles(this.files.children, [])
+  @action queryFiles = async () => {
+    this.loading = true
+    const { isError, data } = await get('/api/file/filelist', {
+      path: this.baseUrl
+    })
+    if (data === null) {
+      runInAction(() => {
+        this.files.errorMessage = 'File Path Error.'
+        this.loading = false
+      })
+    }
+    if (!isError && data) {
+      await git.queryStatus() // 查询git状态
+      runInAction(async () => {
+        this.files = Object.assign({}, data, {children: this.tansformFiles(data.children, {})})
+        this.loading = false
+      })
+    }
   }
-  @action tansformFiles = (node, level) => { // 数据排序 + 转换
-    let dir = node.filter(_item => _item.type === 'directory').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
-    let files = node.filter(_item => _item.type === 'file').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
-    let newNode = dir.concat(files)
-    return newNode && newNode.map((fileNode, _index) => {
+  @action refreshWt = async () => { // 渲染状态树
+    this.files.children = this.tansformFiles(this.files.children)
+  }
+  @action tansformFiles = (children, parent?:any) => { // 数据排序 + 转换
+    let status = git.getStatusFiles() // git status
+    let dir = children.filter(_item => _item.type === 'directory').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
+    let files = children.filter(_item => _item.type === 'file').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
+    let sortChildren = dir.concat(files)
+    return sortChildren && sortChildren.map((fileNode, _index) => {
       fileNode.isOpen = fileNode.isOpen || false
       let gitignores = false // 暂时不做
       let children = null
       if (fileNode.type === 'directory') {
-        children = this.tansformFiles(fileNode.children, level.concat(_index))
+        children = this.tansformFiles(fileNode.children, fileNode)
       }
-      let node = new FileNode(fileNode, false, '', gitignores, level.concat(_index), children)
-      // const fileStatus = this.queryFileStatus(node)
-      // if (fileStatus) {
-      //   node.status = node.type === 'file' ? fileStatus.status : '.'
-      //   node.color = fileStatus.color
-      // }
+      let nodeStatus = status.find(item => item.path === fileNode.path) || { status: null, color: null }
+      fileNode.status = nodeStatus.status
+      fileNode.color = nodeStatus.color
+      let node = new FileNode(fileNode, false, '', gitignores, children)
       return node
     })
   }
@@ -77,7 +89,7 @@ class FileSystem {
         // 不拷贝一下 会有问题
         runInAction(() => {
           this.cacheFiles.forEach(cacheFile => cacheFile.selected = false) // 清空选中态
-          let cacheFile:FileNode = Object.assign({}, fileNode, {
+          let cacheFile: FileNode = Object.assign({}, fileNode, {
             content: data,
             value: data,
             selected: true,
@@ -122,25 +134,6 @@ class FileSystem {
       this.cacheFiles.forEach((file, index) => file.selected = index === 0) // 默认选中第一个
     }
   }
-  @action queryFiles = async () => {
-    this.loading = true
-    const { isError, data } = await get('/api/file/filelist', {
-      path: this.baseUrl
-    })
-    if (data === null) {
-      runInAction(() => {
-        this.files.errorMessage = 'File Path Error.'
-        this.loading = false
-      })
-    }
-    if (!isError && data) {
-      runInAction(() => {
-        this.files = data
-        this.refreshWt()
-        this.loading = false
-      })
-    }
-  }
   @action queryCurrentNode = (): FileNode => {
     return this.cacheFiles.find(cacheFile => {
       return cacheFile.selected
@@ -151,7 +144,6 @@ class FileSystem {
     this.cacheFiles = [...this.cacheFiles]
   }
   @action saveCurrentFile = () => {
-    console.log('saveCurrentFile')
     this.saveFile(this.queryCurrentNode().path)
   }
   @action saveFile = async (path: string) => {
@@ -195,7 +187,7 @@ class FileSystem {
       status: '',
       isOpen: false,
       type: 'file',
-    }, isRoot, '', false, [], null)
+    }, isRoot, '', false, null)
     node.newFile = true
     fileNode.children.push(node)
     this.expandFolder.push(fileNode.path) // open
@@ -238,23 +230,24 @@ class FileSystem {
         await git.queryStatus()
         await this.queryFiles()
         runInAction(() => {
-          // 同步已经打开的 cacheFiles
+          let newPath = fileNode.path.substr(0, fileNode.path.lastIndexOf('/')) + '/' + newName // 最新路径
+          /** 保持文件夹打开状态 */
+          if (this.expandFolder.indexOf(fileNode.path) > -1) {
+            this.expandFolder.push(newPath)
+          }
           let cacheFile = this.cacheFiles.find(item => item.path === fileNode.path)
+          // 同步已经打开的 cacheFiles
           if (cacheFile) {
             if (fileNode.type === 'directory') {
               let cache = this.cacheFiles.filter(_file => {
                 return _file.path.startsWith(fileNode.path)
               })
-              let newPath = fileNode.path.substr(0, fileNode.path.lastIndexOf('/')) + '/' + newName // 最新路径
               cache.map(_item => {
                 _item.path = newPath + '/' + _item.name
                 _item.key = _item.path
               })
               this.cacheFiles = [...this.cacheFiles]
-              /** 保持文件夹打开状态 */
-              if (this.expandFolder.indexOf(fileNode.path) > -1) {
-                this.expandFolder.push(newPath)
-              }
+              
             } else {
               FileNode.ReNameNode(newName, cacheFile)
               this.cacheFiles = [...this.cacheFiles]
@@ -281,7 +274,7 @@ class FileSystem {
       status: '',
       isOpen: false,
       type: 'directory',
-    }, isRoot, '', false, [], [])
+    }, isRoot, '', false, [])
     node.newFolder = true
     fileNode.children.push(node)
     this.expandFolder.push(fileNode.path) // open
@@ -362,7 +355,7 @@ class FileSystem {
       isOpen: false, // 节点是否处于展开状态
       status,
     }
-    let node = new FileNode(fileNode, false, '', false, level, null)
+    let node = new FileNode(fileNode, false, '', false, null)
     return node
   }
 }
