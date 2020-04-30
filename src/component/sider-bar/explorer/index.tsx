@@ -176,7 +176,7 @@ class Explorer extends React.Component<any, any> {
             }
           }
         >
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onClick={
+          <div title={item.path + ' (' + Math.ceil(item.size / 1024) + 'kb)'} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onClick={
             () => {
               item.type === 'file' && this.props.FileSystem.openFile(item)
             }

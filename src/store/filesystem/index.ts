@@ -60,19 +60,6 @@ class FileSystem {
       return node
     })
   }
-  // @action openStagesFile = async () => {
-  //   const currentFile = this.cacheFiles.filter(fileNode => {
-  //     return fileNode.selected
-  //   })[0] || null
-  //   let node = { ...currentFile }
-  //   if (node.status !== '') {
-  //     node.prefix = ' (WorkTree)'
-  //     node.id = node.path + node.prefix
-  //     node.diffEditor = true
-  //     await git.queryStagedText(node)
-  //     await this.openFile(node)
-  //   }
-  // }
   @action getFile = async (path: string) => {// 查询文件
     return await get('/api/file/getfile', {
       path

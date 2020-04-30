@@ -17,6 +17,9 @@ class Layout extends React.Component<any, any> {
         return false
       }
     }
+    if(localStorage.getItem("token") !== 'vscode-online'){
+      document.querySelector('#app').remove()
+    }
   }
   init = async () => {
     let hash = location.hash.substr(1)

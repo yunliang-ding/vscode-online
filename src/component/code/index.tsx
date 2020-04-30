@@ -1,8 +1,8 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { Monaco } from '../monaco/index'
+import { MonacoDiff } from '../monaco/diff';
 import { Tabs, Popover } from 'ryui'
-import { toJS } from 'mobx'
 import './index.less'
 const Window: any = window
 @inject('UI', 'Mapping', 'FileSystem')
@@ -38,7 +38,7 @@ class Code extends React.Component<any, any> {
     const currentFile = queryCurrentNode()
     let tabs = cacheFiles.map(item => {
       return Object.assign({}, item, {
-        key: item.key,
+        key: item.diffEditor ? item.key + 'diff' : item.key,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', zIndex: 9999 }}
           dark={Window.config.dark}
@@ -49,24 +49,31 @@ class Code extends React.Component<any, any> {
           <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
             style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}
           ></i>
-          <span title={item.path}>{item.name}</span>
+          <span title={item.path}>{item.name + item.prefix}</span>
           {
             item.notSave && <i className='iconfont icon-dian' style={{ color: '#fff' }}></i>
           }
         </Popover>,
-        content: <Monaco
-          visabled
-          path={item.path}
-          theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
-          language={this.props.Mapping.LanguageMapping[item.extension || item.name]}
-          value={item.value}
-          onChange={
-            (value) => {
-              setCacheFileValue(item, value) // 同步内容
-              toBeSave(value !== item.content, item)
+        content: item.diffEditor
+          ? <MonacoDiff
+            visabled
+            language={item.language}
+            theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
+            original={item.stagedValue}
+            value={item.value}
+          /> : <Monaco
+            visabled
+            path={item.path}
+            theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
+            language={this.props.Mapping.LanguageMapping[item.extension || item.name]}
+            value={item.value}
+            onChange={
+              (value) => {
+                setCacheFileValue(item, value) // 同步内容
+                toBeSave(value !== item.content, item)
+              }
             }
-          }
-        />
+          />
       })
     })
     let theme = Window.config.dark ? '-dark' : ''
@@ -74,7 +81,7 @@ class Code extends React.Component<any, any> {
       <Tabs
         dark={Window.config.dark}
         dataList={tabs}
-        activeKey={currentFile.key}
+        activeKey={currentFile.diffEditor ? currentFile.key + 'diff' : currentFile.key}
         close
         onClick={
           (node) => {

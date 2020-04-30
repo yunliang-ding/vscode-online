@@ -110,13 +110,13 @@ class GitServices{
       name: path
     })
   }
-  @action queryStagedText = async (_node: any) => {
-    const { data, isError } = await this.queryStaged(_node.path.replace(`${fileSystem.files.path}/`, ''))
+  @action queryStagedText = async (fileNode: any) => {
+    const { data, isError } = await this.queryStaged(fileNode.path.replace(`${fileSystem.files.path}/`, ''))
     if (isError) {
       console.log(`query staged error.`)
     } else {
       runInAction(() => {
-        _node.stagedContent = data
+        fileNode.stagedValue = data
       })
     }
   }

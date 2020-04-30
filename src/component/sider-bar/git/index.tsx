@@ -105,8 +105,9 @@ class Git extends React.Component<any, any> {
           placement='bottom'
         >
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} onClick={
-            () => {
-              item.type === 'file' && this.props.FileSystem.openFile(item)
+            async () => {
+              await this.props.Git.queryStagedText(item)
+              await this.props.FileSystem.openFile(item)
             }
           }>
             <div style={{ display: 'flex', alignItem: 'center', width: 'calc(100% - 20px)' }}>
