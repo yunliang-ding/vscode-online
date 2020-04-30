@@ -3,9 +3,10 @@ import { observer, inject } from 'mobx-react'
 import { Monaco } from '../monaco/index'
 import { MonacoDiff } from '../monaco/diff';
 import { Tabs, Popover } from 'ryui'
+import { toJS } from 'mobx'
 import './index.less'
 const Window: any = window
-@inject('UI', 'Mapping', 'FileSystem')
+@inject('UI', 'FileSystem')
 @observer
 class Code extends React.Component<any, any> {
   props: any
@@ -36,9 +37,10 @@ class Code extends React.Component<any, any> {
   render() {
     const { cacheFiles, openFile, closeFile, queryCurrentNode, toBeSave, setCacheFileValue } = this.props.FileSystem
     const currentFile = queryCurrentNode()
+    console.log(toJS(cacheFiles))
     let tabs = cacheFiles.map(item => {
       return Object.assign({}, item, {
-        key: item.diffEditor ? item.key + 'diff' : item.key,
+        key: item.diffEditor ? item.path + 'diff' : item.path,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', zIndex: 9999 }}
           dark={Window.config.dark}
@@ -46,8 +48,8 @@ class Code extends React.Component<any, any> {
           trigger='contextMenu'
           placement='bottom'
         >
-          <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
-            style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}
+          <i className={'iconfont ' + item.icon}
+            style={{ color: item.iconColor, marginRight: 8 }}
           ></i>
           <span title={item.path}>{item.name + item.prefix}</span>
           {
@@ -65,7 +67,7 @@ class Code extends React.Component<any, any> {
             visabled
             path={item.path}
             theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
-            language={this.props.Mapping.LanguageMapping[item.extension || item.name]}
+            language={item.language}
             value={item.value}
             onChange={
               (value) => {
@@ -81,7 +83,7 @@ class Code extends React.Component<any, any> {
       <Tabs
         dark={Window.config.dark}
         dataList={tabs}
-        activeKey={currentFile.diffEditor ? currentFile.key + 'diff' : currentFile.key}
+        activeKey={currentFile.diffEditor ? currentFile.path + 'diff' : currentFile.path}
         close
         onClick={
           (node) => {

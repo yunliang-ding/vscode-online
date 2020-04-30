@@ -63,7 +63,7 @@ class MonacoService {
     return editorMonaco
   }
   dispose = (editorMonaco: monaco.editor.IStandaloneCodeEditor) => {
-    editorMonaco.dispose()
+    editorMonaco && editorMonaco.dispose()
   }
   /**
    * textMateColor

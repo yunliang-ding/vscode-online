@@ -60,6 +60,7 @@ const IconMapping = new Proxy({
   '.tgz': 'icon-zip',
   '.tar': 'icon-zip',
   '.png': 'icon-img',
+  '.svg': 'icon-img',
   '.jpg': 'icon-img',
   '.jpeg': 'icon-img',
   '.gif': 'icon-img',

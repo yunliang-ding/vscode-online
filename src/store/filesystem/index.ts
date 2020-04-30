@@ -31,10 +31,10 @@ class FileSystem {
     this.files.path = baseUrl
     this.files.name = baseUrl.split('/').pop()
   }
-  // @action queryFileStatus = (_node) => {
+  // @action queryFileStatus = (fileNode) => {
   //   const { stagedChanges, workspaceChanges } = git
   //   return stagedChanges.concat(workspaceChanges).find(_statusFile => {
-  //     return _statusFile.path === _node.path
+  //     return _statusFile.path === fileNode.path
   //   })
   // }
   @action refreshWt = async () => { // 渲染状态树
@@ -44,14 +44,14 @@ class FileSystem {
     let dir = node.filter(_item => _item.type === 'directory').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
     let files = node.filter(_item => _item.type === 'file').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
     let newNode = dir.concat(files)
-    return newNode && newNode.map((_node, _index) => {
-      _node.isOpen = _node.isOpen || false
+    return newNode && newNode.map((fileNode, _index) => {
+      fileNode.isOpen = fileNode.isOpen || false
       let gitignores = false // 暂时不做
       let children = null
-      if (_node.type === 'directory') {
-        children = this.tansformFiles(_node.children, level.concat(_index))
+      if (fileNode.type === 'directory') {
+        children = this.tansformFiles(fileNode.children, level.concat(_index))
       }
-      let node = new FileNode(_node, false, '', gitignores, level.concat(_index), children)
+      let node = new FileNode(fileNode, false, '', gitignores, level.concat(_index), children)
       // const fileStatus = this.queryFileStatus(node)
       // if (fileStatus) {
       //   node.status = node.type === 'file' ? fileStatus.status : '.'
@@ -68,7 +68,7 @@ class FileSystem {
   @action openFile = async (fileNode: FileNode) => { // 打开文件
     if (!fileNode) { return }
     if (!this.cacheFiles.some(_cacheFile => { // 不在缓存就发送请求
-      return _cacheFile.id === fileNode.id
+      return _cacheFile.path === fileNode.path && fileNode.diffEditor === _cacheFile.diffEditor
     })) {
       const { isError, data } = await this.getFile(fileNode.path)
       if (isError) {
@@ -77,7 +77,7 @@ class FileSystem {
         // 不拷贝一下 会有问题
         runInAction(() => {
           this.cacheFiles.forEach(cacheFile => cacheFile.selected = false) // 清空选中态
-          let cacheFile = Object.assign({}, fileNode, {
+          let cacheFile:FileNode = Object.assign({}, fileNode, {
             content: data,
             value: data,
             selected: true,
@@ -87,7 +87,7 @@ class FileSystem {
         })
       }
     } else {
-      this.cacheFiles.forEach(item => item.selected = item.id === fileNode.id)
+      this.cacheFiles.forEach(item => item.selected = item.path === fileNode.path && fileNode.diffEditor === item.diffEditor)
     }
     runInAction(() => {
       this.mustRender = Math.random()
@@ -115,7 +115,7 @@ class FileSystem {
   }
   @action closeFile = (fileNode) => {
     let index = this.cacheFiles.findIndex(file => { // 找到关闭的文件
-      return file.path === fileNode.path
+      return file.path === fileNode.path && file.diffEditor === fileNode.diffEditor
     })
     if (index > -1) {
       this.cacheFiles.splice(index, 1)
@@ -201,14 +201,14 @@ class FileSystem {
     this.expandFolder.push(fileNode.path) // open
     this.mustRender = Math.random()
   }
-  @action newFileSave = async (_node, node, filename) => {
+  @action newFileSave = async (fileNode, node, filename) => {
     if (filename === '') {
-      _node.children = _node.children.filter(_item => {
-        return _item.id !== node.id
+      fileNode.children = fileNode.children.filter(_item => {
+        return _item.path !== node.path
       })
     } else {
       const { isError } = await post('/api/file/new', {
-        path: _node.path,
+        path: fileNode.path,
         filename
       }, {})
       if (!isError) {
@@ -220,18 +220,18 @@ class FileSystem {
       this.mustRender = Math.random()
     })
   }
-  @action renameFileTobe = async (_node) => {
-    _node.rename = true
+  @action renameFileTobe = async (fileNode) => {
+    fileNode.rename = true
     this.mustRender = Math.random()
   }
-  @action renameSave = async (path, _node, newName) => {
-    if (newName === '' || _node.name === newName) {
-      _node.rename = false
+  @action renameSave = async (path, fileNode, newName) => {
+    if (newName === '' || fileNode.name === newName) {
+      fileNode.rename = false
       this.mustRender = Math.random()
     } else {
       const { isError, error } = await post('/api/file/rename', {
         path,
-        oldName: _node.name,
+        oldName: fileNode.name,
         newName
       }, {})
       if (!isError) {
@@ -239,21 +239,20 @@ class FileSystem {
         await this.queryFiles()
         runInAction(() => {
           // 同步已经打开的 cacheFiles
-          let cacheFile = this.cacheFiles.find(item => item.path === _node.path)
+          let cacheFile = this.cacheFiles.find(item => item.path === fileNode.path)
           if (cacheFile) {
-            if (_node.type === 'directory') {
+            if (fileNode.type === 'directory') {
               let cache = this.cacheFiles.filter(_file => {
-                return _file.path.startsWith(_node.path)
+                return _file.path.startsWith(fileNode.path)
               })
-              let newPath = _node.path.substr(0, _node.path.lastIndexOf('/')) + '/' + newName // 最新路径
+              let newPath = fileNode.path.substr(0, fileNode.path.lastIndexOf('/')) + '/' + newName // 最新路径
               cache.map(_item => {
                 _item.path = newPath + '/' + _item.name
                 _item.key = _item.path
-                _item.id = _item.path
               })
               this.cacheFiles = [...this.cacheFiles]
               /** 保持文件夹打开状态 */
-              if (this.expandFolder.indexOf(_node.path) > -1) {
+              if (this.expandFolder.indexOf(fileNode.path) > -1) {
                 this.expandFolder.push(newPath)
               }
             } else {
@@ -264,7 +263,7 @@ class FileSystem {
         })
       } else {
         runInAction(() => {
-          _node.rename = false
+          fileNode.rename = false
           this.mustRender = Math.random()
           console.log(error)
         })
@@ -288,14 +287,14 @@ class FileSystem {
     this.expandFolder.push(fileNode.path) // open
     this.mustRender = Math.random()
   }
-  @action newFolderSave = async (_node, node, foldername) => {
+  @action newFolderSave = async (fileNode, node, foldername) => {
     if (foldername === '') {
-      _node.children = _node.children.filter(_item => {
-        return _item.id !== node.id
+      fileNode.children = fileNode.children.filter(_item => {
+        return _item.path !== node.path
       })
     } else {
       const { isError } = await post('/api/file/newfolder', {
-        path: _node.path,
+        path: fileNode.path,
         foldername
       }, {})
       if (!isError) {
@@ -303,8 +302,8 @@ class FileSystem {
         await this.queryFiles()
       } else {
         console.log(`create folder error.`)
-        _node.children = _node.children.filter(_item => {
-          return _item.id !== node.id
+        fileNode.children = fileNode.children.filter(_item => {
+          return _item.path !== node.path
         })
       }
     }
@@ -353,9 +352,8 @@ class FileSystem {
    * 传入文件路径获取FileNode,可以是外部文件
    */
   @action getFileNodeByPath = (path: string, status: string, level: any) => {
-    let _node = {
+    let fileNode = {
       prefix: '',
-      id: path + '', // 节点唯一标识
       path, // 节点对应的文件路径
       extension: path.substring(path.lastIndexOf(".")), // 节点后缀
       name: path.substring(path.lastIndexOf("/") + 1), // 节点文件名
@@ -364,7 +362,7 @@ class FileSystem {
       isOpen: false, // 节点是否处于展开状态
       status,
     }
-    let node = new FileNode(_node, false, '', false, level, null)
+    let node = new FileNode(fileNode, false, '', false, level, null)
     return node
   }
 }

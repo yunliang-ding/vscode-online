@@ -51,7 +51,6 @@ class GitServices{
             let prefix = _file.inWorkingTree === 0 ? ' (Staged)' : ' (WorkTree)'
             let path = fileSystem.files.path + '/' + _file.path
             const node = {
-              id: path + prefix,
               diffEditor: true,
               isStaged: _file.inWorkingTree === 0,
               path,

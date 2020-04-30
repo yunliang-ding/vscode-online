@@ -4,25 +4,17 @@ import Mapping from '../mapping/index'
 import { monacoService } from '../monaco/index'
 const { IconMapping, IconColorMapping , LanguageMapping } = Mapping
 class Search{
-  @observable searchText: string = ''
-  @observable replaceText: string = ''
-  @observable expand: boolean = false
   @observable searchContent: string = ''
   @observable searchFiles = []
   @observable loading = false
   @observable mustRender = Math.random()
   @observable searchCount = 0
-  @action setExpand = (_expand) => {
-    this.expand = _expand
+  @observable expandFolder: any = []
+  @action setExpandFolder = (expandFolder) => {
+    this.expandFolder = expandFolder
   }
-  @action expendSearch = (_node) => {
-    _node.isOpen = !_node.isOpen
-    this.mustRender = Math.random()
-  }
-  @action collapse = () => {
-    this.searchFiles.map(_item => {
-      _item.isOpen = false
-    })
+  @action setSearchContent = (searchContent:string) => {
+    this.searchContent = searchContent
   }
   @action clearResult = () => {
     this.searchContent = ''
@@ -31,7 +23,7 @@ class Search{
   }
   @action search = async (searchContent: string) => {
     if(searchContent.trim() === ''){
-      console.log('请输入要查询的内容!')
+      alert('请输入要查询的内容!')
       return 
     }
     this.loading = true
@@ -43,13 +35,15 @@ class Search{
         this.searchFiles = res
         this.loading = false
       })
-    }, 2000)
+    }, 1000)
   }
   @action findAllMatches = async (searchString) => {
     let res = []
     if (searchString) {
       monacoService.getModels().forEach(model => {
+        console.log(model)
         let result = model.findMatches(searchString, true, true, true, '', true, 10)
+        this.expandFolder.push(model.uri.path) // 自动展开
         if (result.length > 0 && model.uri.scheme === 'file') {
           let dir: any = model.uri.path.split('/')
           let name = dir.join('/')
@@ -63,8 +57,6 @@ class Search{
           }
           this.searchCount += result.length
           const node = {
-            key: Math.random(),
-            id: model.uri.path,
             path: model.uri.path,
             dir,
             name,
@@ -74,22 +66,21 @@ class Search{
             type: 'directory',
             isOpen: (result.length < 10) || false,
             prefix: '',
-            children: result.map(_item => {
-              let label:any = model.getLineContent(_item.range.startLineNumber).trim().toString();
+            children: result.map(item => {
+              let label:any = model.getLineContent(item.range.startLineNumber).trim().toString();
               label = this.highlightText(label, searchString)
               return {
-                id: model.uri.path ,
-                key: Math.random(),
                 path: model.uri.path,
                 label,
                 name,
                 type: 'file',
                 level: [],
                 prefix: '',
+                diffEditor: false,
                 language: LanguageMapping[extension],
                 icon: IconMapping[extension],
                 model: model,
-                range: _item.range,
+                range: item.range,
                 iconColor: IconColorMapping[extension],
               }
             })
@@ -103,20 +94,20 @@ class Search{
   highlightText = (content, search) => {
     let count = 1
     let arr:any = content.split(search)
-    let result = arr.map(_item => { 
+    let result = arr.map(item => { 
       return {
         key:false, 
-        text:_item,
+        text:item,
         uuid: Math.random()
       } 
     })
-    result.map((_item:any, _index:number, _arr:any)=>{
-      if(_item.text === ""){ //这个原本是关键字
-        _item.key = true,
-        _item.text = search
+    result.map((item:any, _index:number, _arr:any)=>{
+      if(item.text === ""){ //这个原本是关键字
+        item.key = true,
+        item.text = search
       } else { 
         // 满足条件基于追加一项
-        if(_index < _arr.length - 1 && _item.key === false){
+        if(_index < _arr.length - 1 && item.key === false){
           _arr.splice(_index + (count++), 0, {
             key: true,
             text: search
