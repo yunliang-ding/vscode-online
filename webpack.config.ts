@@ -102,9 +102,9 @@ const config = {
     hints: false
   },
   plugins: [
-    // new MonacoWebpackPlugin({
-    //   languages: ['javascript', 'json', 'html', 'css', 'less', 'typescript']
-    // })
+    new MonacoWebpackPlugin({
+      languages: ['javascript', 'json', 'html', 'css', 'less', 'typescript']
+    })
   ],
   mode: process.env.NODE_ENV == "development" ? "development" : "production"
 }

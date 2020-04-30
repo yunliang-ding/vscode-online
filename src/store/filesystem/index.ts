@@ -21,6 +21,9 @@ class FileSystem {
   @action setExpandFolder = (expandFolder) => {
     this.expandFolder = expandFolder
   }
+  @action touchRender = () => {
+    this.mustRender = Math.random()
+  }
   @action setCacheFileValue = (cacheFile, value) => { // 更新内容
     cacheFile.value = value
     this.cacheFiles = [...this.cacheFiles]

@@ -4,7 +4,7 @@ import { ActivityBar, SiderBar, Code, Footer } from 'component'
 import { observer, inject } from 'mobx-react'
 import './index.less'
 const Window: any = window
-@inject('UI', 'FileSystem', 'Git')
+@inject('UI', 'FileSystem', 'Git', 'Monaco')
 @observer
 class Layout extends React.Component<any, any> {
   props: any
@@ -30,6 +30,7 @@ class Layout extends React.Component<any, any> {
     await this.props.FileSystem.queryFiles() // 加载项目
     await this.props.Git.queryBranch() // 加载分支
     await this.props.Git.waitCommited() // 等待push
+    await this.props.Monaco.settingMonaco() // 配置monaco
   }
   componentWillMount() {
     this.init()

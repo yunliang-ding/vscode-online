@@ -17,7 +17,7 @@ class Loading extends React.Component {
     return (
       <div className={"yui-loading" + theme} style={this.props.style}>
         <div className="yui-loading-body" style={{
-          filter: loading ? 'blur(1px)' : 'blur(0px)'
+          filter: loading ? 'blur(1px)' : 'none'
         }}>
           {this.props.children}
         </div>

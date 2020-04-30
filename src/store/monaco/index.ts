@@ -8,7 +8,7 @@ import { textMateService } from './syntaxHighlighter'
 import { get } from '../../axios/index'
 const { LanguageMapping } = Mapping
 const Window: any = window
-// const { typescriptDefaults, javascriptDefaults }: any = monaco.languages.typescript
+const { typescriptDefaults, javascriptDefaults }: any = monaco.languages.typescript
 class MonacoService {
   diffEditor: monaco.editor.IStandaloneDiffEditor;
   options: monaco.editor.IEditorConstructionOptions = {
@@ -124,7 +124,6 @@ class MonacoService {
       fontSize: 12,
       fontWeight: "400",
     }))
-    // this.textMateColor(this.diffEditor.getModifiedEditor(), options.language, options.value, []) // 着色不生效
     fileSystem.setFileNodeDiffEditorMonaco(this.diffEditor)  // 挂在到 cacheFiles 中
   }
   /**
@@ -142,7 +141,7 @@ class MonacoService {
  */
   setCompilerOptions = (compilerOptions) => {
     compilerOptions = compilerOptions.replace(/\n/g, '')
-    // typescriptDefaults._compilerOptions = JSON.parse(compilerOptions)
+    typescriptDefaults._compilerOptions = JSON.parse(compilerOptions)
     this.compilerOptions = JSON.parse(compilerOptions)
   }
   /**
@@ -195,8 +194,8 @@ class MonacoService {
       options.data = options.data.replace(/\n/g, '')
       this.options = JSON.parse(options.data)
     }
-    // typescriptDefaults._compilerOptions = this.compilerOptions
-    // javascriptDefaults._compilerOptions = this.compilerOptions
+    typescriptDefaults._compilerOptions = this.compilerOptions
+    javascriptDefaults._compilerOptions = this.compilerOptions
   }
   createModelByContent = (content, language) => {
     return monaco.editor.createModel(content, language)
@@ -269,45 +268,7 @@ class MonacoService {
   }
   settingMonaco = async () => {
     this.initMonacoOptions() // 初始化 options
-    this.registerCompletionItemProvider() // json
     this.initGoToDefinitionCrossModels()
-  }
-  /**
-   * 在指定类型的文件，指定区域支持snippets
-   */
-  createDependencyProposals = () => [{
-    label: '"lodash"',
-    kind: monaco.languages.CompletionItemKind.Function,
-    documentation: "The Lodash library exported as Node.js modules.",
-    insertText: '"lodash": "*"'
-  },
-  {
-    label: '"express"',
-    kind: monaco.languages.CompletionItemKind.Function,
-    documentation: "Fast, unopinionated, minimalist web framework",
-    insertText: '"express": "*"'
-  },
-  {
-    label: '"mkdirp"',
-    kind: monaco.languages.CompletionItemKind.Function,
-    documentation: "Recursively mkdir, like <code>mkdir -p</code>",
-    insertText: '"mkdirp": "*"'
-  }]
-  registerCompletionItemProvider = () => {
-    monaco.languages.registerCompletionItemProvider('json', {
-      provideCompletionItems: (model: any, position: any) => {
-        let match = model.getValueInRange({
-          startLineNumber: 1,
-          startColumn: 1,
-          endLineNumber: position.lineNumber,
-          endColumn: position.column
-        }).match(/"dependencies"\s*:\s*\{\s*("[^"]*"\s*:\s*"[^"]*"\s*,\s*)*([^"]*)?$/);
-        let suggestions: any = match ? this.createDependencyProposals() : []
-        return {
-          suggestions
-        }
-      }
-    })
   }
   addExtraLib = async () => {
     const { isError, data } = await fileSystem.getFile(`${fileSystem.baseUrl}/.vscode/extraLibs.json`)
