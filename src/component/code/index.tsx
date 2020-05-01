@@ -40,6 +40,7 @@ class Code extends React.Component<any, any> {
     let tabs = cacheFiles.map(item => {
       return Object.assign({}, item, {
         key: item.diffEditor ? item.path + 'diff' : item.path,
+        tip: item.path,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', zIndex: 9999 }}
           dark={Window.config.dark}
@@ -50,7 +51,7 @@ class Code extends React.Component<any, any> {
           <i className={'iconfont ' + item.icon}
             style={{ color: item.iconColor, marginRight: 8 }}
           ></i>
-          <span title={item.path}>{item.name + item.prefix}</span>
+          <span>{item.name + item.prefix}</span>
           {
             item.notSave && <i className='iconfont icon-dian' style={{ color: '#fff' }}></i>
           }

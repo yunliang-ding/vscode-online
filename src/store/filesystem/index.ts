@@ -151,7 +151,7 @@ class FileSystem {
   }
   @action saveFile = async (path: string) => {
     const file = this.cacheFiles.find(fileNode => {
-      return fileNode.path === path && fileNode.content !== fileNode.editorMonaco.getValue() // 只有文件发生了变化才保存
+      return fileNode.path === path && fileNode.diffEditor === false
     })
     if (file) {
       const { isError, error } = await post('/api/file/savefile', {

@@ -19,6 +19,8 @@ class Search extends React.Component<any, any> {
     return data.map(item => {
       let obj: any = {
         key: item.type === 'directory' ? item.path : item.path + '(file)',
+        icon: item.icon,
+        iconColor: item.iconColor,
         label: <div title={item.path} style={{ width: '100%', height: '100%', lineHeight: '24px' }} onClick={
           (e) => {
             item.type === 'file' && e.stopPropagation()
@@ -26,9 +28,6 @@ class Search extends React.Component<any, any> {
           }
         }>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {
-              item.type === 'file' && <i className={'iconfont ' + item.icon} style={{ color: item.iconColor, marginRight: 8 }}></i>
-            }
             {
               item.type === 'directory' ? item.name : <div style={{
                 overFlow: 'hidden',
@@ -50,8 +49,7 @@ class Search extends React.Component<any, any> {
       if (item.children) {
         obj.children = this.renderSearch(item.children)
       }
-      Object.assign(item, obj)
-      return item
+      return Object.assign({}, item, obj)
     })
   }
   render() {

@@ -64,9 +64,6 @@ class Explorer extends React.Component<any, any> {
   renderNode = (item) => {
     if (item.newFile || item.newFolder) { // 新建文件或者文件夹
       return <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-        {
-          item.newFile && <i className='iconfont icon-icon_file' style={{ color: '#ccc', marginRight: 8 }}></i>
-        }
         <input
           autoFocus
           autoComplete='off'
@@ -117,10 +114,6 @@ class Explorer extends React.Component<any, any> {
       </div>
     } else if (item.rename) {
       return <div style={{ display: 'flex', alignItem: 'center', width: '100%' }}>
-        {
-          item.type === 'file' && <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
-            style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}></i>
-        }
         <input
           autoFocus
           autoComplete='off'
@@ -154,16 +147,14 @@ class Explorer extends React.Component<any, any> {
           } />
       </div>
     }
-    return item.children ? item.name : <div style={{ display: 'flex', alignItem: 'center' }}>
-      <i className={'iconfont ' + this.props.Mapping.IconMapping[item.extension || item.name]}
-        style={{ color: this.props.Mapping.IconColorMapping[item.extension || item.name], marginRight: 8 }}></i>
-      <span>{item.name}</span>
-    </div>
+    return <span style={{marginLeft: 4}}>{item.name}</span>
   }
   renderExplorer = (node) => {
     return node.map(item => {
       let obj: any = {
         key: item.path,
+        icon:item.icon,
+        iconColor: item.iconColor,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
           dark={Window.config.dark}
@@ -206,8 +197,7 @@ class Explorer extends React.Component<any, any> {
       if (item.children) {
         obj.children = this.renderExplorer(item.children)
       }
-      Object.assign(item, obj)
-      return item
+      return Object.assign({}, item, obj)
     })
   }
   render() {

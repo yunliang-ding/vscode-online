@@ -97,6 +97,8 @@ class Git extends React.Component<any, any> {
     return node.map(item => {
       let obj: any = {
         key: item.path,
+        icon: item.icon,
+        iconColor: item.iconColor,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
           dark={Window.config.dark}
@@ -111,8 +113,6 @@ class Git extends React.Component<any, any> {
             }
           }>
             <div style={{ display: 'flex', alignItem: 'center', width: 'calc(100% - 20px)' }}>
-              <i className={'iconfont ' + item.icon}
-                style={{ color: item.iconColor, marginRight: 8 }}></i>
               <span>
                 <span style={{ marginRight: 8, opacity: 0.6, textDecoration: item.status === 'D' ? 'line-through' : 'unset' }}>
                   {item.name}
@@ -124,8 +124,7 @@ class Git extends React.Component<any, any> {
           </div>
         </Popover>
       }
-      Object.assign(item, obj)
-      return item
+      return Object.assign({}, item, obj)
     })
   }
   render() {
