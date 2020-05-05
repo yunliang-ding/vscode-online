@@ -46,7 +46,7 @@ class Layout extends React.Component<any, any> {
           <SplitPane
             split="vertical"
             defaultSize={300}
-            minSize={0}
+            minSize={200}
             maxSize={600}
             onDragStarted={() => (document.body.style.cursor = 'col-resize')}
             onDragFinished={

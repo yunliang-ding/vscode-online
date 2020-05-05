@@ -25,6 +25,7 @@ body{
 }
 .load-spin-iconfont{
   font-size:60px;
+  filter:blur(1px);
   color:var(--theme-color);
   animation:load-spin-move 3s linear infinite;
 }

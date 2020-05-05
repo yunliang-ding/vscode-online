@@ -80,22 +80,26 @@ class Code extends React.Component<any, any> {
     })
     let theme = Window.config.dark ? '-dark' : ''
     return <div className={`app-code${theme}`}>
-      <Tabs
-        dark={Window.config.dark}
-        dataList={tabs}
-        activeKey={currentFile.diffEditor ? currentFile.path + 'diff' : currentFile.path}
-        close
-        onClick={
-          (node) => {
-            openFile(node)
-          }
-        }
-        onRemove={
-          (node) => {
-            closeFile(node)
-          }
-        }
-      />
+      {
+        tabs.length === 0 ? <div className='app-code-none'>
+          <i className='iconfont icon-tools'></i>
+        </div> : <Tabs
+            dark={Window.config.dark}
+            dataList={tabs}
+            activeKey={currentFile.diffEditor ? currentFile.path + 'diff' : currentFile.path}
+            close
+            onClick={
+              (node) => {
+                openFile(node)
+              }
+            }
+            onRemove={
+              (node) => {
+                closeFile(node)
+              }
+            }
+          />
+      }
     </div>
   }
 }
