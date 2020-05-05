@@ -24,7 +24,7 @@ body{
   justify-content: center;
 }
 .load-spin-iconfont{
-  font-size:160px;
+  font-size:60px;
   color:var(--theme-color);
   animation:load-spin-move 3s linear infinite;
 }
