@@ -19,6 +19,7 @@ const IconColorMapping = new Proxy({
   '.tgz': '#0e932e',
   '.tar': '#0e932e',
   '.png': '#1296db',
+  '.svg': '#1296db',
   '.jpg': '#1296db',
   '.jpeg': '#1296db',
   '.gif': '#1296db',
