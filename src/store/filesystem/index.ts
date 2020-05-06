@@ -21,6 +21,9 @@ class FileSystem {
   @action setExpandFolder = (expandFolder) => {
     this.expandFolder = expandFolder
   }
+  notSaveCount = () => {
+    return this.cacheFiles.filter(item => item.notSave).length
+  }
   @action touchRender = () => {
     this.mustRender = Math.random()
   }

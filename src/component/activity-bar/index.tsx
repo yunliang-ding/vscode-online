@@ -1,8 +1,9 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
+import { Badge } from 'ryui'
 import './index.less'
 const Window: any = window
-@inject('UI')
+@inject('UI', 'Git', 'FileSystem')
 @observer
 class ActivityBar extends React.Component<any, any> {
   props: any
@@ -29,6 +30,8 @@ class ActivityBar extends React.Component<any, any> {
             }
           >
             <i title={tab.label} className={`iconfont ${tab.icon}`}></i>
+            { tab.label === 'Explorer' && <Badge count={this.props.FileSystem.notSaveCount()} /> }
+            { tab.label === 'Git' && <Badge count={this.props.Git.countChange} /> }
           </div>
         })
       }
