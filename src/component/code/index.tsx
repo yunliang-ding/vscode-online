@@ -58,13 +58,11 @@ class Code extends React.Component<any, any> {
         </Popover>,
         content: item.diffEditor
           ? <MonacoDiff
-            visabled
             language={item.language}
             theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
             original={item.stagedValue}
             value={item.value}
           /> : <Monaco
-            visabled
             path={item.path}
             theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
             language={item.language}

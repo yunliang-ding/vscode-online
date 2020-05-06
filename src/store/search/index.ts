@@ -2,8 +2,15 @@ import { observable, action, runInAction } from 'mobx'
 import { fileSystem } from '../filesystem/index'
 import Mapping from '../mapping/index'
 import { monacoService } from '../monaco/index'
-const { IconMapping, IconColorMapping , LanguageMapping } = Mapping
-class Search{
+import { Message } from 'ryui'
+const Window: any = window
+const message = new Message({
+  duration: 300,
+  dark: Window.config.dark,
+  position: 'br'
+})
+const { IconMapping, IconColorMapping, LanguageMapping } = Mapping
+class Search {
   @observable searchContent: string = ''
   @observable searchFiles = []
   @observable loading = false
@@ -13,7 +20,7 @@ class Search{
   @action setExpandFolder = (expandFolder) => {
     this.expandFolder = expandFolder
   }
-  @action setSearchContent = (searchContent:string) => {
+  @action setSearchContent = (searchContent: string) => {
     this.searchContent = searchContent
   }
   @action clearResult = () => {
@@ -22,9 +29,9 @@ class Search{
     this.searchCount = 0
   }
   @action search = async (searchContent: string) => {
-    if(searchContent.trim() === ''){
-      alert('请输入要查询的内容!')
-      return 
+    if (searchContent.trim() === '') {
+      message.warning('请输入要查询的内容!')
+      return
     }
     this.loading = true
     this.searchCount = 0
@@ -67,7 +74,7 @@ class Search{
             isOpen: (result.length < 10) || false,
             prefix: '',
             children: result.map(item => {
-              let label:any = model.getLineContent(item.range.startLineNumber).trim().toString();
+              let label: any = model.getLineContent(item.range.startLineNumber).trim().toString();
               label = this.highlightText(label, searchString)
               return {
                 path: model.uri.path,
@@ -93,21 +100,21 @@ class Search{
   }
   highlightText = (content, search) => {
     let count = 1
-    let arr:any = content.split(search)
-    let result = arr.map(item => { 
+    let arr: any = content.split(search)
+    let result = arr.map(item => {
       return {
-        key:false, 
-        text:item,
+        key: false,
+        text: item,
         uuid: Math.random()
-      } 
+      }
     })
-    result.map((item:any, _index:number, _arr:any)=>{
-      if(item.text === ""){ //这个原本是关键字
+    result.map((item: any, _index: number, _arr: any) => {
+      if (item.text === "") { //这个原本是关键字
         item.key = true,
-        item.text = search
-      } else { 
+          item.text = search
+      } else {
         // 满足条件基于追加一项
-        if(_index < _arr.length - 1 && item.key === false){
+        if (_index < _arr.length - 1 && item.key === false) {
           _arr.splice(_index + (count++), 0, {
             key: true,
             text: search

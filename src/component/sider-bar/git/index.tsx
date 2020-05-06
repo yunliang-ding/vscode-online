@@ -1,8 +1,13 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
-import { Tree, Popover, Loading } from 'ryui'
+import { Tree, Popover, Loading, Message } from 'ryui'
 import './index.less'
 const Window: any = window
+const message = new Message({
+  duration: 3,
+  dark: Window.config.dark,
+  position: 'br'
+})
 const $: any = document.querySelector.bind(document)
 @inject('UI', 'FileSystem', 'Git')
 @observer
@@ -13,11 +18,11 @@ class Git extends React.Component<any, any> {
   }
   commit = async (commitInfo: string) => {
     if (this.props.Git.countChange === 0) {
-      alert(`There's nothing to commit here.`)
+      message.warning(`暂无提交的内容.`)
       return
     }
     if (commitInfo === '') {
-      alert(`commit message not allow empty.`)
+      message.warning(`提交信息不能为空.`)
     } else {
       this.props.Git.commitFile(commitInfo)
     }

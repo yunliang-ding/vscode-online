@@ -4,6 +4,13 @@ import { FileNode } from './file'
 import { monacoService as Monaco } from '../monaco/index'
 import { git } from '../git/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
+import { Message } from 'ryui'
+const Window: any = window
+const message = new Message({
+  duration: 3,
+  dark: Window.config.dark,
+  position: 'br'
+})
 class FileSystem {
   @observable baseUrl = ''
   @observable mustRender = 0
@@ -44,7 +51,7 @@ class FileSystem {
     })
     if (data === null) {
       runInAction(() => {
-        this.files.errorMessage = 'File Path Error.'
+        message.error('项目加载异常.')
         this.loading = false
       })
     }
@@ -90,7 +97,7 @@ class FileSystem {
     })) {
       const { isError, data } = await this.getFile(fileNode.path)
       if (isError) {
-        console.log(`Open file ${fileNode.name} exception.`)
+        message.error(`打开文件 ${fileNode.name} 异常.`)
       } else {
         // 不拷贝一下 会有问题
         runInAction(() => {
@@ -115,7 +122,7 @@ class FileSystem {
     if (this.cacheFiles.some(tab => {
       return tab.notSave && node.path !== tab.path
     })) {
-      alert('没有保存的')
+      message.warning('文件未保存')
     } else {
       node.selected = true
       this.cacheFiles = [node]
@@ -126,7 +133,7 @@ class FileSystem {
     if (this.cacheFiles.some(tab => {
       return tab.notSave
     })) {
-      alert('未保存的设置')
+      message.warning('文件未保存')
     } else {
       this.cacheFiles.length = 0
     }
@@ -174,7 +181,7 @@ class FileSystem {
             Monaco.setCompilerOptions(file.editorMonaco.getValue())
           }
         } else {
-          console.log(error)
+          message.error('文件保存失败.')
         }
       })
     }
@@ -212,6 +219,8 @@ class FileSystem {
       if (!isError) {
         await git.queryStatus()
         await this.queryFiles()
+      } else {
+        message.error('添加文件失败.')
       }
     }
     runInAction(() => {
@@ -257,6 +266,7 @@ class FileSystem {
             } else {
               FileNode.ReNameNode(newName, cacheFile)
               this.cacheFiles = [...this.cacheFiles]
+              console.log(toJS(this.cacheFiles))
             }
           }
         })
@@ -264,7 +274,7 @@ class FileSystem {
         runInAction(() => {
           fileNode.rename = false
           this.mustRender = Math.random()
-          console.log(error)
+          message.error('文件重命名失败.')
         })
       }
     }
@@ -300,10 +310,10 @@ class FileSystem {
         await git.queryStatus()
         await this.queryFiles()
       } else {
-        console.log(`create folder error.`)
         fileNode.children = fileNode.children.filter(_item => {
           return _item.path !== node.path
         })
+        message.error('添加文件夹失败.')
       }
     }
     runInAction(() => {
@@ -320,7 +330,7 @@ class FileSystem {
       await git.queryStatus()
       await this.queryFiles()
     } else {
-      console.log(error)
+      message.error('删除文件失败')
     }
   }
   /**

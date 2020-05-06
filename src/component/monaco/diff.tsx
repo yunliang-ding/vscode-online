@@ -22,9 +22,7 @@ class MonacoDiff extends React.Component<any, any> {
     )
   }
   render() {
-    return <div className='app-monaco-editor-diff' ref={(node) => { this.monacoNode = node }} style={{
-      display: this.props.visabled ? 'block' : 'none'
-    }} />
+    return <div className='app-monaco-editor-diff' ref={(node) => { this.monacoNode = node }} />
   }
 }
 export { MonacoDiff }

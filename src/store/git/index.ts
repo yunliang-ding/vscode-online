@@ -12,9 +12,16 @@ import { observable, action, runInAction, toJS } from 'mobx'
 import { get } from '../../axios/index'
 import Mapping from '../mapping/index'
 import { fileSystem } from '../filesystem/index'
+import { Message } from 'ryui'
+const Window: any = window
+const message = new Message({
+  duration: 3,
+  dark: Window.config.dark,
+  position: 'br'
+})
 const { IconMapping, IconColorMapping, StatusMapping, StatusColorMapping, LanguageMapping } = Mapping
-class GitServices{
-  @observable loading:boolean = false
+class GitServices {
+  @observable loading: boolean = false
   @observable git = {
     isGitProject: true,
     branch: '',
@@ -29,7 +36,7 @@ class GitServices{
   @observable workspaceChanges = []
   @observable stagedChanges = []
   @action queryStatus = async () => {
-    if(this.git.isGitProject){
+    if (this.git.isGitProject) {
       this.loading = true
       const { data, isError } = await get('/api/git/status', {
         path: fileSystem.files.path
@@ -72,7 +79,7 @@ class GitServices{
           })
         })
       } else {
-        console.log('query status error.')
+        message.error('查询文件状态异常.')
       }
     }
   }
@@ -86,7 +93,7 @@ class GitServices{
           this.git.branch = data
         })
       } else {
-       console.log(`Query branch error.`)
+        message.error(`查询分支异常.`)
       }
     }
   }
@@ -99,7 +106,7 @@ class GitServices{
         this.gitignores = data
       })
     } else {
-     console.log(`Is Not Git Project.`)
+      console.log(`Is Not Git Project.`)
     }
   }
   @action queryStaged = async (path) => {
@@ -156,7 +163,7 @@ class GitServices{
       await this.waitCommited()
     })
     if (res.isError) {
-      console.log('commit error.')
+      message.error('提交信息异常.')
     }
     return res
   }
@@ -169,7 +176,7 @@ class GitServices{
       this.loading = false
     })
     if (isError) {
-      console.log('git push error.')
+      message.error('提送远程分支异常.')
     } else {
       runInAction(() => {
         this.waitCommited()
