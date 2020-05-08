@@ -2,7 +2,7 @@ import { observable, action, runInAction } from 'mobx'
 import { fileSystem } from '../filesystem/index'
 import Mapping from '../mapping/index'
 import { monacoService } from '../monaco/index'
-import { Message } from 'ryui'
+import { Message } from 'react-ryui'
 const Window: any = window
 const message = new Message({
   duration: 300,

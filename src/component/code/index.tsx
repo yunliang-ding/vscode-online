@@ -2,7 +2,7 @@ import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { Monaco } from '../monaco/index'
 import { MonacoDiff } from '../monaco/diff';
-import { Tabs, Popover } from 'ryui'
+import { Tabs, Popover } from 'react-ryui'
 import { toJS } from 'mobx'
 import './index.less'
 const Window: any = window

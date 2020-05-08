@@ -12,7 +12,7 @@ import { observable, action, runInAction, toJS } from 'mobx'
 import { get } from '../../axios/index'
 import Mapping from '../mapping/index'
 import { fileSystem } from '../filesystem/index'
-import { Message } from 'ryui'
+import { Message } from 'react-ryui'
 const Window: any = window
 const message = new Message({
   duration: 3,

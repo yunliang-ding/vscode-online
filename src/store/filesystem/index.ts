@@ -4,7 +4,7 @@ import { FileNode } from './file'
 import { monacoService as Monaco } from '../monaco/index'
 import { git } from '../git/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import { Message } from 'ryui'
+import { Message } from 'react-ryui'
 const Window: any = window
 const message = new Message({
   duration: 3,

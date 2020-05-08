@@ -1,7 +1,7 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { toJS } from 'mobx'
-import { Tree, Popover, Loading } from 'ryui'
+import { Tree, Popover, Loading } from 'react-ryui'
 import './index.less'
 const Window: any = window
 const $: any = document.querySelector.bind(document)
@@ -113,7 +113,7 @@ class Explorer extends React.Component<any, any> {
         />
       </div>
     } else if (item.rename) {
-      return <div style={{ display: 'flex', alignItem: 'center', width: '100%' }}>
+      return <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
         <input
           autoFocus
           autoComplete='off'

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
-import { Badge } from 'ryui'
+import { Badge } from 'react-ryui'
 import './index.less'
 const Window: any = window
 @inject('UI', 'Git', 'FileSystem')

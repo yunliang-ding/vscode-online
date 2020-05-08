@@ -1,6 +1,6 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
-import { Tree, Popover, Loading, Message } from 'ryui'
+import { Tree, Popover, Loading, Message } from 'react-ryui'
 import './index.less'
 const Window: any = window
 const message = new Message({
@@ -117,7 +117,7 @@ class Git extends React.Component<any, any> {
               await this.props.FileSystem.openFile(item)
             }
           }>
-            <div style={{ display: 'flex', alignItem: 'center', width: 'calc(100% - 20px)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', width: 'calc(100% - 20px)' }}>
               <span>
                 <span style={{ marginRight: 8, opacity: 0.6, textDecoration: item.status === 'D' ? 'line-through' : 'unset' }}>
                   {item.name}

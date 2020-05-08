@@ -2,7 +2,7 @@ import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { toJS } from 'mobx'
 import './index.less'
-import { Loading, Tree } from 'ryui'
+import { Loading, Tree } from 'react-ryui'
 const Window: any = window
 @inject('UI', 'FileSystem', 'Search', 'Monaco')
 @observer
@@ -30,7 +30,7 @@ class Search extends React.Component<any, any> {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {
               item.type === 'directory' ? item.name : <div style={{
-                overFlow: 'hidden',
+                overflow: 'hidden',
                 whiteSpace: 'nowrap'
               }}>
                 {

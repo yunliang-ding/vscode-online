@@ -24,8 +24,7 @@ const config = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
     alias: {
-      component: path.join(__dirname, './src/component'),
-      ryui: path.join(__dirname, './src/yui')
+      component: path.join(__dirname, './src/component')
     }
   },
   externals: {
@@ -61,10 +60,6 @@ const config = {
       }
     }, {
       test: /\.(less|css)$/,
-      include: [ //样式只应用到这两个文件夹下面的css文件中
-        path.resolve(__dirname, 'node_modules'),
-        path.resolve(__dirname, './src')
-      ],
       use: [
         require.resolve('style-loader'),
         {
