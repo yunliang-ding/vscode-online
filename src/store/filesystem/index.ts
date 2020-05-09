@@ -5,6 +5,7 @@ import { monacoService as Monaco } from '../monaco/index'
 import { git } from '../git/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { Message } from 'react-ryui'
+const $: any = document.querySelector.bind(document)
 const Window: any = window
 const message = new Message({
   duration: 3,
@@ -25,6 +26,7 @@ class FileSystem {
     errorMessage: ''
   }
   @observable expandFolder = []
+  @observable cacheFiles: any = []
   @action setExpandFolder = (expandFolder) => {
     this.expandFolder = expandFolder
   }
@@ -38,11 +40,11 @@ class FileSystem {
     cacheFile.value = value
     this.cacheFiles = [...this.cacheFiles]
   }
-  @observable cacheFiles: any = []
   @action setBaseUrl = (baseUrl: string): void => { // 按照路由设置 项目基本信息
     this.baseUrl = baseUrl
     this.files.path = baseUrl
     this.files.name = baseUrl.split('/').pop()
+    $('#title').innerHTML = `${this.files.name}`
   }
   @action queryFiles = async () => {
     this.loading = true

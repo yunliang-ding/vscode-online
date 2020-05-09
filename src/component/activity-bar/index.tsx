@@ -1,6 +1,7 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { Badge } from 'react-ryui'
+import { switchFullScreen } from './switchFullScreen'
 import './index.less'
 const Window: any = window
 @inject('UI', 'Git', 'FileSystem')
@@ -15,7 +16,9 @@ class ActivityBar extends React.Component<any, any> {
     const {
       currentTab,
       tabList,
-      setCurrentTab
+      setCurrentTab,
+      setFullScreen,
+      fullScreen
     } = this.props.UI
     return <div className={`app-activity-bar${theme}`}>
       {
@@ -35,6 +38,18 @@ class ActivityBar extends React.Component<any, any> {
           </div>
         })
       }
+      <div className='app-full-screen' onClick={
+        () => {
+          setFullScreen(!fullScreen)
+          if(fullScreen){
+            switchFullScreen().exit()
+          } else {
+            switchFullScreen().request()
+          }
+        }
+      }>
+        <i className='iconfont icon-config1'></i>
+      </div>
     </div>
   }
 }

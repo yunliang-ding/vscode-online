@@ -3,6 +3,7 @@ class UI {
   @observable loading = false
   @observable login = false
   @observable currentTab = 'Explorer'
+  @observable fullScreen = false
   @observable tabList = [{
     icon: 'icon-wenjian',
     label: 'Explorer'
@@ -21,6 +22,9 @@ class UI {
   }
   @action setCurrentTab = (currentTab: string): void  => {
     this.currentTab = currentTab
+  }
+  @action setFullScreen = (fullScreen: boolean) => {
+    this.fullScreen = fullScreen
   }
 }
 const ui = new UI()
