@@ -102,7 +102,7 @@ class Git extends React.Component<any, any> {
     return node.map(item => {
       let obj: any = {
         key: item.path,
-        icon: item.icon,
+        icon: `iconfont ${item.icon}`,
         iconColor: item.iconColor,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
@@ -146,17 +146,17 @@ class Git extends React.Component<any, any> {
             source control : git
         </div>
           <div className='app-git-header-right'>
-            <i title='commit' className='iconfont icon-tijiao' onClick={
+            <i title='commit' className='codicon codicon-check' onClick={
               () => {
                 this.commit($('#commit-info').value.trim())
               }
             }></i>
-            <i title='refresh' className='iconfont icon-shuaxin' onClick={
+            <i title='refresh' className='codicon codicon-refresh' onClick={
               () => {
                 this.props.Git.queryStatus()
               }
             }></i>
-            <i title='push' className='iconfont icon-jsontijiao' onClick={
+            <i title='push' className='codicon codicon-more' onClick={
               () => {
                 this.props.Git.pushFile()
               }

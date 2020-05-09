@@ -157,8 +157,8 @@ class Explorer extends React.Component<any, any> {
     return node.map(item => {
       let obj: any = {
         key: item.path,
-        icon: item.icon,
-        iconColor: item.iconColor,
+        icon: item.type === 'file' ? `iconfont ${item.icon}` : this.props.FileSystem.expandFolder.includes(item.path) ? 'codicon codicon-chevron-down' : 'codicon codicon-chevron-down collapsed' ,
+        iconColor: item.type === 'file' ? item.iconColor : '#fff',
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
           dark={this.props.UI.isDark}
@@ -218,22 +218,22 @@ class Explorer extends React.Component<any, any> {
             explorer: {name}
           </div>
           <div className='app-explorer-header-right'>
-            <i className='iconfont icon-tianjiawenjian' onClick={
+            <i className='codicon codicon-new-file' onClick={
               () => {
                 this.props.FileSystem.newFileTobe(this.props.FileSystem.files, true)
               }
             }></i>
-            <i className='iconfont icon-jiemu_jiemu_tianjiawenjianjia' onClick={
+            <i className='codicon  codicon-new-folder' onClick={
               () => {
                 this.props.FileSystem.newFolderTobe(this.props.FileSystem.files, true)
               }
             }></i>
-            <i className='iconfont icon-shuaxin' onClick={
+            <i className='codicon codicon-refresh' onClick={
               () => {
                 queryFiles()
               }
             }></i>
-            <i className='iconfont icon-zhankai' onClick={
+            <i className='codicon codicon-collapse-all' onClick={
               () => {
                 setExpandFolder([])
               }

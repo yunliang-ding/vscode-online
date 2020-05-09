@@ -18,9 +18,9 @@ class Search extends React.Component<any, any> {
     return data.map(item => {
       let obj: any = {
         key: item.type === 'directory' ? item.path : item.path + '(file)',
-        icon: item.icon,
+        icon: `iconfont ${item.icon}`,
         iconColor: item.iconColor,
-        label: <div title={item.path} style={{ width: '100%', height: '100%', lineHeight: '24px' }} onClick={
+        label: <div title={item.path} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onClick={
           (e) => {
             item.type === 'file' && e.stopPropagation()
             item.type === 'file' && this.openFile(item)
@@ -67,12 +67,12 @@ class Search extends React.Component<any, any> {
             search
           </div>
           <div className='app-search-header-right'>
-            <i className='iconfont icon-shuaxin' onClick={
+            <i className='codicon codicon-refresh' onClick={
               () => {
                 search(searchContent)
               }
             }></i>
-            <i className='iconfont icon-shanchu' onClick={clearResult}></i>
+            <i className='codicon codicon-clear-all' onClick={clearResult}></i>
           </div>
         </div>
         <div className='app-search-input'>

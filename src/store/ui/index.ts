@@ -8,13 +8,13 @@ class UI {
   @observable currentTab = 'Explorer'
   @observable fullScreen = false
   @observable tabList = [{
-    icon: 'icon-wenjian',
+    icon: 'codicon-files',
     label: 'Explorer'
   }, {
-    icon: 'icon-search1',
+    icon: 'codicon-search',
     label: 'Search'
   }, {
-    icon: 'icon-git1',
+    icon: 'codicon-source-control',
     label: 'Git'
   }]
   @action setLoading = (loading: boolean): void => {

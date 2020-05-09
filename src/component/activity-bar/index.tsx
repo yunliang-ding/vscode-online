@@ -60,7 +60,7 @@ class ActivityBar extends React.Component<any, any> {
               }
             }
           >
-            <i title={tab.label} className={`iconfont ${tab.icon}`}></i>
+            <i title={tab.label} className={`codicon ${tab.icon}`}></i>
             { tab.label === 'Explorer' && <Badge count={this.props.FileSystem.notSaveCount()} /> }
             { tab.label === 'Git' && <Badge count={this.props.Git.countChange} /> }
           </div>
@@ -73,7 +73,7 @@ class ActivityBar extends React.Component<any, any> {
           dark={this.props.UI.isDark}
           placement='top'
         >
-          <i className='iconfont icon-config1'></i>
+          <i className='codicon codicon-settings-gear'></i>
         </Popover>
       </div>
     </div>
