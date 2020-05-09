@@ -11,7 +11,7 @@ class Footer extends React.Component<any, any> {
   }
   render() {
     const { git: { waitCommitCount, branch, isGitProject } } = this.props.Git
-    let theme = Window.config.dark ? '-dark' : ''
+    let theme = this.props.UI.isDark ? '-dark' : ''
     return <div className={`app-footer${theme}`}>
       {
         isGitProject && <div>

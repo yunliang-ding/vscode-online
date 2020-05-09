@@ -3,7 +3,6 @@ import { observer, inject } from 'mobx-react'
 import { toJS } from 'mobx'
 import './index.less'
 import { Loading, Tree } from 'react-ryui'
-const Window: any = window
 @inject('UI', 'FileSystem', 'Search', 'Monaco')
 @observer
 class Search extends React.Component<any, any> {
@@ -55,7 +54,7 @@ class Search extends React.Component<any, any> {
   render() {
     const { cacheFiles } = this.props.FileSystem
     const { searchCount, searchFiles, loading, search, searchContent, setSearchContent, clearResult, setExpandFolder, expandFolder } = this.props.Search
-    let theme = Window.config.dark ? '-dark' : ''
+    let theme = this.props.UI.isDark ? '-dark' : ''
     const data = this.renderSearch(toJS(searchFiles))
     let currentFile = cacheFiles.find(item => item.selected) || {}
     return <Loading
@@ -104,7 +103,7 @@ class Search extends React.Component<any, any> {
               width: '100%',
               height: '100%'
             }}
-            dark={Window.config.dark}
+            dark={this.props.UI.isDark}
             defaultCheckedKeys={[currentFile.path]}
             defaultExpandedKeys={JSON.parse(JSON.stringify(expandFolder))}
             treeData={data}

@@ -4,7 +4,6 @@ import { Explorer } from './explorer/index'
 import { Search } from './search/index'
 import { Git } from './git/index'
 import './index.less'
-const Window: any = window
 @inject('UI')
 @observer
 class SiderBar extends React.Component<any, any> {
@@ -13,7 +12,7 @@ class SiderBar extends React.Component<any, any> {
     super(props)
   }
   render() {
-    let theme = Window.config.dark ? '-dark' : ''
+    let theme = this.props.UI.isDark ? '-dark' : ''
     const { currentTab } = this.props.UI
     return <div className={`app-sider-bar${theme}`}>
       {

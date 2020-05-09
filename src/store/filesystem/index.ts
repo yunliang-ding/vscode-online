@@ -17,6 +17,7 @@ class FileSystem {
   @observable mustRender = 0
   @observable dragFile: FileNode
   @observable loading: boolean = false
+  @observable tabLoading: boolean = false
   @observable files: any = {
     children: [],
     name: '',
@@ -97,7 +98,7 @@ class FileSystem {
     if (!this.cacheFiles.some(_cacheFile => { // 不在缓存就发送请求
       return _cacheFile.path === fileNode.path && fileNode.diffEditor === _cacheFile.diffEditor
     })) {
-      this.loading = true
+      this.tabLoading = true
       const { isError, data } = await this.getFile(fileNode.path)
       if (isError) {
         message.error(`打开文件 ${fileNode.name} 异常.`)
@@ -119,7 +120,7 @@ class FileSystem {
     }
     runInAction(() => {
       this.mustRender = Math.random()
-      this.loading = false
+      this.tabLoading = false
     })
   }
   @action closeOther = (node: FileNode) => {
@@ -156,22 +157,24 @@ class FileSystem {
     const file = this.cacheFiles.find(fileNode => {
       return fileNode.path === path && fileNode.diffEditor === false
     })
-    if (file) {
-      const { isError, error } = await post('/api/file/savefile', {
+    if (file && file.content !== file.value) { // 内容修改才可以保存
+      this.tabLoading = true
+      const { isError } = await post('/api/file/savefile', {
         path: file.path,
-        content: file.editorMonaco.getValue()
+        content: file.value
       }, {})
       runInAction(async () => {
+        this.tabLoading = false
         if (!isError) {
-          file.content = file.editorMonaco.getValue() // 更新节点的content
+          file.content = file.value // 更新节点的content
           await this.toBeSave(false, file)
           await git.queryStatus() // 查询git状态
           await this.refreshWt() // 更新状态树
           // 更新设置
           if (this.baseUrl + '/' + '.vscode/settings.json' === file.path) {
-            Monaco.setOptions(file.editorMonaco.getValue())
+            Monaco.setOptions(file.value)
           } else if (this.baseUrl + '/' + '.vscode/tsconfig.json' === file.path) {
-            Monaco.setCompilerOptions(file.editorMonaco.getValue())
+            Monaco.setCompilerOptions(file.value)
           }
         } else {
           message.error('文件保存失败.')

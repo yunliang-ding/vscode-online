@@ -3,7 +3,6 @@ import { observer, inject } from 'mobx-react'
 import { toJS } from 'mobx'
 import { Tree, Popover, Loading, Modal } from 'react-ryui'
 import './index.less'
-const Window: any = window
 const $: any = document.querySelector.bind(document)
 @inject('UI', 'FileSystem', 'Mapping')
 @observer
@@ -36,7 +35,6 @@ class Explorer extends React.Component<any, any> {
           this.setState({
             visible: true
           })
-          // this.props.FileSystem.deleteFile(item)
         }
       }>
         <span>Delete File</span>
@@ -163,7 +161,7 @@ class Explorer extends React.Component<any, any> {
         iconColor: item.iconColor,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
-          dark={Window.config.dark}
+          dark={this.props.UI.isDark}
           content={this.menu(item)}
           trigger='contextMenu'
           placement='bottom'
@@ -209,7 +207,7 @@ class Explorer extends React.Component<any, any> {
   render() {
     const { cacheFiles, expandFolder, setExpandFolder, files: { children, name }, loading, queryFiles, mustRender } = this.props.FileSystem
     const data = this.renderExplorer(toJS(children))
-    let theme = Window.config.dark ? '-dark' : ''
+    let theme = this.props.UI.isDark ? '-dark' : ''
     let currentFile = cacheFiles.find(item => item.selected) || {}
     return <Loading
       style={{ height: '100%', width: '100%' }}
@@ -249,7 +247,7 @@ class Explorer extends React.Component<any, any> {
               height: '100%'
             }}
             key={mustRender}
-            dark={Window.config.dark}
+            dark={this.props.UI.isDark}
             defaultExpandedKeys={JSON.parse(JSON.stringify(expandFolder))}
             defaultCheckedKeys={[currentFile.key]}
             treeData={data}
@@ -265,7 +263,7 @@ class Explorer extends React.Component<any, any> {
         title="提示"
         closable
         footer={null}
-        dark={Window.config.dark}
+        dark={this.props.UI.isDark}
         mask
         visible={this.state.visible}
         content={

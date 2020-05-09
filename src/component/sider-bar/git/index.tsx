@@ -2,12 +2,7 @@ import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { Tree, Popover, Loading, Message } from 'react-ryui'
 import './index.less'
-const Window: any = window
-const message = new Message({
-  duration: 3,
-  dark: Window.config.dark,
-  position: 'br'
-})
+
 const $: any = document.querySelector.bind(document)
 @inject('UI', 'FileSystem', 'Git')
 @observer
@@ -16,13 +11,18 @@ class Git extends React.Component<any, any> {
   constructor(props) {
     super(props)
   }
+  message = new Message({
+    duration: 3,
+    dark: this.props.UI.isDark,
+    position: 'br'
+  })
   commit = async (commitInfo: string) => {
     if (this.props.Git.countChange === 0) {
-      message.warning(`暂无提交的内容.`)
+      this.message.warning(`暂无提交的内容.`)
       return
     }
     if (commitInfo === '') {
-      message.warning(`提交信息不能为空.`)
+      this.message.warning(`提交信息不能为空.`)
     } else {
       this.props.Git.commitFile(commitInfo)
     }
@@ -106,7 +106,7 @@ class Git extends React.Component<any, any> {
         iconColor: item.iconColor,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
-          dark={Window.config.dark}
+          dark={this.props.UI.isDark}
           content={staged ? this.stagedChangeMenu(item) : this.workSpaceChangeMenu(item)}
           trigger='contextMenu'
           placement='bottom'
@@ -136,7 +136,7 @@ class Git extends React.Component<any, any> {
     const { git: { isGitProject }, workspaceChanges, stagedChanges, loading } = this.props.Git
     const workspaceChangesData = this.renderTreeData(workspaceChanges, false)
     const stagedChangesData = this.renderTreeData(stagedChanges, true)
-    let theme = Window.config.dark ? '-dark' : ''
+    let theme = this.props.UI.isDark ? '-dark' : ''
     return <Loading
       style={{ height: '100%', width: '100%' }}
       loading={loading}>
@@ -178,7 +178,7 @@ class Git extends React.Component<any, any> {
               stagedChangesData.length > 0 && <div className='app-git-body-change-staged'>
                 <div className='app-git-body-change-title'>Staged Change</div>
                 <Tree
-                  dark={Window.config.dark}
+                  dark={this.props.UI.isDark}
                   treeData={stagedChangesData}
                 />
               </div>
@@ -187,7 +187,7 @@ class Git extends React.Component<any, any> {
               workspaceChangesData.length > 0 && <div className='app-git-body-change-workspace'>
                 <div className='app-git-body-change-title'>Change</div>
                 <Tree
-                  dark={Window.config.dark}
+                  dark={this.props.UI.isDark}
                   treeData={workspaceChangesData}
                 />
               </div>

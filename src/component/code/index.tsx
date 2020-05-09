@@ -2,16 +2,15 @@ import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { Monaco } from '../monaco/index'
 import { MonacoDiff } from '../monaco/diff';
-import { Tabs, Popover, Modal } from 'react-ryui'
+import { Tabs, Popover, Modal, Loading } from 'react-ryui'
 import './index.less'
-const Window: any = window
 @inject('UI', 'FileSystem')
 @observer
 class Code extends React.Component<any, any> {
   [x: string]: any;
   props: any
   state: any
-  fileNode:any
+  fileNode: any
   constructor(props) {
     super(props)
     this.state = {
@@ -69,7 +68,7 @@ class Code extends React.Component<any, any> {
     </div>
   }
   render() {
-    const { cacheFiles, openFile, closeFile, closeOther, closeAll, queryCurrentNode, toBeSave, setCacheFileValue } = this.props.FileSystem
+    const { tabLoading, cacheFiles, openFile, closeFile, closeOther, closeAll, queryCurrentNode, toBeSave, setCacheFileValue } = this.props.FileSystem
     const currentFile = queryCurrentNode()
     let tabs = cacheFiles.map((item, index) => {
       return Object.assign({}, item, {
@@ -77,7 +76,7 @@ class Code extends React.Component<any, any> {
         tip: item.path,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', zIndex: 9999 }}
-          dark={Window.config.dark}
+          dark={this.props.UI.isDark}
           content={this.menu(item)}
           trigger='contextMenu'
           placement='bottom'
@@ -99,13 +98,13 @@ class Code extends React.Component<any, any> {
           ? <MonacoDiff
             language={item.language}
             key={item.path + 'diff'}
-            theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
+            theme={this.props.UI.isDark ? 'vs-dark' : 'vs-light'}
             original={item.stagedValue}
             value={item.value}
           /> : <Monaco
             path={item.path}
             key={item.path}
-            theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
+            theme={this.props.UI.isDark ? 'vs-dark' : 'vs-light'}
             language={item.language}
             value={item.value}
             onChange={
@@ -117,79 +116,83 @@ class Code extends React.Component<any, any> {
           />
       })
     })
-    let theme = Window.config.dark ? '-dark' : ''
-    return <div className={`app-code${theme}`}>
-      {
-        tabs.length === 0 ? <div className='app-code-none'>
-          <i className='iconfont icon-tools'></i>
-        </div> : <Tabs
-            dark={Window.config.dark}
-            dataList={tabs}
-            activeKey={currentFile.diffEditor ? currentFile.path + 'diff' : currentFile.path}
-            close
-            onClick={
-              (node) => {
-                openFile(node)
-              }
-            }
-            onRemove={
-              (node) => {
-                this.fileNode = node
-                if (node.notSave) {
-                  this.setState({
-                    visible: true,
-                    closeType: 0
-                  })
-                } else {
-                  closeFile(node)
+    let theme = this.props.UI.isDark ? '-dark' : ''
+    return <Loading
+      style={{ height: '100%', width: '100%' }}
+      loading={tabLoading}>
+      <div className={`app-code${theme}`}>
+        {
+          tabs.length === 0 ? <div className='app-code-none'>
+            <i className='iconfont icon-tools'></i>
+          </div> : <Tabs
+              dark={this.props.UI.isDark}
+              dataList={tabs}
+              activeKey={currentFile.diffEditor ? currentFile.path + 'diff' : currentFile.path}
+              close
+              onClick={
+                (node) => {
+                  openFile(node)
                 }
               }
-            }
-          />
-      }
-      <Modal
-        title="提示"
-        closable
-        footer={null}
-        dark={Window.config.dark}
-        mask
-        visible={this.state.visible}
-        content={
-          <div className='explorer-model-delete'>
-            <i className='iconfont icon-iconfontcolor100-copy'></i>
-            <span>
-              还有未保存的文件，是否确认关闭？
-            </span>
-          </div>
-        }
-        style={{
-          width: 300,
-          height: 140
-        }}
-        onClose={
-          () => {
-            this.setState({
-              visible: false
-            })
-          }
-        }
-        onOk={
-          () => {
-            this.setState({
-              visible: false
-            }, () => {
-              if(this.state.closeType === 0){
-                closeFile(this.fileNode)
-              } else if(this.state.closeType === 1){
-                closeOther(this.fileNode)
-              } else if(this.state.closeType === 2){
-                closeAll()
+              onRemove={
+                (node) => {
+                  this.fileNode = node
+                  if (node.notSave) {
+                    this.setState({
+                      visible: true,
+                      closeType: 0
+                    })
+                  } else {
+                    closeFile(node)
+                  }
+                }
               }
-            })
-          }
+            />
         }
-      />
-    </div>
+        <Modal
+          title="提示"
+          closable
+          footer={null}
+          dark={this.props.UI.isDark}
+          mask
+          visible={this.state.visible}
+          content={
+            <div className='explorer-model-delete'>
+              <i className='iconfont icon-iconfontcolor100-copy'></i>
+              <span>
+                还有未保存的文件，是否确认关闭？
+            </span>
+            </div>
+          }
+          style={{
+            width: 300,
+            height: 140
+          }}
+          onClose={
+            () => {
+              this.setState({
+                visible: false
+              })
+            }
+          }
+          onOk={
+            () => {
+              this.setState({
+                visible: false
+              }, () => {
+                if (this.state.closeType === 0) {
+                  closeFile(this.fileNode)
+                } else if (this.state.closeType === 1) {
+                  closeOther(this.fileNode)
+                } else if (this.state.closeType === 2) {
+                  closeAll()
+                }
+              })
+            }
+          }
+        />
+      </div>
+    </Loading>
   }
 }
 export { Code }
