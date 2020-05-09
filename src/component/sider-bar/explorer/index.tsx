@@ -1,17 +1,22 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { toJS } from 'mobx'
-import { Tree, Popover, Loading } from 'react-ryui'
+import { Tree, Popover, Loading, Modal } from 'react-ryui'
 import './index.less'
 const Window: any = window
 const $: any = document.querySelector.bind(document)
 @inject('UI', 'FileSystem', 'Mapping')
 @observer
 class Explorer extends React.Component<any, any> {
+  [x: string]: any
   props: any
   folder: any
+  state: any
   constructor(props) {
     super(props)
+    this.state = {
+      visible: false
+    }
   }
   componentDidUpdate() {
     $('#renameing') && $('#renameing').select()
@@ -28,7 +33,10 @@ class Explorer extends React.Component<any, any> {
       </div>,
       <div className='app-explorer-menu-item' onClick={
         () => {
-          this.props.FileSystem.deleteFile(item)
+          this.setState({
+            visible: true
+          })
+          // this.props.FileSystem.deleteFile(item)
         }
       }>
         <span>Delete File</span>
@@ -147,13 +155,13 @@ class Explorer extends React.Component<any, any> {
           } />
       </div>
     }
-    return <span style={{marginLeft: 4}}>{item.name}</span>
+    return <span style={{ marginLeft: 4 }}>{item.name}</span>
   }
   renderExplorer = (node) => {
     return node.map(item => {
       let obj: any = {
         key: item.path,
-        icon:item.icon,
+        icon: item.icon,
         iconColor: item.iconColor,
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
@@ -255,6 +263,44 @@ class Explorer extends React.Component<any, any> {
           />
         </div>
       </div>
+      <Modal
+        title="提示"
+        closable
+        footer={null}
+        dark={Window.config.dark}
+        mask
+        visible={this.state.visible}
+        content={
+          <div className='explorer-model-delete'>
+            <i className='iconfont icon-iconfontcolor100-copy'></i>
+            <span>
+              {
+                this.folder && (this.folder.type === 'file' ? `是否删除文件${this.folder.name}?` : `是否删除文件夹${this.folder.name}?`)
+              }
+            </span>
+          </div>
+        }
+        style={{
+          width: 300,
+          height: 140
+        }}
+        onClose={
+          () => {
+            this.setState({
+              visible: false
+            })
+          }
+        }
+        onOk={
+          () => {
+            this.setState({
+              visible: false
+            }, () => {
+              this.props.FileSystem.deleteFile(this.folder)
+            })
+          }
+        }
+      />
     </Loading>
   }
 }

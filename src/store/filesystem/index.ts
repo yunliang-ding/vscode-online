@@ -95,6 +95,7 @@ class FileSystem {
     if (!this.cacheFiles.some(_cacheFile => { // 不在缓存就发送请求
       return _cacheFile.path === fileNode.path && fileNode.diffEditor === _cacheFile.diffEditor
     })) {
+      this.loading = true
       const { isError, data } = await this.getFile(fileNode.path)
       if (isError) {
         message.error(`打开文件 ${fileNode.name} 异常.`)
@@ -116,27 +117,16 @@ class FileSystem {
     }
     runInAction(() => {
       this.mustRender = Math.random()
+      this.loading = false
     })
   }
   @action closeOther = (node) => {
-    if (this.cacheFiles.some(tab => {
-      return tab.notSave && node.path !== tab.path
-    })) {
-      message.warning('文件未保存')
-    } else {
-      node.selected = true
-      this.cacheFiles = [node]
-      Monaco.updateModelOptions() // 更新modelOptions
-    }
+    node.selected = true
+    this.cacheFiles = [node]
+    Monaco.updateModelOptions() // 更新modelOptions
   }
   @action closeAll = () => {
-    if (this.cacheFiles.some(tab => {
-      return tab.notSave
-    })) {
-      message.warning('文件未保存')
-    } else {
-      this.cacheFiles.length = 0
-    }
+    this.cacheFiles.length = 0
   }
   @action closeFile = (fileNode) => {
     let index = this.cacheFiles.findIndex(file => { // 找到关闭的文件

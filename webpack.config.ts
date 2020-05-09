@@ -50,7 +50,7 @@ const config = {
         }
       }
     }, {
-      test: /\.(png|jpg|gif|svg|ttf)$/,
+      test: /\.(png|jpg|gif|svg|ttf|eot|woff|woff2)$/,
       use: {
         loader: 'file-loader',
         options: {
