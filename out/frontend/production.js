@@ -2,9 +2,9 @@ const fs = require('fs')
 const express = require('express')
 const proxy = require('http-proxy-middleware')
 const app = express()
-const prefix = '/vscode-online'
-const proxyUrl = 'http://localhost:8360'
-const port = 9000
+const prefix = ''
+const proxyUrl = 'http://localhost:8090'
+const port = 80
 // 开启静态资源访问
 app.use(express.static('./frontend/public')) 
 // 接口的代理1
