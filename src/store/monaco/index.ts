@@ -286,6 +286,12 @@ class MonacoService {
     } else {
     }
   }
+  /**
+   * 更新主题
+   */
+  setTheme = (theme) => {
+    monaco.editor.setTheme(theme)
+  }
 }
 const monacoService = new MonacoService()
 export {

@@ -13,6 +13,9 @@ class Monaco extends React.Component<any, any> {
   componentWillUnmount() {
     this.props.Monaco.dispose(this.editor)
   }
+  componentDidUpdate() {
+    this.props.Monaco.setTheme(this.props.theme)
+  }
   componentDidMount() {
     this.editor = this.props.Monaco.init(this.monacoNode, {
       language: this.props.language,

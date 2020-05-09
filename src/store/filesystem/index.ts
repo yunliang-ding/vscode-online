@@ -81,7 +81,7 @@ class FileSystem {
       if (fileNode.type === 'directory') {
         children = this.tansformFiles(fileNode.children, fileNode)
       }
-      let nodeStatus = status.find(item => item.path === fileNode.path) || { status: null, color: null }
+      let nodeStatus = status.find(item => item.path.startsWith(fileNode.path)) || { status: null, color: null }
       fileNode.status = nodeStatus.status
       fileNode.color = nodeStatus.color
       let node = new FileNode(fileNode, false, '', gitignores, children)
