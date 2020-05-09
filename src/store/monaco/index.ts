@@ -8,7 +8,7 @@ import { textMateService } from './syntaxHighlighter'
 import { get } from '../../axios/index'
 const { LanguageMapping } = Mapping
 const Window: any = window
-// const { typescriptDefaults, javascriptDefaults }: any = monaco.languages.typescript
+const { typescriptDefaults, javascriptDefaults }: any = monaco.languages.typescript
 class MonacoService {
   diffEditor: monaco.editor.IStandaloneDiffEditor;
   options: monaco.editor.IEditorConstructionOptions = {
@@ -141,7 +141,7 @@ class MonacoService {
  */
   setCompilerOptions = (compilerOptions) => {
     compilerOptions = compilerOptions.replace(/\n/g, '')
-    // typescriptDefaults._compilerOptions = JSON.parse(compilerOptions)
+    typescriptDefaults._compilerOptions = JSON.parse(compilerOptions)
     this.compilerOptions = JSON.parse(compilerOptions)
   }
   /**
@@ -194,8 +194,8 @@ class MonacoService {
       options.data = options.data.replace(/\n/g, '')
       this.options = JSON.parse(options.data)
     }
-    // typescriptDefaults._compilerOptions = this.compilerOptions
-    // javascriptDefaults._compilerOptions = this.compilerOptions
+    typescriptDefaults._compilerOptions = this.compilerOptions
+    javascriptDefaults._compilerOptions = this.compilerOptions
   }
   createModelByContent = (content, language) => {
     return monaco.editor.createModel(content, language)

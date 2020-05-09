@@ -76,7 +76,6 @@ class Explorer extends React.Component<any, any> {
           autoFocus
           autoComplete='off'
           style={{
-            background: '#444',
             width: '100%',
             height: 20,
             color: '#fff',
@@ -133,7 +132,6 @@ class Explorer extends React.Component<any, any> {
             }
           }
           style={{
-            background: '#444',
             width: '100%',
             height: 20,
             color: '#fff',

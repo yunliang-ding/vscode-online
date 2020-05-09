@@ -98,11 +98,13 @@ class Code extends React.Component<any, any> {
         content: item.diffEditor
           ? <MonacoDiff
             language={item.language}
+            key={item.path + 'diff'}
             theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
             original={item.stagedValue}
             value={item.value}
           /> : <Monaco
             path={item.path}
+            key={item.path}
             theme={Window.config.dark ? 'vs-dark' : 'vs-light'}
             language={item.language}
             value={item.value}

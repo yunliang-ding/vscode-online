@@ -58,7 +58,7 @@ class FileSystem {
     if (!isError && data) {
       await git.queryStatus() // 查询git状态
       runInAction(async () => {
-        this.files = Object.assign({}, data, {children: this.tansformFiles(data.children, {})})
+        this.files = Object.assign({}, data, { children: this.tansformFiles(data.children, {}) })
         this.loading = false
       })
     }
@@ -66,7 +66,7 @@ class FileSystem {
   @action refreshWt = async () => { // 渲染状态树
     this.files.children = this.tansformFiles(this.files.children)
   }
-  @action tansformFiles = (children, parent?:any) => { // 数据排序 + 转换
+  @action tansformFiles = (children, parent?: any) => { // 数据排序 + 转换
     let status = git.getStatusFiles() // git status
     let dir = children.filter(_item => _item.type === 'directory').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
     let files = children.filter(_item => _item.type === 'file').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
@@ -120,9 +120,10 @@ class FileSystem {
       this.loading = false
     })
   }
-  @action closeOther = (node) => {
+  @action closeOther = (node: FileNode) => {
+    this.closeAll()
     node.selected = true
-    this.cacheFiles = [node]
+    this.cacheFiles.push(node)
     Monaco.updateModelOptions() // 更新modelOptions
   }
   @action closeAll = () => {
@@ -240,23 +241,22 @@ class FileSystem {
           if (this.expandFolder.indexOf(fileNode.path) > -1) {
             this.expandFolder.push(newPath)
           }
-          let cacheFile = this.cacheFiles.find(item => item.path === fileNode.path)
-          // 同步已经打开的 cacheFiles
-          if (cacheFile) {
-            if (fileNode.type === 'directory') {
-              let cache = this.cacheFiles.filter(_file => {
-                return _file.path.startsWith(fileNode.path)
-              })
-              cache.map(_item => {
-                _item.path = newPath + '/' + _item.name
-                _item.key = _item.path
-              })
-              this.cacheFiles = [...this.cacheFiles]
-              
-            } else {
+          if (fileNode.type === 'directory') {
+            let cache = this.cacheFiles.filter(_file => {
+              return _file.path.startsWith(fileNode.path)
+            })
+            cache.map(_item => {
+              _item.path = newPath + '/' + _item.name
+              _item.key = _item.path
+            })
+            this.cacheFiles = [...this.cacheFiles]
+
+          } else {
+            let cacheFile = this.cacheFiles.find(item => item.path === fileNode.path)
+            // 同步已经打开的 cacheFiles
+            if (cacheFile) {
               FileNode.ReNameNode(newName, cacheFile)
               this.cacheFiles = [...this.cacheFiles]
-              console.log(toJS(this.cacheFiles))
             }
           }
         })

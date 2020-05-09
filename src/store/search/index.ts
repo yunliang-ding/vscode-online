@@ -48,7 +48,6 @@ class Search {
     let res = []
     if (searchString) {
       monacoService.getModels().forEach(model => {
-        console.log(model)
         let result = model.findMatches(searchString, true, true, true, '', true, 10)
         this.expandFolder.push(model.uri.path) // 自动展开
         if (result.length > 0 && model.uri.scheme === 'file') {
