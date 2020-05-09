@@ -13,6 +13,7 @@ import { get } from '../../axios/index'
 import Mapping from '../mapping/index'
 import { fileSystem } from '../filesystem/index'
 import { Message } from 'react-ryui'
+const $: any = document.querySelector.bind(document)
 const Window: any = window
 const message = new Message({
   duration: 3,
@@ -156,6 +157,7 @@ class GitServices {
     })
     runInAction(() => {
       this.loading = false
+      $('#commit-info').value = ''
     })
     runInAction(async () => {
       await this.queryStatus()

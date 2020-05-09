@@ -249,7 +249,7 @@ class Explorer extends React.Component<any, any> {
             key={mustRender}
             dark={this.props.UI.isDark}
             defaultExpandedKeys={JSON.parse(JSON.stringify(expandFolder))}
-            defaultCheckedKeys={[currentFile.key]}
+            defaultCheckedKeys={[currentFile.path]}
             treeData={data}
             onExpand={
               (e) => {
