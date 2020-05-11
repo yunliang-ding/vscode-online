@@ -119,7 +119,7 @@ class Git extends React.Component<any, any> {
           }>
             <div style={{ display: 'flex', alignItems: 'center', width: 'calc(100% - 20px)' }}>
               <span>
-                <span style={{ marginRight: 8, opacity: 0.6, textDecoration: item.status === 'D' ? 'line-through' : 'unset' }}>
+                <span style={{ margin: '0 8px', opacity: 0.6, textDecoration: item.status === 'D' ? 'line-through' : 'unset' }}>
                   {item.name}
                 </span>
                 <span>{item.dir}</span>

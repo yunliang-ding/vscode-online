@@ -269,9 +269,10 @@ class MonacoService {
   settingMonaco = async () => {
     this.initMonacoOptions() // 初始化 options
     this.initGoToDefinitionCrossModels()
+    this.addExtraLib() // 添加第三方依赖
   }
   addExtraLib = async () => {
-    const { isError, data } = await fileSystem.getFile(`${fileSystem.baseUrl}/.vscode/extraLibs.json`)
+    const { isError, data } = await fileSystem.getFile(`${fileSystem.baseUrl}/.vscode/extralibs.json`)
     if (!isError) {
       let extraLibs = JSON.parse(data)
       for (let i = 0; i < extraLibs.length; i++) {

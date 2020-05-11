@@ -38,7 +38,7 @@ class Explorer extends React.Component<any, any> {
         }
       }>
         <span>Delete File</span>
-        <i className='iconfont icon-shanchu'></i>
+        <i className='codicon codicon-trash'></i>
       </div>
     ]
     if (item.type !== 'file') {
@@ -49,7 +49,7 @@ class Explorer extends React.Component<any, any> {
           }
         }>
           <span>New File</span>
-          <i className='iconfont icon-tianjiawenjian'></i>
+          <i className='codicon codicon-new-file'></i>
         </div>,
         <div className='app-explorer-menu-item' onClick={
           () => {
@@ -57,7 +57,7 @@ class Explorer extends React.Component<any, any> {
           }
         }>
           <span>New Folder</span>
-          <i className='iconfont icon-jiemu_jiemu_tianjiawenjianjia'></i>
+          <i className='codicon codicon-new-folder'></i>
         </div>
       )
     }
@@ -192,8 +192,13 @@ class Explorer extends React.Component<any, any> {
               item.status && <div style={{
                 color: item.color,
                 width: 20,
-                textAlign: 'center'
-              }}>{item.status}</div>
+                display: 'flex',
+                justifyContent: 'center'
+              }}>
+              {
+                item.type === 'file' ? item.status : <div className='app-gitstatus-dot' style={{ background: item.color }} />
+              }
+              </div>
             }
           </div>
         </Popover>
@@ -223,7 +228,7 @@ class Explorer extends React.Component<any, any> {
                 this.props.FileSystem.newFileTobe(this.props.FileSystem.files, true)
               }
             }></i>
-            <i className='codicon  codicon-new-folder' onClick={
+            <i className='codicon codicon-new-folder' onClick={
               () => {
                 this.props.FileSystem.newFolderTobe(this.props.FileSystem.files, true)
               }

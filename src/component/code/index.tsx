@@ -122,6 +122,16 @@ class Code extends React.Component<any, any> {
       loading={tabLoading}>
       <div className={`app-code${theme}`}>
         {
+          tabs.length > 0 && <div className='app-code-tools'>
+            <i title='Open Changes' className='codicon codicon-compare-changes' onClick={
+              () => {
+                this.props.FileSystem.openStageFile() // 打开当前选中的git记录
+              }
+            }></i>
+            <i title='More Actions' className='codicon codicon-more'></i>
+          </div>
+        }
+        {
           tabs.length === 0 ? <div className='app-code-none'>
             <i className='iconfont icon-tools'></i>
           </div> : <Tabs

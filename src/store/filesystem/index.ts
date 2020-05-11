@@ -319,7 +319,7 @@ class FileSystem {
   }
   @action closeFolder = (children) => { // 关闭文件夹下所有文件
     children.forEach(fileNode => {
-      if(fileNode.type === 'directory'){
+      if (fileNode.type === 'directory') {
         this.closeFolder(fileNode.children)
       } else {
         this.closeFile(fileNode)
@@ -379,6 +379,18 @@ class FileSystem {
     }
     let node = new FileNode(fileNode, false, '', false, null)
     return node
+  }
+  /**
+   * 打开当前选中的git记录
+  */
+  @action openStageFile = async () => {
+    let fileNode = Object.assign({}, this.queryCurrentNode()) // simple deep
+    if (git.getStatusFiles().some(item => item.path === fileNode.path)) { // 有记录才打开
+      fileNode.prefix = ' (WorkTree)'
+      fileNode.diffEditor = true
+      await git.queryStagedText(fileNode)
+      await this.openFile(fileNode)
+    }
   }
 }
 const fileSystem = new FileSystem()

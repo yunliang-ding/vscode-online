@@ -20,7 +20,7 @@ class Search extends React.Component<any, any> {
         key: item.type === 'directory' ? item.path : item.path + '(file)',
         icon: `iconfont ${item.icon}`,
         iconColor: item.iconColor,
-        label: <div title={item.path} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onClick={
+        label: <div title={item.path} style={{ marginLeft: 4, width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onClick={
           (e) => {
             item.type === 'file' && e.stopPropagation()
             item.type === 'file' && this.openFile(item)
