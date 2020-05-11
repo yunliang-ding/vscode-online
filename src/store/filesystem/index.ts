@@ -81,7 +81,9 @@ class FileSystem {
       if (fileNode.type === 'directory') {
         children = this.tansformFiles(fileNode.children, fileNode)
       }
-      let nodeStatus = status.find(item => item.path.startsWith(fileNode.path)) || { status: null, color: null }
+      let nodeStatus = status.find(item => {
+        return (item.path.startsWith(fileNode.path) && item.path[fileNode.path.length] === '/') || item.path === fileNode.path
+      }) || { status: null, color: null }
       fileNode.status = nodeStatus.status
       fileNode.color = nodeStatus.color
       let node = new FileNode(fileNode, false, '', gitignores, children)
@@ -315,13 +317,22 @@ class FileSystem {
       this.mustRender = Math.random()
     })
   }
+  @action closeFolder = (children) => { // 关闭文件夹下所有文件
+    children.forEach(fileNode => {
+      if(fileNode.type === 'directory'){
+        this.closeFolder(fileNode.children)
+      } else {
+        this.closeFile(fileNode)
+      }
+    })
+  }
   @action deleteFile = async (fileNode) => {
-    const { isError, error } = await post('/api/file/delete', {
+    const { isError } = await post('/api/file/delete', {
       path: fileNode.path.substr(0, fileNode.path.lastIndexOf('/')),
       filename: fileNode.name
     }, {})
     if (!isError) {
-      this.closeFile(fileNode)
+      fileNode.type === 'directory' ? this.closeFolder(fileNode.children) : this.closeFile(fileNode)
       await git.queryStatus()
       await this.queryFiles()
     } else {
