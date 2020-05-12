@@ -279,7 +279,7 @@ class MonacoService {
         const [[key, value]] = Window.Object.entries(extraLibs[i])
         const { isError, data } = await fileSystem.getFile(`${fileSystem.baseUrl}${value}`)
         if (!isError) {
-          monaco.languages.typescript.typescriptDefaults.addExtraLib(data, `file:///node_modules/@types/${key}/index.d.ts`)
+          monaco.languages.typescript.typescriptDefaults.addExtraLib(data, `file://${fileSystem.baseUrl}/node_modules/@types/${key}/index.d.ts`)
           monaco.editor.createModel(data, 'typescript', this.getUri(`${fileSystem.baseUrl}${value}`))
         } else {
         }

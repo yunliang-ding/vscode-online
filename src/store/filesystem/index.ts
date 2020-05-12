@@ -61,7 +61,7 @@ class FileSystem {
     if (!isError && data) {
       await git.queryStatus() // 查询git状态
       runInAction(async () => {
-        this.files = Object.assign({}, data, { children: this.tansformFiles(data.children, {}) })
+        this.files = Object.assign({}, data, { children: this.tansformFiles(data.children) })
         this.loading = false
       })
     }
@@ -69,7 +69,7 @@ class FileSystem {
   @action refreshWt = async () => { // 渲染状态树
     this.files.children = this.tansformFiles(this.files.children)
   }
-  @action tansformFiles = (children, parent?: any) => { // 数据排序 + 转换
+  @action tansformFiles = (children) => { // 数据排序 + 转换
     let status = git.getStatusFiles() // git status
     let dir = children.filter(_item => _item.type === 'directory').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
     let files = children.filter(_item => _item.type === 'file').sort((a, b) => { return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 })
@@ -79,7 +79,7 @@ class FileSystem {
       let gitignores = false // 暂时不做
       let children = null
       if (fileNode.type === 'directory') {
-        children = this.tansformFiles(fileNode.children, fileNode)
+        children = this.tansformFiles(fileNode.children)
       }
       let nodeStatus = status.find(item => {
         return (item.path.startsWith(fileNode.path) && item.path[fileNode.path.length] === '/') || item.path === fileNode.path
@@ -385,8 +385,10 @@ class FileSystem {
   */
   @action openStageFile = async () => {
     let fileNode = Object.assign({}, this.queryCurrentNode()) // simple deep
-    if (git.getStatusFiles().some(item => item.path === fileNode.path)) { // 有记录才打开
-      fileNode.prefix = ' (WorkTree)'
+    let status = git.getStatusFiles().find(item => item.path === fileNode.path)
+    console.log('status', status)
+    if (status) { // 有记录才打开
+      fileNode.prefix =  status.isStaged ? ' (Staged)' : status.status === 'U' ? ' (Untracked)' : ' (WorkTree)'
       fileNode.diffEditor = true
       await git.queryStagedText(fileNode)
       await this.openFile(fileNode)

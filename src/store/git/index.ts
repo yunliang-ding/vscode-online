@@ -56,7 +56,7 @@ class GitServices {
             let name = dir.join('/')
             name = dir.pop()
             let extension = name.substr(name.lastIndexOf('.'))
-            let prefix = _file.inWorkingTree === 0 ? ' (Staged)' : ' (WorkTree)'
+            let prefix = _file.inWorkingTree === 0 ? ' (Staged)' : _file.status[0] === 'WT_NEW' ? ' (Untracked)' : ' (WorkTree)'
             let path = fileSystem.files.path + '/' + _file.path
             const node = {
               diffEditor: true,
