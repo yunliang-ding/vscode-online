@@ -10,8 +10,20 @@ class LoaderPanel extends React.Component<any, any> {
   }
   render() {
     let theme = this.props.UI.isDark ? '-dark' : ''
+    const { stepInfos } = this.props.Loader
     return <div className={`app-loader-panel${theme}`}>
-      app-loader-panel
+      <div className='app-loader-panel-header'>
+        <i className='iconfont icon-tools'></i>
+      </div>
+      <div className='app-loader-panel-message'>
+        <div className='inner-box'>
+          {
+            stepInfos.map((item, index) => {
+              return <p key={index}>{item.message}</p>
+            })
+          }
+        </div>
+      </div>
     </div>
   }
 }

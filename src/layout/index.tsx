@@ -44,29 +44,32 @@ class Layout extends React.Component<any, any> {
       }
     }>
       {
-        this.props.Loader.loading ? <LoaderPanel /> : <div className='app-layout-body'>
-          <ActivityBar />
-          <SplitPane
-            split="vertical"
-            defaultSize={300}
-            minSize={200}
-            maxSize={600}
-            onDragStarted={() => (document.body.style.cursor = 'col-resize')}
-            onDragFinished={
-              () => {
-                document.body.style.cursor = 'auto'
-              }
-            }
-          >
-            <SiderBar />
-            <Code />
-          </SplitPane>
-        </div>
+        this.props.Loader.loading && <LoaderPanel />
       }
+      <div className='app-layout-body' style={{
+        visibility: this.props.Loader.loading ? 'hidden' : 'visible'
+      }}>
+        <ActivityBar />
+        <SplitPane
+          split="vertical"
+          defaultSize={300}
+          minSize={200}
+          maxSize={600}
+          onDragStarted={() => (document.body.style.cursor = 'col-resize')}
+          onDragFinished={
+            () => {
+              document.body.style.cursor = 'auto'
+            }
+          }
+        >
+          <SiderBar />
+          <Code />
+        </SplitPane>
+      </div>
       <div className='app-layout-footer'>
         <Footer />
       </div>
-    </div>
+    </div >
   }
 }
 export { Layout }

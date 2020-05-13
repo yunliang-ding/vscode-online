@@ -6,6 +6,7 @@ import { fileSystem } from '../filesystem/index'
 import { observable, action, runInAction, toJS } from 'mobx'
 import { textMateService } from './syntaxHighlighter'
 import { get } from '../../axios/index'
+import { loader } from '../loader/index'
 const { LanguageMapping } = Mapping
 const Window: any = window
 const { typescriptDefaults, javascriptDefaults }: any = monaco.languages.typescript

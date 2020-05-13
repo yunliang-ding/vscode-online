@@ -3,6 +3,7 @@ import { get, post } from '../../axios/index'
 import { FileNode } from './file'
 import { monacoService as Monaco } from '../monaco/index'
 import { git } from '../git/index'
+import { loader } from '../loader/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { Message } from 'react-ryui'
 const $: any = document.querySelector.bind(document)
@@ -56,6 +57,10 @@ class FileSystem {
     if (data === null) {
       runInAction(() => {
         message.error('项目加载异常.')
+        loader.addStepInfos({
+          isError: true,
+          message: '项目加载异常.'
+        })
         this.loading = false
       })
     }
@@ -64,6 +69,10 @@ class FileSystem {
       runInAction(async () => {
         this.files = Object.assign({}, data, { children: this.tansformFiles(data.children) })
         this.loading = false
+      })
+      loader.addStepInfos({
+        isError: false,
+        message: '项目加载完毕.'
       })
     }
   }

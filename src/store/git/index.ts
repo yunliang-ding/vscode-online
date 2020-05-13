@@ -12,6 +12,7 @@ import { observable, action, runInAction, toJS } from 'mobx'
 import { get } from '../../axios/index'
 import Mapping from '../mapping/index'
 import { fileSystem } from '../filesystem/index'
+import { loader } from '../loader/index'
 import { Message } from 'react-ryui'
 const $: any = document.querySelector.bind(document)
 const Window: any = window
@@ -92,9 +93,17 @@ class GitServices {
       if (!isError) {
         runInAction(() => {
           this.git.branch = data
+          loader.addStepInfos({
+            isError: true,
+            message: 'git 信息加载完毕.'
+          })
         })
       } else {
         message.error(`查询分支异常.`)
+        loader.addStepInfos({
+          isError: true,
+          message: '查询分支异常.'
+        })
       }
     }
   }
