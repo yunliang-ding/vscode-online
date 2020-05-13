@@ -15,6 +15,7 @@ const message = new Message({
 class FileSystem {
   @observable baseUrl = ''
   @observable mustRender = 0
+  @observable modelNumber = 0
   @observable dragFile: FileNode
   @observable loading: boolean = false
   @observable tabLoading: boolean = false
@@ -67,6 +68,7 @@ class FileSystem {
     }
   }
   @action refreshWt = async () => { // 渲染状态树
+    this.modelNumber = 0 // 重制
     this.files.children = this.tansformFiles(this.files.children)
   }
   @action tansformFiles = (children) => { // 数据排序 + 转换
@@ -87,6 +89,9 @@ class FileSystem {
       fileNode.status = nodeStatus.status
       fileNode.color = nodeStatus.color
       let node = new FileNode(fileNode, false, '', gitignores, children)
+      if (['.ts', '.tsx'].indexOf(fileNode.extension) > -1) {
+        this.modelNumber ++
+      }
       return node
     })
   }

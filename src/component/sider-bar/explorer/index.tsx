@@ -4,7 +4,7 @@ import { toJS } from 'mobx'
 import { Tree, Popover, Loading, Modal } from 'react-ryui'
 import './index.less'
 const $: any = document.querySelector.bind(document)
-@inject('UI', 'FileSystem', 'Mapping')
+@inject('UI', 'FileSystem')
 @observer
 class Explorer extends React.Component<any, any> {
   [x: string]: any

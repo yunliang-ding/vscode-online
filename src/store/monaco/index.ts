@@ -267,9 +267,9 @@ class MonacoService {
     editorMonaco && editorMonaco.focus() // focus
   }
   settingMonaco = async () => {
-    this.initMonacoOptions() // 初始化 options
-    this.initGoToDefinitionCrossModels()
-    this.addExtraLib() // 添加第三方依赖
+    await this.initMonacoOptions() // 初始化 options
+    await this.initGoToDefinitionCrossModels()
+    await this.addExtraLib() // 添加第三方依赖
   }
   addExtraLib = async () => {
     const { isError, data } = await fileSystem.getFile(`${fileSystem.baseUrl}/.vscode/extralibs.json`)
@@ -281,10 +281,8 @@ class MonacoService {
         if (!isError) {
           monaco.languages.typescript.typescriptDefaults.addExtraLib(data, `file://${fileSystem.baseUrl}/node_modules/@types/${key}/index.d.ts`)
           monaco.editor.createModel(data, 'typescript', this.getUri(`${fileSystem.baseUrl}${value}`))
-        } else {
         }
       }
-    } else {
     }
   }
   /**

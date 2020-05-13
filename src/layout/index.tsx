@@ -1,10 +1,10 @@
 import * as React from "react"
 import SplitPane from 'react-split-pane'
-import { ActivityBar, SiderBar, Code, Footer } from 'component'
+import { ActivityBar, SiderBar, Code, Footer, LoaderPanel } from 'component'
 import { observer, inject } from 'mobx-react'
 import './index.less'
 const Window: any = window
-@inject('UI', 'FileSystem', 'Git', 'Monaco', 'WorkerStore')
+@inject('UI', 'Loader')
 @observer
 class Layout extends React.Component<any, any> {
   props: any
@@ -28,16 +28,11 @@ class Layout extends React.Component<any, any> {
     }, false);
   }
   init = async () => {
-    let hash = location.hash.substr(1)
-    if (hash.endsWith('/')) {
-      hash = hash.substr(0, hash.length - 1)
+    let path = location.hash.substr(1)
+    if (path.endsWith('/')) {
+      path = path.substr(0, path.length - 1)
     }
-    await this.props.FileSystem.setBaseUrl(hash) // 设置项目path
-    await this.props.FileSystem.queryFiles() // 加载项目
-    await this.props.Git.queryBranch() // 加载分支
-    await this.props.Git.waitCommited() // 等待push
-    await this.props.Monaco.settingMonaco() // 配置monaco
-    await this.props.WorkerStore.init() // worker
+    this.props.Loader.start(path) // 加载项目
   }
   componentWillMount() {
     this.init()
@@ -48,24 +43,26 @@ class Layout extends React.Component<any, any> {
         e.preventDefault()
       }
     }>
-      <div className='app-layout-body'>
-        <ActivityBar />
-        <SplitPane
-          split="vertical"
-          defaultSize={300}
-          minSize={200}
-          maxSize={600}
-          onDragStarted={() => (document.body.style.cursor = 'col-resize')}
-          onDragFinished={
-            () => {
-              document.body.style.cursor = 'auto'
+      {
+        this.props.Loader.loading ? <LoaderPanel /> : <div className='app-layout-body'>
+          <ActivityBar />
+          <SplitPane
+            split="vertical"
+            defaultSize={300}
+            minSize={200}
+            maxSize={600}
+            onDragStarted={() => (document.body.style.cursor = 'col-resize')}
+            onDragFinished={
+              () => {
+                document.body.style.cursor = 'auto'
+              }
             }
-          }
-        >
-          <SiderBar />
-          <Code />
-        </SplitPane>
-      </div>
+          >
+            <SiderBar />
+            <Code />
+          </SplitPane>
+        </div>
+      }
       <div className='app-layout-footer'>
         <Footer />
       </div>
