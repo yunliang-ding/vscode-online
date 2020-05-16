@@ -39,6 +39,13 @@ class Explorer extends React.Component<any, any> {
       }>
         <span>Delete File</span>
         <i className='codicon codicon-trash'></i>
+      </div>,
+       <div className='app-explorer-menu-item' onClick={
+        () => {
+        }
+      }>
+        <span>{ item.type === 'file' ? 'Download File' : 'Download Folder'}</span>
+        <i className='iconfont icon-xiazai'></i>
       </div>
     ]
     if (item.type !== 'file') {
