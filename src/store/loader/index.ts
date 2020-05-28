@@ -4,7 +4,7 @@ import { git } from '../git/index'
 import { monacoService } from '../monaco/index'
 import { workerStore } from '../worker/index'
 class Loader {
-  @observable loading = false // 是否加载中
+  @observable loading = true // 是否加载中
   @observable stepInfos = [] // 步骤信息
   @action start = async (path) => {
     this.loading = true
@@ -31,6 +31,9 @@ class Loader {
   }
   @action clearStepInfos = (): void => {
     this.stepInfos = []
+  }
+  @action setLoading = (loading:boolean): void => {
+    this.loading = loading
   }
 }
 const loader = new Loader()

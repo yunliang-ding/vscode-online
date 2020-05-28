@@ -1,7 +1,6 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import './index.less'
-const Window: any = window
 @inject('UI', 'Git')
 @observer
 class Footer extends React.Component<any, any> {
@@ -15,7 +14,7 @@ class Footer extends React.Component<any, any> {
     return <div className={`app-footer${theme}`}>
       {
         isGitProject && <div>
-          {branch}    {waitCommitCount}    <i className='iconfont icon-jsontijiao'></i>
+          {branch}    {waitCommitCount}    <i className='iconfont icon-jiantou'></i>
         </div>
       }
     </div>

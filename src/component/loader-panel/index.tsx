@@ -8,6 +8,16 @@ class LoaderPanel extends React.Component<any, any> {
   constructor(props) {
     super(props)
   }
+  init = async () => {
+    let path = location.hash.substr(1)
+    if (path.endsWith('/')) {
+      path = path.substr(0, path.length - 1)
+    }
+    this.props.Loader.start(path) // 加载项目
+  }
+  componentWillMount() {
+    this.init()
+  }
   render() {
     let theme = this.props.UI.isDark ? '-dark' : ''
     const { stepInfos } = this.props.Loader

@@ -3,8 +3,8 @@ const $: any = document.querySelector.bind(document)
 const Window: any = window
 class UI {
   @observable loading = false
-  @observable login = false
-  @observable isDark = true // 默认黑色主题
+  @observable login = localStorage.getItem("token") === '930226'
+  @observable isDark = localStorage.getItem("theme") !== 'light' // 默认黑色主题
   @observable currentTab = 'Explorer'
   @observable fullScreen = false
   @observable tabList = [{
@@ -35,10 +35,12 @@ class UI {
       Window.config.dark = true
       let href = $('#style-theme').getAttribute('href').replace('light', 'dark')
       $('#style-theme').setAttribute('href', href)
+      localStorage.setItem("theme", 'dark')
     } else {
       Window.config.dark = false
       let href = $('#style-theme').getAttribute('href').replace('dark', 'light')
       $('#style-theme').setAttribute('href', href)
+      localStorage.setItem("theme", 'light')
     }
   }
 }

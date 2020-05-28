@@ -1,12 +1,14 @@
-import { ActivityBar } from './activity-bar'
-import { SiderBar } from './sider-bar'
-import { Code } from './code'
-import { Footer } from './footer'
-import { LoaderPanel } from './loader-panel'
+import { ActivityBar } from './activity-bar/index'
+import { SiderBar } from './sider-bar/index'
+import { Code } from './code/index'
+import { Footer } from './footer/index'
+import { LoaderPanel } from './loader-panel/index'
+import { Login } from './login/index'
 export {
   ActivityBar,
   SiderBar,
   Code,
   Footer,
-  LoaderPanel
+  LoaderPanel,
+  Login
 }
