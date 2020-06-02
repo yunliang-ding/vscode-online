@@ -5,10 +5,7 @@ node/app/
 
 out/log
 out/backend/node_modules
-out/backend/app
-out/backend/src
 out/frontend/node_modules
-out/frontend/public
 
 .vscode/
 .DS_Store

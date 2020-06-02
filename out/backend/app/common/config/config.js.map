@@ -1,0 +1,14 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/common/config/config.js"
+    ],
+    "names": [
+        "port"
+    ],
+    "mappings": "AAAA;AACA;;;;;kBAGe;AACb;AACAA,QAAM;AAFO,C",
+    "file": "../../../src/common/config/config.js",
+    "sourcesContent": [
+        "'use strict';\n/**\n * config\n */\nexport default {\n  //key: value\n  port: 8090\n};"
+    ]
+}
