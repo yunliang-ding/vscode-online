@@ -35,6 +35,9 @@ class Loader {
   @action setLoading = (loading:boolean): void => {
     this.loading = loading
   }
+  @action setLastStepInfos = (info) => {
+    this.stepInfos[this.stepInfos.length - 1] = info
+  }
 }
 const loader = new Loader()
 export {

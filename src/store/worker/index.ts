@@ -1,12 +1,13 @@
 import { monacoService } from '../monaco/index'
 import { fileSystem } from '../filesystem/index'
+import { loader } from '../loader/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { fromCode } from '../../axios/util'
 class WorkerStore {
   worker: Worker
   loadModelNumber:number
   init = async () => {
-    return new Promise(resolve => {
+    return fileSystem.modelNumber > 0 ? new Promise(resolve => {
       this.loadModelNumber = 0
       this.worker = this.createWorker(() => {
         const axios = new XMLHttpRequest();
@@ -36,10 +37,18 @@ class WorkerStore {
           resolve(true) // 告诉外面结束了，不用等待了
         }
         const { content, path } = JSON.parse(event.data)
+        if(this.loadModelNumber === 1){
+          loader.addStepInfos({isError: false, message: `加载:${path}`})
+        } else {
+          loader.setLastStepInfos({
+            isError: false,
+            message: `加载:${path}`
+          })
+        }
         monaco.editor.createModel(fromCode(content), 'typescript', monacoService.getUri(path))
       }
       this.worker.postMessage(JSON.stringify(fileSystem.files.children))
-    })
+    }) : null
   }
   createWorker = (f) => {
     var blob = new Blob(['(' + f.toString() + ')()']);
