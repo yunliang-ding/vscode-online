@@ -51,7 +51,7 @@
     "typescript": "^3.6.3",
     "webpack": "^4.39.1",
     "webpack-cli": "^3.3.6",
-    "webpack-devserver": "0.0.6",
+    "webpack-dev-server":"3.11.0",
     "@types/node": "12.7.5",
     "@types/react": "^16.0.25",
     "@types/react-dom":"16.9.4"
