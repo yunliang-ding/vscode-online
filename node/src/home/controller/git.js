@@ -2,39 +2,39 @@
 import Base from './base.js';
 const { exec } = require('child_process')
 const Git = require("nodegit");
-const statusMapping = new Proxy({
-  'A ': {
-    inWorkingTree: 0,
-    status: ["INDEX_NEW"]
-  },
-  '??': {
-    inWorkingTree: 1,
-    status: ["WT_NEW"]
-  },
-  'M ': {
-    inWorkingTree: 0,
-    status: ["INDEX_MODIFIED"]
-  },
-  ' M': {
-    inWorkingTree: 1,
-    status: ["WT_MODIFIED"]
-  },
-  'D ': {
-    inWorkingTree: 0,
-    status: ["INDEX_DELETED"]
-  },
-  ' D': {
-    inWorkingTree: 1,
-    status: ["WT_DELETED"]
-  }
-}, {
-  get: (target, key, receiver) => {
-    return target[key] || {
-      inWorkingTree: 0,
-      status: 0
-    }
-  }
-})
+// const statusMapping = new Proxy({
+//   'A ': {
+//     inWorkingTree: 0,
+//     status: ["INDEX_NEW"]
+//   },
+//   '??': {
+//     inWorkingTree: 1,
+//     status: ["WT_NEW"]
+//   },
+//   'M ': {
+//     inWorkingTree: 0,
+//     status: ["INDEX_MODIFIED"]
+//   },
+//   ' M': {
+//     inWorkingTree: 1,
+//     status: ["WT_MODIFIED"]
+//   },
+//   'D ': {
+//     inWorkingTree: 0,
+//     status: ["INDEX_DELETED"]
+//   },
+//   ' D': {
+//     inWorkingTree: 1,
+//     status: ["WT_DELETED"]
+//   }
+// }, {
+//   get: (target, key, receiver) => {
+//     return target[key] || {
+//       inWorkingTree: 0,
+//       status: 0
+//     }
+//   }
+// })
 export default class extends Base {
   async statusAction() {
     try {

@@ -115,7 +115,8 @@ const StatusMapping = new Proxy({
   "WT_DELETED": 'D',
   "INDEX_NEW": 'U',
   "INDEX_MODIFIED": 'M',
-  "INDEX_DELETED": 'D'
+  "INDEX_DELETED": 'D',
+  "CONFLICTED": 'C'
 }, {
   get: (target, key: string, receiver) => {
     return target[key] || '?'
@@ -128,7 +129,7 @@ const StatusColorMapping = new Proxy({
   "WT_DELETED": '#f44336',
   "INDEX_NEW": '#73c991',
   "INDEX_MODIFIED": '#e2c08d',
-  "INDEX_DELETED": '#f44336'
+  "CONFLICTED": '#4757ab'
 }, {
   get: (target, key: string, receiver) => {
     return target[key] || '#1e1e1e'
