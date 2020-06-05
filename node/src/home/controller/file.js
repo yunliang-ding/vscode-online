@@ -234,11 +234,11 @@ export default class extends Base {
     }
   }
   async downloadAction(){
-    let { path, type } = this.get()
+    let { path, type } = this.post()
     let name = path.split('/').slice(-1)[0]
     if(type === 'dir'){
       // 压缩文件夹
-      await this.fileCommand(`cd ${path}; zip ${name}.zip ${path}`)
+      await this.fileCommand(`cd ${path}; zip -r ${name}.zip ${path}`)
       path += '.zip' // 生成压缩文件
       this.download(path, name + '.zip')
       // 删除临时压缩文件

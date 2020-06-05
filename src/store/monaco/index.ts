@@ -152,11 +152,12 @@ class MonacoService {
       if (!source) {
         return Promise.resolve(null);
       }
+      console.log('input', input)
       return Promise.resolve(this.doOpenEditor(source, input));
     }
     StandaloneCodeEditorServiceImpl.prototype.doOpenEditor = (editor, input) => {
       // 获取引用文件路径
-      const path = input.resource.fsPath
+      const path = input.resource.path
       // 不在项目就调用外部路径生成 FileNode
       let fileNode = fileSystem.getFileNodeByPath(path, '', '')
       let selection = input.options.selection
