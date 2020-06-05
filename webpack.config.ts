@@ -18,7 +18,7 @@ function getIPAdress() {
 const config = {
   entry: './src/index.tsx',
   output: {
-    path: process.env.NODE_ENV == "production" ? path.resolve(__dirname, './out/frontend/public/') : path.resolve(__dirname, 'www/'),
+    path: process.env.NODE_ENV == "production" ? path.resolve(__dirname, '../workbench-build/frontend/public/') : path.resolve(__dirname, 'www/'),
     filename: 'app.js'
   },
   resolve: {
@@ -84,7 +84,7 @@ const config = {
     contentBase: './www',
     proxy: [{
       context: ['/api'],
-      target: `http://49.233.85.54:8090`,
+      target: `http://${getIPAdress()}:8090`,
       pathRewrite: { '^/api': '' },
       changeOrigin: true,
       secure: true

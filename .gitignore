@@ -1,11 +1,5 @@
 node_modules/
-
 node/node_modules/
 node/app/
-
-out/log
-out/backend/node_modules
-out/frontend/node_modules
-
 .vscode/
 .DS_Store
