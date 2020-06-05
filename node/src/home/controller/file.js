@@ -233,4 +233,18 @@ export default class extends Base {
       }
     }
   }
+  async downloadAction(){
+    let { path, type } = this.get()
+    let name = path.split('/').slice(-1)[0]
+    if(type === 'dir'){
+      // 压缩文件夹
+      await this.fileCommand(`cd ${path}; zip ${name}.zip ${path}`)
+      path += '.zip' // 生成压缩文件
+      this.download(path, name + '.zip')
+      // 删除临时压缩文件
+      // this.fileCommand(`cd ${path}; rm -rf ${name}.zip`)
+    } else {
+      this.download(path, name)
+    }
+  }
 }
