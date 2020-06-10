@@ -1,4 +1,5 @@
 const path = require("path")
+const packageName = require('./package.json').name;
 const os = require('os')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 function getIPAdress() {
@@ -19,7 +20,11 @@ const config = {
   entry: './src/index.tsx',
   output: {
     path: process.env.NODE_ENV == "production" ? path.resolve(__dirname, '../workbench-build/frontend/public/') : path.resolve(__dirname, 'www/'),
-    filename: 'app.js'
+    filename: 'app.js',
+    library: `${packageName}-[name]`,
+    libraryTarget: 'umd',
+    jsonpFunction: `webpackJsonp_${packageName}`,
+    publicPath: `http://49.233.85.54:${process.env.NODE_ENV == "production" ? 8001 : 9000}/`
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
@@ -78,7 +83,7 @@ const config = {
   },
   devServer: {
     host: getIPAdress(),
-    port: 8080,
+    port: 9000,
     hot: true,
     compress: true,
     contentBase: './www',

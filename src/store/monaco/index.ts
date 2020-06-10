@@ -47,7 +47,7 @@ class MonacoService {
     let oldDecorations = []
     let model = monaco.editor.getModel(this.getUri(options.path)) || monaco.editor.createModel(options.value, options.language, this.getUri(options.path))
     model.setValue(options.value)
-    let editorMonaco: monaco.editor.IStandaloneCodeEditor = monaco.editor.create(dom, Object.assign({}, options, this.options, { model }), {
+    let editorMonaco: monaco.editor.IStandaloneCodeEditor = monaco.editor.create(dom, Object.assign({tabSize:2}, options, this.options, { model }), {
       textModelService: this.getTextModelService()
     })
     fileSystem.setFileNodeEditorMonacoByPath(editorMonaco, options.path)  // 挂在到 cacheFiles 中
@@ -118,7 +118,7 @@ class MonacoService {
    * 创建diff
    */
   createDiffEditor = (dom, options) => {
-    this.diffEditor = monaco.editor.createDiffEditor(dom, Object.assign({}, options, {
+    this.diffEditor = monaco.editor.createDiffEditor(dom, Object.assign({tabSize:2}, options, {
       selectOnLineNumbers: true,
       automaticLayout: true,
       fontSize: 12,
