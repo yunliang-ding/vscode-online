@@ -152,7 +152,6 @@ class MonacoService {
       if (!source) {
         return Promise.resolve(null);
       }
-      console.log('input', input)
       return Promise.resolve(this.doOpenEditor(source, input));
     }
     StandaloneCodeEditorServiceImpl.prototype.doOpenEditor = (editor, input) => {

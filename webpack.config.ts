@@ -1,7 +1,9 @@
 const path = require("path")
+const webpack = require('webpack');
 const packageName = require('./package.json').name;
 const os = require('os')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const publicPath = process.env.NODE_ENV === "production" ? 'http://49.233.85.54:8001/' : 'http://49.233.85.54:9000/'
 function getIPAdress() {
   let localIPAddress = "";
   let interfaces = os.networkInterfaces();
@@ -24,7 +26,7 @@ const config = {
     library: `${packageName}-[name]`,
     libraryTarget: 'umd',
     jsonpFunction: `webpackJsonp_${packageName}`,
-    publicPath: `http://49.233.85.54:${process.env.NODE_ENV == "production" ? 8001 : 9000}/`
+    publicPath
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
@@ -104,6 +106,9 @@ const config = {
   plugins: [
     new MonacoWebpackPlugin({
       languages: ['javascript', 'json', 'html', 'css', 'less', 'typescript']
+    }),
+    new webpack.DefinePlugin({
+      'process.env.ASSET_PATH': JSON.stringify(publicPath)
     })
   ],
   mode: process.env.NODE_ENV == "development" ? "development" : "production"

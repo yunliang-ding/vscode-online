@@ -24,4 +24,18 @@
     </svg>
   </div>
 </div>
+<script>
+  window.MonacoEnvironment = {
+    getWorkerUrl: function (moduleId, label) {
+      if (label === 'typescript' || label === 'javascript') {
+        return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+            importScripts('${process.env.ASSET_PATH}/typescript.worker.js');`
+        )}`;
+      }
+      return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+          importScripts('${process.env.ASSET_PATH}/editor.worker.js');`
+      )}`;
+    }
+  }
+</script>
 <script src='./app.js'></script>
