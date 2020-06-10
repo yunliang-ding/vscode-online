@@ -408,6 +408,16 @@ class FileSystem {
       await this.openFile(fileNode)
     }
   }
+  /**
+    download
+  */
+  @action downloadFile = async (fileNode) => {
+    window.open(`/api/file/download?path=${fileNode.path}&type=${fileNode.type === 'file' ? 'file' : 'dir'}`)
+    // 删除压缩文件
+    fileNode.name += '.zip'
+    fileNode.path += `/${fileNode.name}`
+    this.deleteFile(fileNode)
+  }
 }
 const fileSystem = new FileSystem()
 export {

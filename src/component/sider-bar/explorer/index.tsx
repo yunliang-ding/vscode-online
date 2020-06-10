@@ -37,14 +37,15 @@ class Explorer extends React.Component<any, any> {
           })
         }
       }>
-        <span>Delete File</span>
+        <span>{item.type === 'file' ? 'Delete File' : 'Delete Folder'}</span>
         <i className='codicon codicon-trash'></i>
       </div>,
-       <div className='app-explorer-menu-item' onClick={
+      <div className='app-explorer-menu-item' onClick={
         () => {
+          this.props.FileSystem.downloadFile(item)
         }
       }>
-        <span>{ item.type === 'file' ? 'Download File' : 'Download Folder'}</span>
+        <span>{item.type === 'file' ? 'Download File' : 'Download Folder'}</span>
         <i className='iconfont icon-xiazai'></i>
       </div>
     ]
@@ -164,7 +165,7 @@ class Explorer extends React.Component<any, any> {
     return node.map(item => {
       let obj: any = {
         key: item.path,
-        icon: item.type === 'file' ? `iconfont ${item.icon}` : this.props.FileSystem.expandFolder.includes(item.path) ? 'codicon codicon-chevron-down' : 'codicon codicon-chevron-down collapsed' ,
+        icon: item.type === 'file' ? `iconfont ${item.icon}` : this.props.FileSystem.expandFolder.includes(item.path) ? 'codicon codicon-chevron-down' : 'codicon codicon-chevron-down collapsed',
         iconColor: item.type === 'file' ? item.iconColor : '#fff',
         label: <Popover
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}
@@ -202,9 +203,9 @@ class Explorer extends React.Component<any, any> {
                 display: 'flex',
                 justifyContent: 'center'
               }}>
-              {
-                item.type === 'file' ? item.status : <div className='app-gitstatus-dot' style={{ background: item.color }} />
-              }
+                {
+                  item.type === 'file' ? item.status : <div className='app-gitstatus-dot' style={{ background: item.color }} />
+                }
               </div>
             }
           </div>
