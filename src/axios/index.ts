@@ -16,7 +16,7 @@ const get = async (url, params) => {
     if (response.data.loginStatusCode === -1) {
       store.UI.setLogin(true)
     }
-    if (url.endsWith('/api/file/getfile')) {
+    if (url.endsWith('/workbench/file/getfile')) {
       response.data.data = fromCode(response.data.data)
     }
     return response.data
@@ -33,7 +33,7 @@ const get = async (url, params) => {
 const post = async (url, data, headers) => {
   store.UI.setLoading(true)
   data = data || {}
-  if (url.endsWith('/api/file/savefile')) {
+  if (url.endsWith('/workbench/file/savefile')) {
     data.content = fromCode(data.content)
   }
   let response = null

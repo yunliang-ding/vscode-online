@@ -88,9 +88,9 @@ const config = {
     compress: true,
     contentBase: './www',
     proxy: [{
-      context: ['/api'],
+      context: ['/workbench'],
       target: `http://${getIPAdress()}:8090`,
-      pathRewrite: { '^/api': '' },
+      pathRewrite: { '^/workbench': '' },
       changeOrigin: true,
       secure: true
     }]

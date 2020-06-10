@@ -225,7 +225,7 @@ class MonacoService {
     return monaco.editor.getModels()
   }
   startBindFile = async (extension?) => {
-    const { isError, data } = await get('/api/file/filelist', {
+    const { isError, data } = await get('/workbench/file/filelist', {
       path: fileSystem.baseUrl,
       createModel: true
     })

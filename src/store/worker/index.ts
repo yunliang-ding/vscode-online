@@ -15,7 +15,7 @@ class WorkerStore {
           data.map(file => {
             if (file.type === 'file') {
               if (['.ts', '.tsx'].indexOf(file.extension) > -1) {
-                axios.open("GET", `${location.origin}/api/file/getfile?path=${file.path}`, false);
+                axios.open("GET", `${location.origin}/workbench/file/getfile?path=${file.path}`, false);
                 axios.send();
                 const { data, isError } = JSON.parse(axios.responseText)
                 if (!isError) {

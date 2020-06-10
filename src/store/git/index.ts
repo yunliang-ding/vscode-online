@@ -40,7 +40,7 @@ class GitServices {
   @action queryStatus = async () => {
     if (this.git.isGitProject) {
       this.loading = true
-      const { data, isError } = await get('/api/git/status', {
+      const { data, isError } = await get('/workbench/git/status', {
         path: fileSystem.files.path
       })
       runInAction(() => {
@@ -87,7 +87,7 @@ class GitServices {
   }
   @action queryBranch = async () => {
     if (this.git.isGitProject) {
-      const { data, isError } = await get('/api/git/branch', {
+      const { data, isError } = await get('/workbench/git/branch', {
         path: fileSystem.files.path
       })
       if (!isError) {
@@ -109,7 +109,7 @@ class GitServices {
   }
   @action gitignore = async () => {
     if (this.git.isGitProject) {
-      const { data, isError } = await get('/api/git/gitignore', {
+      const { data, isError } = await get('/workbench/git/gitignore', {
         path: fileSystem.files.path
       })
       !isError && runInAction(() => {
@@ -120,7 +120,7 @@ class GitServices {
     }
   }
   @action queryStaged = async (path) => {
-    return await get('/api/git/getstaged', {
+    return await get('/workbench/git/getstaged', {
       path: fileSystem.files.path,
       name: path
     })
@@ -136,7 +136,7 @@ class GitServices {
     }
   }
   @action checkoutFile = async (filePath) => {
-    const { isError } = await get('/api/git/checkout', {
+    const { isError } = await get('/workbench/git/checkout', {
       path: fileSystem.files.path,
       filePath
     })
@@ -148,7 +148,7 @@ class GitServices {
     }
   }
   @action addFile = async (filePath) => {
-    const { isError } = await get('/api/git/add', {
+    const { isError } = await get('/workbench/git/add', {
       path: fileSystem.files.path,
       filePath
     })
@@ -160,7 +160,7 @@ class GitServices {
   }
   @action commitFile = async (commitInfo) => {
     this.loading = true
-    const res = await get('/api/git/commit', {
+    const res = await get('/workbench/git/commit', {
       path: fileSystem.files.path,
       commitInfo
     })
@@ -180,7 +180,7 @@ class GitServices {
   }
   @action pushFile = async () => {
     this.loading = true
-    const { isError } = await get('/api/git/push', {
+    const { isError } = await get('/workbench/git/push', {
       path: fileSystem.files.path
     })
     runInAction(() => {
@@ -195,7 +195,7 @@ class GitServices {
     }
   }
   @action resetFile = async (filePath) => {
-    const { isError } = await get('/api/git/reset', {
+    const { isError } = await get('/workbench/git/reset', {
       path: fileSystem.files.path,
       filePath
     })
@@ -207,7 +207,7 @@ class GitServices {
   }
   @action waitCommited = async () => {
     if (this.git.isGitProject) {
-      const { data, isError } = await get('/api/git/waitcommit', {
+      const { data, isError } = await get('/workbench/git/waitcommit', {
         path: fileSystem.files.path,
         branch: this.git.branch
       })

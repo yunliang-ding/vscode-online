@@ -51,7 +51,7 @@ class FileSystem {
   }
   @action queryFiles = async () => {
     this.loading = true
-    const { isError, data } = await get('/api/file/filelist', {
+    const { isError, data } = await get('/workbench/file/filelist', {
       path: this.baseUrl
     })
     if (data === null) {
@@ -105,7 +105,7 @@ class FileSystem {
     })
   }
   @action getFile = async (path: string) => {// 查询文件
-    return await get('/api/file/getfile', {
+    return await get('/workbench/file/getfile', {
       path
     })
   }
@@ -175,7 +175,7 @@ class FileSystem {
     })
     if (file && file.content !== file.value) { // 内容修改才可以保存
       this.tabLoading = true
-      const { isError } = await post('/api/file/savefile', {
+      const { isError } = await post('/workbench/file/savefile', {
         path: file.path,
         content: file.value
       }, {})
@@ -224,7 +224,7 @@ class FileSystem {
         return _item.path !== node.path
       })
     } else {
-      const { isError } = await post('/api/file/new', {
+      const { isError } = await post('/workbench/file/new', {
         path: fileNode.path,
         filename
       }, {})
@@ -248,7 +248,7 @@ class FileSystem {
       fileNode.rename = false
       this.mustRender = Math.random()
     } else {
-      const { isError, error } = await post('/api/file/rename', {
+      const { isError, error } = await post('/workbench/file/rename', {
         path,
         oldName: fileNode.name,
         newName
@@ -313,7 +313,7 @@ class FileSystem {
         return _item.path !== node.path
       })
     } else {
-      const { isError } = await post('/api/file/newfolder', {
+      const { isError } = await post('/workbench/file/newfolder', {
         path: fileNode.path,
         foldername
       }, {})
@@ -341,7 +341,7 @@ class FileSystem {
     })
   }
   @action deleteFile = async (fileNode) => {
-    const { isError } = await post('/api/file/delete', {
+    const { isError } = await post('/workbench/file/delete', {
       path: fileNode.path.substr(0, fileNode.path.lastIndexOf('/')),
       filename: fileNode.name
     }, {})
@@ -412,7 +412,7 @@ class FileSystem {
     download
   */
   @action downloadFile = async (fileNode) => {
-    window.open(`/api/file/download?path=${fileNode.path}&type=${fileNode.type === 'file' ? 'file' : 'dir'}`)
+    window.open(`/workbench/file/download?path=${fileNode.path}&type=${fileNode.type === 'file' ? 'file' : 'dir'}`)
     // 删除压缩文件
     fileNode.name += '.zip'
     fileNode.path += `/${fileNode.name}`
