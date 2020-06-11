@@ -3,11 +3,9 @@ const webpack = require('webpack');
 const packageName = require('./package.json').name;
 const os = require('os')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-const isMicroApp = process.env.APP_TYPE === 'MICRO_APP'
 const isProduction = process.env.NODE_ENV === "production"
-const outPath = isMicroApp ? '../workbench-build/frontend/public/workbench' : isProduction ? '../workbench-build/frontend/public' : 'www/'
-const publicPath = isMicroApp ? 'http://49.233.85.54/workbench/' :  isProduction ? 'http://49.233.85.54:8001/' : 'http://49.233.85.54:9000/'
-console.log(publicPath)
+const outPath = isProduction ? '../workbench-build/frontend/public' : 'www/'
+const publicPath = 'https://yun-static.cdn.bcebos.com/workbench/'
 function getIPAdress() {
   let localIPAddress = "";
   let interfaces = os.networkInterfaces();
@@ -102,7 +100,7 @@ const config = {
     }]
   },
   optimization: isProduction ? {
-    minimize: false
+    minimize: true
   } : {},
   performance: {
     hints: false

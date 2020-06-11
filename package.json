@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress -p",
-    "start": "NODE_ENV=development webpack-dev-server --progress --hot",
-    "micro": "NODE_ENV=production APP_TYPE=MICRO_APP webpack --progress -p"
+    "start": "NODE_ENV=development webpack-dev-server --progress --hot"
   },
   "author": "dyl",
   "license": "ISC",
