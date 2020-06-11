@@ -4,8 +4,10 @@ const packageName = require('./package.json').name;
 const os = require('os')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const isProduction = process.env.NODE_ENV === "production"
-const outPath = isProduction ? '../workbench-build/frontend/public' : 'www/'
-const publicPath = 'https://yun-static.cdn.bcebos.com/workbench/'
+// const isMicro = process.env.NODE_TYPE === 'micro_app' // 微应用打包
+// const outPath = isMicro ? '../workbench-build/frontend/public/workbench/' : isProduction ? '../workbench-build/frontend/public/' : 'www/'
+const outPath = isProduction ? '../workbench-build/frontend/public/' : 'www/'
+const publicPath = 'https://yun-static.gz.bcebos.com/workbench/' // isMicro ? 'http://49.233.85.54/workbench/' : isProduction ? 'http://49.233.85.54:8001' : 'http://49.233.85.54:9000' 
 function getIPAdress() {
   let localIPAddress = "";
   let interfaces = os.networkInterfaces();
