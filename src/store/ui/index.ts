@@ -7,6 +7,19 @@ class UI {
   @observable isDark = localStorage.getItem("theme") !== 'light' // 默认黑色主题
   @observable currentTab = 'Explorer'
   @observable fullScreen = false
+  @observable openProjectVisabled = false
+  @observable projectPath = localStorage.getItem('project_path') || ''
+  @observable projectList = localStorage.getItem('project_list') ? JSON.parse(localStorage.getItem('project_list')) : []
+  @action setOpenProjectVisabled = (openProjectVisabled:boolean) => {
+    this.openProjectVisabled = openProjectVisabled
+  }
+  @action setProjectPath = (projectPath:string) => {
+    this.projectPath = projectPath
+  }
+  @action addProjectList = (projectPath:string) => {
+    this.projectList.indexOf(projectPath) === -1 && this.projectList.push(projectPath)
+  }
+  
   @observable tabList = [{
     icon: 'codicon-files',
     label: 'Explorer'
@@ -42,6 +55,12 @@ class UI {
       $('#style-theme').setAttribute('href', href)
       localStorage.setItem("theme", 'light')
     }
+  }
+  @action openProject = (projectPath) => {
+    this.addProjectList(projectPath)
+    localStorage.setItem('project_path', projectPath)
+    localStorage.setItem('project_list', JSON.stringify(this.projectList))
+    location.reload();
   }
 }
 const ui = new UI()

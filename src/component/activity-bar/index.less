@@ -16,6 +16,10 @@
       font-size:24px;
       color:#999;
     }
+    .iconfont{
+      font-size:18px;
+      color:#fff;
+    }
   }
   .app-activity-bar-item-active{
     .codicon{
@@ -37,9 +41,10 @@
     }
   }
   .app-activity-menu{
-    width: 100px;
+    width: fit-content;
+    min-width: 100px;
     font-size:12px;
-    div{
+    .app-activity-menu-item{
       height:26px;
       display:flex;
       padding: 4px;
@@ -47,7 +52,7 @@
       width:100%;
       color:#ddd;
     }
-    div:hover{
+    .app-activity-menu-item:hover{
       background-color: #222;
     }
   }
@@ -67,11 +72,14 @@
   .codicon{
     color:#333;
   }
+  .iconfont{
+    color:#333 !important;
+  }
   .app-activity-menu{
-    div{
+    .app-activity-menu-item{
       color:#333;
     }
-    div:hover{
+    .app-activity-menu-item:hover{
       background-color: #eee;
     }
   }

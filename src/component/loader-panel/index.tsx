@@ -9,11 +9,7 @@ class LoaderPanel extends React.Component<any, any> {
     super(props)
   }
   init = async () => {
-    let path = location.hash.substr(1)
-    if (path.endsWith('/')) {
-      path = path.substr(0, path.length - 1)
-    }
-    this.props.Loader.start(path) // 加载项目
+    this.props.Loader.start(this.props.UI.projectPath) // 加载项目
   }
   componentWillMount() {
     this.init()

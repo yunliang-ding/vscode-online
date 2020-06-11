@@ -3,7 +3,11 @@ const webpack = require('webpack');
 const packageName = require('./package.json').name;
 const os = require('os')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-const publicPath = process.env.NODE_ENV === "production" ? 'http://49.233.85.54:8001/' : 'http://49.233.85.54:9000/'
+const isMicroApp = process.env.APP_TYPE === 'MICRO_APP'
+const isProduction = process.env.NODE_ENV === "production"
+const outPath = isMicroApp ? '../workbench-build/frontend/public/workbench' : isProduction ? '../workbench-build/frontend/public' : 'www/'
+const publicPath = isMicroApp ? 'http://49.233.85.54/workbench/' :  isProduction ? 'http://49.233.85.54:8001/' : 'http://49.233.85.54:9000/'
+console.log(publicPath)
 function getIPAdress() {
   let localIPAddress = "";
   let interfaces = os.networkInterfaces();
@@ -21,7 +25,7 @@ function getIPAdress() {
 const config = {
   entry: './src/index.tsx',
   output: {
-    path: process.env.NODE_ENV == "production" ? path.resolve(__dirname, '../workbench-build/frontend/public/') : path.resolve(__dirname, 'www/'),
+    path: path.resolve(__dirname, outPath),
     filename: 'app.js',
     library: `${packageName}-[name]`,
     libraryTarget: 'umd',
@@ -97,8 +101,8 @@ const config = {
       secure: true
     }]
   },
-  optimization: process.env.NODE_ENV === "production" ? {
-    minimize: true
+  optimization: isProduction ? {
+    minimize: false
   } : {},
   performance: {
     hints: false
@@ -106,11 +110,8 @@ const config = {
   plugins: [
     new MonacoWebpackPlugin({
       languages: ['javascript', 'json', 'html', 'css', 'less', 'typescript']
-    }),
-    new webpack.DefinePlugin({
-      'process.env.ASSET_PATH': JSON.stringify(publicPath)
     })
   ],
-  mode: process.env.NODE_ENV == "development" ? "development" : "production"
+  mode: isProduction ? "production" : "development"
 }
 module.exports = config

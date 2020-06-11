@@ -10,6 +10,49 @@ class ActivityBar extends React.Component<any, any> {
   constructor(props) {
     super(props)
   }
+  recentlyMenu = () => {
+    const {
+      openProject, projectList
+    } = this.props.UI
+    return <div className='app-activity-menu'>
+      {
+        projectList.map(item => {
+          return <div key={item} className='app-activity-menu-item' onClick={
+            () => {
+              openProject(item)
+            }
+          }>
+            {item}
+          </div>
+        })
+      }
+    </div>
+  }
+  topMenu = () => {
+    const {
+      setOpenProjectVisabled,
+      projectList
+    } = this.props.UI
+    return <div className='app-activity-menu'>
+      <div className='app-activity-menu-item' onClick={
+        () => {
+          setOpenProjectVisabled(true)
+        }
+      }>打开项目</div>
+      {
+        projectList.length > 0 && <div className='app-activity-menu-item'>
+          <Popover
+            content={this.recentlyMenu()}
+            trigger='hover'
+            dark={this.props.UI.isDark}
+            placement='bottom'
+          >
+            最近打开的项目
+          </Popover>
+        </div>
+      }
+    </div>
+  }
   menu = () => {
     const {
       fullScreen,
@@ -17,10 +60,10 @@ class ActivityBar extends React.Component<any, any> {
       setTheme,
     } = this.props.UI
     return <div className='app-activity-menu'>
-      <div onClick={
+      <div className='app-activity-menu-item' onClick={
         () => {
           setFullScreen(!fullScreen)
-          if(fullScreen){
+          if (fullScreen) {
             switchFullScreen().exit()
           } else {
             switchFullScreen().request()
@@ -29,12 +72,12 @@ class ActivityBar extends React.Component<any, any> {
       }>
         <span>{this.props.UI.fullScreen ? '退出全屏' : '全屏模式'}</span>
       </div>
-      <div onClick={
+      <div className='app-activity-menu-item' onClick={
         () => {
           setTheme(true)
         }
       }>黑色主题</div>
-      <div onClick={
+      <div className='app-activity-menu-item' onClick={
         () => {
           setTheme(false)
         }
@@ -49,6 +92,16 @@ class ActivityBar extends React.Component<any, any> {
       setCurrentTab
     } = this.props.UI
     return <div className={`app-activity-bar${theme}`}>
+      <div className='app-activity-bar-item'>
+        <Popover
+          content={this.topMenu()}
+          trigger='click'
+          dark={this.props.UI.isDark}
+          placement='right'
+        >
+          <i className='iconfont icon-zhankai'></i>
+        </Popover>
+      </div>
       {
         tabList.map(tab => {
           return <div
@@ -61,8 +114,8 @@ class ActivityBar extends React.Component<any, any> {
             }
           >
             <i title={tab.label} className={`codicon ${tab.icon}`}></i>
-            { tab.label === 'Explorer' && <Badge count={this.props.FileSystem.notSaveCount()} /> }
-            { tab.label === 'Git' && <Badge count={this.props.Git.countChange} /> }
+            {tab.label === 'Explorer' && <Badge count={this.props.FileSystem.notSaveCount()} />}
+            {tab.label === 'Git' && <Badge count={this.props.Git.countChange} />}
           </div>
         })
       }
