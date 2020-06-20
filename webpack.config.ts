@@ -4,10 +4,19 @@ const packageName = require('./package.json').name;
 const os = require('os')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const isProduction = process.env.NODE_ENV === "production"
-// const isMicro = process.env.NODE_TYPE === 'micro_app' // 微应用打包
-// const outPath = isMicro ? '../workbench-build/frontend/public/workbench/' : isProduction ? '../workbench-build/frontend/public/' : 'www/'
 const outPath = isProduction ? '../workbench-build/frontend/public/' : 'www/'
-const publicPath = 'https://yun-static.gz.bcebos.com/workbench/' // isMicro ? 'http://49.233.85.54/workbench/' : isProduction ? 'http://49.233.85.54:8001' : 'http://49.233.85.54:9000' 
+const publicPath = 'https://yun-static.gz.bcebos.com/workbench/' // CDN地址
+const output = isProduction ? {
+  path: path.resolve(__dirname, outPath),
+  filename: 'app.js',
+  // library: `${packageName}-[name]`,
+  // libraryTarget: 'umd',
+  // jsonpFunction: `webpackJsonp_${packageName}`,
+  publicPath // 生产环境使用CDN地址
+} : {
+  path: path.resolve(__dirname, outPath),
+  filename: 'app.js',
+} 
 function getIPAdress() {
   let localIPAddress = "";
   let interfaces = os.networkInterfaces();
@@ -24,14 +33,7 @@ function getIPAdress() {
 }
 const config = {
   entry: './src/index.tsx',
-  output: {
-    path: path.resolve(__dirname, outPath),
-    filename: 'app.js',
-    library: `${packageName}-[name]`,
-    libraryTarget: 'umd',
-    jsonpFunction: `webpackJsonp_${packageName}`,
-    publicPath
-  },
+  output,
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
     alias: {

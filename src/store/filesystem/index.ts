@@ -412,7 +412,7 @@ class FileSystem {
     download
   */
   @action downloadFile = async (fileNode) => {
-    window.open(`/workbench/file/download?path=${fileNode.path}&type=${fileNode.type === 'file' ? 'file' : 'dir'}`)
+    window.open(`/workbench/file/download?path=${fileNode.path}&type=${fileNode.type === 'file' ? 'file' : 'dir'}`, '_parent')
     // 删除压缩文件
     fileNode.name += '.zip'
     fileNode.path += `/${fileNode.name}`
