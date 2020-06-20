@@ -9,9 +9,9 @@ const publicPath = 'https://yun-static.gz.bcebos.com/workbench/' // CDN地址
 const output = isProduction ? {
   path: path.resolve(__dirname, outPath),
   filename: 'app.js',
-  // library: `${packageName}-[name]`,
-  // libraryTarget: 'umd',
-  // jsonpFunction: `webpackJsonp_${packageName}`,
+  library: `${packageName}-[name]`,
+  libraryTarget: 'umd',
+  jsonpFunction: `webpackJsonp_${packageName}`,
   publicPath // 生产环境使用CDN地址
 } : {
   path: path.resolve(__dirname, outPath),
