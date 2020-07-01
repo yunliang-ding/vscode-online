@@ -222,7 +222,6 @@ class Explorer extends React.Component<any, any> {
     const data = this.renderExplorer(toJS(children))
     let theme = this.props.UI.isDark ? '-dark' : ''
     let currentFile = cacheFiles.find(item => item.selected) || {}
-    console.log('name', name)
     return <Loading
       style={{ height: '100%', width: '100%' }}
       loading={loading}>

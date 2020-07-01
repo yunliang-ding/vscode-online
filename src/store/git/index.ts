@@ -25,7 +25,7 @@ const { IconMapping, IconColorMapping, StatusMapping, StatusColorMapping, Langua
 class GitServices {
   @observable loading: boolean = false
   @observable git = {
-    isGitProject: false,
+    isGitProject: true,
     branch: '',
     remoteUrl: '',
     userName: '',
@@ -81,7 +81,10 @@ class GitServices {
           })
         })
       } else {
-        message.error('查询文件状态异常.')
+        runInAction(()=>{
+          this.git.isGitProject = false
+          message.warning('查询文件状态异常.')
+        })
       }
     }
   }

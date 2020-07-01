@@ -75,6 +75,11 @@ class ActivityBar extends React.Component<any, any> {
       }
       <div className='app-activity-menu-item' onClick={
         () => {
+          this.props.UI.setOpenProjectVisabled(true)
+        }
+      }>打开项目</div>
+      <div className='app-activity-menu-item' onClick={
+        () => {
           setFullScreen(!fullScreen)
           if (fullScreen) {
             switchFullScreen().exit()
