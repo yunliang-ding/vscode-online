@@ -4,7 +4,7 @@ const packageName = require('./package.json').name;
 const os = require('os')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const isProduction = process.env.NODE_ENV === "production"
-const outPath = isProduction ? '../workbench-build/frontend/public/' : 'www/'
+const outPath = isProduction ? './out' : './www'
 const publicPath = 'https://yun-static.gz.bcebos.com/workbench/' // CDN地址
 const output = isProduction ? {
   path: path.resolve(__dirname, outPath),
