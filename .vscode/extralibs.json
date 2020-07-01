@@ -1,0 +1,17 @@
+[
+  {
+    "react": "/node_modules/@types/react/index.d.ts"
+  },
+  {
+    "react-dom": "/node_modules/@types/react-dom/index.d.ts"
+  },
+  {
+    "mobx": "/node_modules/mobx/lib/mobx.d.ts"
+  },
+  {
+    "mobx-react": "/node_modules/mobx-react/index.d.ts"
+  },
+  {
+    "react-ryui": "/node_modules/react-ryui/lib/index.d.ts"
+  }
+]
