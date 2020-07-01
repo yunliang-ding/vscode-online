@@ -129,7 +129,7 @@ class ActivityBar extends React.Component<any, any> {
           dark={this.props.UI.isDark}
           placement='top'
         >
-          <i className='codicon codicon-settings-gear'></i>
+          <i className='codicon codicon-settings-gear' style={{ fontSize: 24 }}></i>
         </Popover>
       </div>
     </div>
