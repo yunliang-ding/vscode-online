@@ -58,8 +58,21 @@ class ActivityBar extends React.Component<any, any> {
       fullScreen,
       setFullScreen,
       setTheme,
+      projectList
     } = this.props.UI
     return <div className='app-activity-menu'>
+      {
+        projectList.length > 0 && <div className='app-activity-menu-item'>
+          <Popover
+            content={this.recentlyMenu()}
+            trigger='hover'
+            dark={this.props.UI.isDark}
+            placement='right'
+          >
+            最近打开的项目
+          </Popover>
+        </div>
+      }
       <div className='app-activity-menu-item' onClick={
         () => {
           setFullScreen(!fullScreen)
@@ -92,16 +105,6 @@ class ActivityBar extends React.Component<any, any> {
       setCurrentTab
     } = this.props.UI
     return <div className={`app-activity-bar${theme}`}>
-      <div className='app-activity-bar-item'>
-        <Popover
-          content={this.topMenu()}
-          trigger='click'
-          dark={this.props.UI.isDark}
-          placement='right'
-        >
-          <i className='iconfont icon-zhankai'></i>
-        </Popover>
-      </div>
       {
         tabList.map(tab => {
           return <div

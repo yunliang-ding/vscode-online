@@ -50,6 +50,13 @@ class FileSystem {
     $('#title').innerHTML = `${this.files.name}`
   }
   @action queryFiles = async () => {
+    if(this.baseUrl === ''){
+      loader.addStepInfos({
+        isError: false,
+        message: '暂无加载项目.'
+      })
+      return
+    }
     this.loading = true
     const { isError, data } = await get('/workbench/file/filelist', {
       path: this.baseUrl

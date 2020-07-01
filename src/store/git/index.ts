@@ -25,7 +25,7 @@ const { IconMapping, IconColorMapping, StatusMapping, StatusColorMapping, Langua
 class GitServices {
   @observable loading: boolean = false
   @observable git = {
-    isGitProject: true,
+    isGitProject: false,
     branch: '',
     remoteUrl: '',
     userName: '',

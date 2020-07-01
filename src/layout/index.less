@@ -28,18 +28,25 @@
     z-index: 9;
     display: flex;
     justify-content: center;
-    align-items: center;
     background: #2b2a2ab8;
     .workbench-open-project-box{
       display: flex;
-      width:400px;
-      height: 32px;
+      width: 600px;
+      background: #1e1e1e;
+      padding: 4px;
+      height: 40px;
       justify-content: space-between;
+      box-shadow: 0 0 6px 1px #000000c9;
       .yui-input{
-        width: 78%;
+        width: 90%;
+        input{
+          background-color: #222;
+           border:0;
+        }
       }
       .yui-btn{
-        width: 20%;
+        border:0;
+        width: 10%;
         border-radius: 0;
       }
     }

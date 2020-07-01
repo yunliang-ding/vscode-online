@@ -1,7 +1,7 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { toJS } from 'mobx'
-import { Tree, Popover, Loading, Modal } from 'react-ryui'
+import { Tree, Popover, Loading, Modal, Button } from 'react-ryui'
 import './index.less'
 const $: any = document.querySelector.bind(document)
 @inject('UI', 'FileSystem')
@@ -222,54 +222,70 @@ class Explorer extends React.Component<any, any> {
     const data = this.renderExplorer(toJS(children))
     let theme = this.props.UI.isDark ? '-dark' : ''
     let currentFile = cacheFiles.find(item => item.selected) || {}
+    console.log('name', name)
     return <Loading
       style={{ height: '100%', width: '100%' }}
       loading={loading}>
       <div className={`app-explorer${theme}`}>
         <div className='app-explorer-header'>
           <div className='app-explorer-header-left'>
-            explorer: {name}
+            explorer: {name === '' ? 'no folder opened' : name}
           </div>
-          <div className='app-explorer-header-right'>
-            <i className='codicon codicon-new-file' onClick={
-              () => {
-                this.props.FileSystem.newFileTobe(this.props.FileSystem.files, true)
-              }
-            }></i>
-            <i className='codicon codicon-new-folder' onClick={
-              () => {
-                this.props.FileSystem.newFolderTobe(this.props.FileSystem.files, true)
-              }
-            }></i>
-            <i className='codicon codicon-refresh' onClick={
-              () => {
-                queryFiles()
-              }
-            }></i>
-            <i className='codicon codicon-collapse-all' onClick={
-              () => {
-                setExpandFolder([])
-              }
-            }></i>
-          </div>
+          {
+            name !== '' && <div className='app-explorer-header-right'>
+              <i className='codicon codicon-new-file' onClick={
+                () => {
+                  this.props.FileSystem.newFileTobe(this.props.FileSystem.files, true)
+                }
+              }></i>
+              <i className='codicon codicon-new-folder' onClick={
+                () => {
+                  this.props.FileSystem.newFolderTobe(this.props.FileSystem.files, true)
+                }
+              }></i>
+              <i className='codicon codicon-refresh' onClick={
+                () => {
+                  queryFiles()
+                }
+              }></i>
+              <i className='codicon codicon-collapse-all' onClick={
+                () => {
+                  setExpandFolder([])
+                }
+              }></i>
+            </div>
+          }
         </div>
         <div className='app-explorer-body'>
-          <Tree
-            style={{
-              width: '100%',
-              height: '100%'
-            }}
-            key={mustRender}
-            dark={this.props.UI.isDark}
-            defaultExpandedKeys={JSON.parse(JSON.stringify(expandFolder))}
-            defaultCheckedKeys={[currentFile.path]}
-            treeData={data}
-            onExpand={
-              (e) => {
-                setExpandFolder(e)
+          {
+            name !== '' ? <Tree
+              style={{
+                width: '100%',
+                height: '100%'
+              }}
+              key={mustRender}
+              dark={this.props.UI.isDark}
+              defaultExpandedKeys={JSON.parse(JSON.stringify(expandFolder))}
+              defaultCheckedKeys={[currentFile.path]}
+              treeData={data}
+              onExpand={
+                (e) => {
+                  setExpandFolder(e)
+                }
               }
-            }
-          />
+            /> : <div className='app-explorer-body-none'>
+                <Button
+                  type='primary'
+                  style={{ width: 220 }}
+                  label='打开文件夹'
+                  onClick={
+                    () => {
+                      this.props.UI.setOpenProjectVisabled(true)
+                    }
+                  }
+                />
+              </div>
+          }
         </div>
       </div>
       <Modal
