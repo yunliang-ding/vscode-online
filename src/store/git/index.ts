@@ -102,7 +102,10 @@ class GitServices {
           })
         })
       } else {
-        message.error(`查询分支异常.`)
+        runInAction(()=>{
+          this.git.isGitProject = false
+          message.error(`查询分支异常.`)
+        })
         loader.addStepInfos({
           isError: true,
           message: '查询分支异常.'

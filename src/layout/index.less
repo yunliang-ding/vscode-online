@@ -29,6 +29,7 @@
     display: flex;
     justify-content: center;
     background: #2b2a2ab8;
+    z-index: 9999999;
     .workbench-open-project-box{
       display: flex;
       width: 600px;
@@ -48,6 +49,20 @@
         border:0;
         width: 10%;
         border-radius: 0;
+      }
+    }
+  }
+}
+.app-layout{
+  .workbench-open-project{
+    background: rgba(204, 204, 204, 0.541);
+    .workbench-open-project-box{
+      background: #ccc;
+      box-shadow: 0 0 6px 1px #e2e0e0c9;
+      .yui-input{
+        input{
+          background-color: #fff;
+        }
       }
     }
   }

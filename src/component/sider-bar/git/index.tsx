@@ -1,6 +1,6 @@
 import * as React from "react"
 import { observer, inject } from 'mobx-react'
-import { Tree, Popover, Loading, Message } from 'react-ryui'
+import { Tree, Popover, Loading, Message, Button } from 'react-ryui'
 import './index.less'
 
 const $: any = document.querySelector.bind(document)
@@ -144,56 +144,62 @@ class Git extends React.Component<any, any> {
         <div className='app-git-header'>
           <div className='app-git-header-left'>
             source control : git
-        </div>
-          <div className='app-git-header-right'>
-            <i title='commit' className='codicon codicon-check' onClick={
-              () => {
-                this.commit($('#commit-info').value.trim())
-              }
-            }></i>
-            <i title='refresh' className='codicon codicon-refresh' onClick={
-              () => {
-                this.props.Git.queryStatus()
-              }
-            }></i>
-            <i title='push' className='codicon codicon-more' onClick={
-              () => {
-                this.props.Git.pushFile()
-              }
-            }></i>
           </div>
-        </div>
-        <div className='app-git-body'>
-          <div className='app-git-input'>
-            <input autoFocus autoComplete='off' id='commit-info' placeholder='Message (press Enter to commit)' onKeyDown={
-              (e: any) => {
-                if (e.keyCode === 13) {
-                  this.commit(e.target.value.trim())
+          {
+            isGitProject && <div className='app-git-header-right'>
+              <i title='commit' className='codicon codicon-check' onClick={
+                () => {
+                  this.commit($('#commit-info').value.trim())
                 }
-              }
-            } />
-          </div>
-          <div className='app-git-body-change'>
-            {
-              stagedChangesData.length > 0 && <div className='app-git-body-change-staged'>
-                <div className='app-git-body-change-title'>Staged Change</div>
-                <Tree
-                  dark={this.props.UI.isDark}
-                  treeData={stagedChangesData}
-                />
-              </div>
-            }
-            {
-              workspaceChangesData.length > 0 && <div className='app-git-body-change-workspace'>
-                <div className='app-git-body-change-title'>Change</div>
-                <Tree
-                  dark={this.props.UI.isDark}
-                  treeData={workspaceChangesData}
-                />
-              </div>
-            }
-          </div>
+              }></i>
+              <i title='refresh' className='codicon codicon-refresh' onClick={
+                () => {
+                  this.props.Git.queryStatus()
+                }
+              }></i>
+              <i title='push' className='codicon codicon-more' onClick={
+                () => {
+                  this.props.Git.pushFile()
+                }
+              }></i>
+            </div>
+          }
         </div>
+        {
+          isGitProject ? <div className='app-git-body'>
+            <div className='app-git-input'>
+              <input autoFocus autoComplete='off' id='commit-info' placeholder='Message (press Enter to commit)' onKeyDown={
+                (e: any) => {
+                  if (e.keyCode === 13) {
+                    this.commit(e.target.value.trim())
+                  }
+                }
+              } />
+            </div>
+            <div className='app-git-body-change'>
+              {
+                stagedChangesData.length > 0 && <div className='app-git-body-change-staged'>
+                  <div className='app-git-body-change-title'>Staged Change</div>
+                  <Tree
+                    dark={this.props.UI.isDark}
+                    treeData={stagedChangesData}
+                  />
+                </div>
+              }
+              {
+                workspaceChangesData.length > 0 && <div className='app-git-body-change-workspace'>
+                  <div className='app-git-body-change-title'>Change</div>
+                  <Tree
+                    dark={this.props.UI.isDark}
+                    treeData={workspaceChangesData}
+                  />
+                </div>
+              }
+            </div>
+          </div> : <div className='app-git-body-none'>
+              <Button label='Is Not Git Project' style={{ width: 220 }} type='primary' />
+            </div>
+        }
       </div>
     </Loading>
   }
