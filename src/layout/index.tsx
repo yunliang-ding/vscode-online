@@ -2,7 +2,7 @@ import * as React from "react"
 import SplitPane from 'react-split-pane'
 import { ActivityBar, SiderBar, Code, Footer, LoaderPanel, Login } from 'component/index'
 import { observer, inject } from 'mobx-react'
-import { Input, Button } from 'react-ryui'
+import { Input, Button, Loading } from 'react-ryui'
 import './index.less'
 const Window: any = window
 @inject('UI', 'Loader')
@@ -13,6 +13,7 @@ class Layout extends React.Component<any, any> {
     super(props)
   }
   componentDidMount() {
+    this.props.UI.isLogin()
     if (Window.config.model === 'production') {
       window.onbeforeunload = () => {
         return false
@@ -100,13 +101,9 @@ class Layout extends React.Component<any, any> {
       <div className='app-layout-footer'>
         <Footer />
       </div>
-    </div > : <div className='app-layout' onContextMenu={
-      (e) => {
-        e.preventDefault()
-      }
-    }>
-        <Login />
-      </div>
+    </div > : <div className='app-layout'>
+      { login === false ? <Login /> : <Loading loading/> }
+    </div>
   }
 }
 export { Layout }

@@ -1,7 +1,8 @@
 'use strict';
-import Base from './base.js';
+import Base from './base.js'
+import { User } from './user'
 const { exec } = require('child_process')
-const Git = require("nodegit");
+const Git = require("nodegit")
 // const statusMapping = new Proxy({
 //   'A ': {
 //     inWorkingTree: 0,
@@ -36,6 +37,21 @@ const Git = require("nodegit");
 //   }
 // })
 export default class extends Base {
+  __before() {
+    // this.header('Access-Control-Allow-Origin', this.header('origin') || '*');
+    // this.header('Access-Control-Allow-Headers', 'x-requested-with');
+    // this.header('Access-Control-Request-Method', 'GET,POST,PUT,DELETE');
+    // this.header('Access-Control-Allow-Credentials', 'true');
+    let { token } = this.cookie()
+    if (User.token !== token && this.http.url !== '/file/login') {
+      this.json({
+        code: 403,
+        isError: true,
+        message: '需要登录',
+        data: []
+      })
+    }
+  }
   async statusAction() {
     try {
       const status = await Git.Repository.open(this.get('path')).then((_repository) => {

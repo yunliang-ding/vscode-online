@@ -188,9 +188,9 @@ class MonacoService {
     const compilerOptions = await fileSystem.getFile(fileSystem.baseUrl + '/' + '.vscode/tsconfig.json') // 查找monaco相关配置文件
     if (!compilerOptions.isError) {
       compilerOptions.data = compilerOptions.data.replace(/\n/g, '')
-      this.compilerOptions = JSON.parse(compilerOptions.data)
+      compilerOptions.data && (this.compilerOptions = JSON.parse(compilerOptions.data))
     }
-    if (!options.isError) {
+    if (!options.isError && options.data) {
       options.data = options.data.replace(/\n/g, '')
       this.options = JSON.parse(options.data)
     }
@@ -273,7 +273,7 @@ class MonacoService {
   }
   addExtraLib = async () => {
     const { isError, data } = await fileSystem.getFile(`${fileSystem.baseUrl}/.vscode/extralibs.json`)
-    if (!isError) {
+    if (!isError && data) {
       let extraLibs = JSON.parse(data)
       for (let i = 0; i < extraLibs.length; i++) {
         const [[key, value]] = Window.Object.entries(extraLibs[i])

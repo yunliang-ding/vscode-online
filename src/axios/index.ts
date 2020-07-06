@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '../store/index'
-import { toCode, fromCode } from './util'
+import { fromCode } from './util'
 const qs = require('qs')
 const get = async (url, params) => {
   store.UI.setLoading(true)
@@ -9,12 +9,11 @@ const get = async (url, params) => {
     params,
     timeout: 60000
   }
-
   try {
     response = await axios.get(url, options)
     store.UI.setLoading(false)
-    if (response.data.loginStatusCode === -1) {
-      store.UI.setLogin(true)
+    if (response.data.code === 403) { // 用户没有登录
+      store.UI.setLogin(false)
     }
     if (url.endsWith('/workbench/file/getfile')) {
       response.data.data = fromCode(response.data.data)
@@ -44,8 +43,8 @@ const post = async (url, data, headers) => {
       },
       withCredentials: true
     })
-    if (response.data.loginStatusCode === -1) {
-      store.UI.setLogin(true)
+    if (response.data.code === 403) { // 用户没有登录
+      store.UI.setLogin(false)
     }
     store.UI.setLoading(false)
     return response.data

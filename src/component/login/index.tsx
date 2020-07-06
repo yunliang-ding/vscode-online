@@ -2,6 +2,7 @@ import * as React from "react"
 import { observer, inject } from 'mobx-react'
 import { Input, Message, Button } from 'react-ryui'
 import './index.less'
+import { post } from "../../axios"
 @inject('UI')
 @observer
 class Login extends React.Component<any, any> {
@@ -9,7 +10,8 @@ class Login extends React.Component<any, any> {
   constructor(props) {
     super(props)
     this.state = {
-      token: localStorage.getItem('token')
+      username: '',
+      password: ''
     }
   }
   render() {
@@ -19,36 +21,56 @@ class Login extends React.Component<any, any> {
       dark: this.props.UI.isDark
     })
     return <div className={`app-login${theme}`}>
-      <div className='app-login-box'>
-        <Input
-          dark={this.props.UI.isDark}
-          placeholder='请输入验证码'
-          value={this.state.token}
-          onChange={
-            (e) => {
-              this.setState({token: e.target.value})
-            }
-          }
-        />
-        <Button
-          label='提交'
-          type='primary'
-          dark={this.props.UI.isDark}
-          style={{
-            width:60,
-            marginLeft: 8
-          }}
-          onClick={
-            () => {
-              if(this.state.token !== '930226'){
-                message.error('验证码错误')
-              } else {
-                localStorage.setItem('token', '930226')
-                this.props.UI.setLogin(true)
+      <div className='app-login-left' />
+      <div className='app-login-right'>
+        <div className='app-login-box'>
+          <div className='app-login-logo'>
+            <i className='iconfont icon-tools'></i>
+          </div>
+          <div className='app-login-user'>
+            <Input
+              dark
+              placeholder='请输入用户名'
+              value={this.state.username}
+              onChange={
+                (e) => {
+                  this.setState({ username: e.target.value })
+                }
               }
-            }
-          }
-        />
+            />
+            <Input
+              dark
+              placeholder='请输入密码'
+              type='password'
+              value={this.state.password}
+              onChange={
+                (e) => {
+                  this.setState({ password: e.target.value })
+                }
+              }
+            />
+          </div>
+          <div className='app-login-footer'>
+            <Button
+              label='登录'
+              dark
+              type='primary'
+              style={{
+                width: 160,
+                marginLeft: 8
+              }}
+              onClick={
+                async () => {
+                  const { data, isError } = await post('/workbench/file/login', this.state, {})
+                  if (isError) {
+                    message.warning('用户名或密码错误!')
+                  } else {
+                    this.props.UI.setLogin(true)
+                  }
+                }
+              } />
+          </div>
+        </div>
       </div>
     </div>
   }

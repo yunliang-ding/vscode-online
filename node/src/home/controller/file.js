@@ -1,12 +1,12 @@
 'use strict';
-import Base from './base.js';
-const dirTree = require("directory-tree");
-const uuidv1 = require('uuid/v1');
+import Base from './base.js'
+import { User } from './user'
+const config = require('../../../www/config.json')
+const dirTree = require("directory-tree")
+const uuidv1 = require('uuid/v1')
 const fse = require('fs-extra')
 const fs = require('fs')
 const { exec } = require('child_process')
-const tokens = {}
-let loginStatusCode = 0
 export default class extends Base {
   /**
    * @return {Promise} []
@@ -17,10 +17,13 @@ export default class extends Base {
     // this.header('Access-Control-Request-Method', 'GET,POST,PUT,DELETE');
     // this.header('Access-Control-Allow-Credentials', 'true');
     let { token } = this.cookie()
-    if (!token in tokens || think.isEmpty(token)) {
-      loginStatusCode = -1
-    } else {
-      loginStatusCode = 0
+    if (User.token !== token && this.http.url !== '/file/login') {
+      this.json({
+        code: 403,
+        isError: true,
+        message: '需要登录',
+        data: []
+      })
     }
   }
   toCode = (code) => {  //加密字符串
@@ -37,24 +40,29 @@ export default class extends Base {
     }
     return newCCode
   }
+  async isloginAction(){
+    let { token } = this.cookie()
+    this.json({
+      code: User.token !== token ? 403 : 200
+    })
+  }
   async loginAction() {
-    const username = this.get('username')
-    const password = this.get('passward')
-    if (username === 'admin' && password === 'admin') {
-      let token = uuidv1()
-      tokens[token] = {
-        username
-      }
-      this.cookie('token', token, {
-        domain: '127.0.0.1',
+    const { username, password } = this.post()
+    if (username === config.username && password === config.password) {
+      User.token = uuidv1() // 生成用户的token
+      this.cookie('token', User.token, {
+        // domain: this.header('origin'),
         httponly: true // 只能通过http请求
       })
       this.json({
-        isError: false
+        isError: false,
+        message: '登录成功'
       })
     } else {
       this.json({
-        isError: true
+        code: 403,
+        isError: true,
+        message: '需要登录'
       })
     }
   }
@@ -77,16 +85,15 @@ export default class extends Base {
       extensions: /\.js|.jsx|.ts|.tsx/,
       exclude: /node_modules|.DS_Store|.git/
     } : {
-      exclude: /node_modules|.DS_Store/
-    }
+        exclude: /node_modules|.DS_Store/
+      }
     try {
       const data = dirTree(this.get('path'), param)
-      if(this.get('createModel')){
+      if (this.get('createModel')) {
         data.children = await this.queryContent(data.children)
       }
       this.json({
         data,
-        loginStatusCode,
         isError: false
       })
     } catch (error) {
@@ -102,7 +109,6 @@ export default class extends Base {
       const data = await fse.readFile(this.get('path'), 'utf8')
       this.json({
         data: this.toCode(data),
-        loginStatusCode,
         isError: false
       })
     } catch (error) {
@@ -116,14 +122,13 @@ export default class extends Base {
   async savefileAction() {
     try {
       const exist = await fs.existsSync(this.post('path'))
-      if(exist){
+      if (exist) {
         fse.outputFile(this.post('path'), this.toCode(this.post('content')).toString())
         this.json({
           isError: false,
-          loginStatusCode,
         })
       } else {
-        throw('file is not exist')
+        throw ('file is not exist')
       }
     } catch (error) {
       console.log(error)
@@ -182,14 +187,14 @@ export default class extends Base {
     try {
       const exist = await fs.existsSync(this.post('path') + '/' + this.post('newName'))
       console.log(this.post('path') + '/' + this.post('newName'))
-      if(!exist){
+      if (!exist) {
         const { data, isError } = await this.fileCommand(`cd ${this.post('path')};mv ${this.post('oldName')} ${this.post('newName')}`)
         this.json({
           data,
           isError
         })
       } else {
-        throw(`${this.post('newName')} file already exists!`)
+        throw (`${this.post('newName')} file already exists!`)
       }
     } catch (error) {
       console.log(error)
@@ -233,10 +238,10 @@ export default class extends Base {
       }
     }
   }
-  async downloadAction(){
+  async downloadAction() {
     let { path, type } = this.get()
     let name = path.split('/').slice(-1)[0]
-    if(type === 'dir'){
+    if (type === 'dir') {
       // 压缩文件夹
       await this.fileCommand(`cd ${path}; zip -r ${name}.zip ./*`)
       path += `/${name}.zip` // 生成压缩文件

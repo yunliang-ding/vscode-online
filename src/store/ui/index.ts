@@ -1,9 +1,10 @@
-import { observable, action } from 'mobx'
+import { observable, action, runInAction } from 'mobx'
+import { get } from '../../axios/index'
 const $: any = document.querySelector.bind(document)
 const Window: any = window
 class UI {
   @observable loading = false
-  @observable login = localStorage.getItem("token") === '930226'
+  @observable login = null // 默认没有登录
   @observable isDark = localStorage.getItem("theme") !== 'light' // 默认黑色主题
   @observable currentTab = 'Explorer'
   @observable fullScreen = false
@@ -19,7 +20,12 @@ class UI {
   @action addProjectList = (projectPath:string) => {
     this.projectList.indexOf(projectPath) === -1 && this.projectList.push(projectPath)
   }
-  
+  @action isLogin = async () => {
+    const { code } = await get('/workbench/file/islogin', {})
+    runInAction(() => {
+      this.login = code !== 403
+    })
+  }
   @observable tabList = [{
     icon: 'codicon-files',
     label: 'Explorer'
