@@ -19,12 +19,12 @@ export default class extends Base {
     // this.header('Access-Control-Allow-Credentials', 'true');
     let { token } = this.cookie()
     if (User.token !== token && this.http.url !== '/file/login') {
-      // this.json({
-      //   code: 403,
-      //   isError: true,
-      //   message: '需要登录',
-      //   data: []
-      // })
+      this.json({
+        code: 403,
+        isError: true,
+        message: '需要登录',
+        data: []
+      })
     }
   }
   toCode = (code) => {  //加密字符串
