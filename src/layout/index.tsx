@@ -1,8 +1,8 @@
 import * as React from "react"
 import SplitPane from 'react-split-pane'
-import { ActivityBar, SiderBar, Code, Footer, LoaderPanel, Login } from 'component/index'
+import { ActivityBar, SiderBar, Code, Footer, LoaderPanel, Login, OpenFolder } from 'component/index'
 import { observer, inject } from 'mobx-react'
-import { Input, Button, Loading } from 'react-ryui'
+import { Loading } from 'react-ryui'
 import './index.less'
 const Window: any = window
 @inject('UI', 'Loader')
@@ -30,12 +30,7 @@ class Layout extends React.Component<any, any> {
     const theme = this.props.UI.isDark ? '-dark' : ''
     const { loading } = this.props.Loader
     const {
-      login,
-      openProjectVisabled,
-      setOpenProjectVisabled,
-      projectPath,
-      setProjectPath,
-      openProject
+      login
     } = this.props.UI
     return login ? <div className={`app-layout${theme}`} onContextMenu={
       (e) => {
@@ -43,40 +38,10 @@ class Layout extends React.Component<any, any> {
       }
     }>
       {
-        loading && <LoaderPanel />
+        <OpenFolder />
       }
       {
-        openProjectVisabled && <div className='workbench-open-project' onClick={
-          () => {
-            setOpenProjectVisabled(false)
-          }
-        }>
-          <div className='workbench-open-project-box' onClick={
-            (e) => {
-              e.stopPropagation()
-            }
-          }>
-            <Input
-              dark={this.props.UI.isDark}
-              value={projectPath}
-              placeholder='输入项目路径'
-              onChange={
-                (e) => {
-                  setProjectPath(e.target.value)
-                }
-              }
-            />
-            <Button
-              label='打开'
-              dark={this.props.UI.isDark}
-              onClick={
-                () => {
-                  openProject(projectPath)
-                }
-              }
-            />
-          </div>
-        </div>
+        loading && <LoaderPanel />
       }
       <div className='app-layout-body' style={{
         visibility: loading ? 'hidden' : 'visible'

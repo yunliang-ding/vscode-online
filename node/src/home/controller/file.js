@@ -6,6 +6,7 @@ const dirTree = require("directory-tree")
 const uuidv1 = require('uuid/v1')
 const fse = require('fs-extra')
 const fs = require('fs')
+const path = require('path')
 const { exec } = require('child_process')
 export default class extends Base {
   /**
@@ -18,12 +19,12 @@ export default class extends Base {
     // this.header('Access-Control-Allow-Credentials', 'true');
     let { token } = this.cookie()
     if (User.token !== token && this.http.url !== '/file/login') {
-      this.json({
-        code: 403,
-        isError: true,
-        message: '需要登录',
-        data: []
-      })
+      // this.json({
+      //   code: 403,
+      //   isError: true,
+      //   message: '需要登录',
+      //   data: []
+      // })
     }
   }
   toCode = (code) => {  //加密字符串
@@ -40,7 +41,7 @@ export default class extends Base {
     }
     return newCCode
   }
-  async isloginAction(){
+  async isloginAction() {
     let { token } = this.cookie()
     this.json({
       code: User.token !== token ? 403 : 200
@@ -79,6 +80,40 @@ export default class extends Base {
       }
     }
     return res
+  }
+  async getdirsAction() {
+    try {
+      let queryDir = async (dir) => {
+        return new Promise(resolve => {
+          let data = []
+          fs.readdir(dir, (err, files) => {
+            files.forEach(file => {
+              if(file.startsWith('.')) return
+              let filepath = path.join(dir, file)
+              let stats = fs.statSync(filepath)
+              if(stats.isDirectory()){
+                data.push({
+                  type: 'directory',
+                  name: file,
+                  path: filepath
+                })
+              }
+            })
+            resolve(data)
+          })
+        })
+      }
+      const data = await queryDir(this.get('dir'))
+      this.json({
+        data,
+        isError: false
+      })
+    } catch (error) {
+      this.json({
+        error,
+        isError: true
+      })
+    }
   }
   async filelistAction() {
     let param = this.get('createModel') ? {

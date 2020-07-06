@@ -15,6 +15,11 @@ const message = new Message({
 })
 class FileSystem {
   @observable baseUrl = ''
+  @observable dirs = [{
+    value: '/',
+    label: '/',
+    children: []
+  }] // 系统目录
   @observable mustRender = 0
   @observable modelNumber = 0
   @observable dragFile: FileNode
@@ -49,8 +54,19 @@ class FileSystem {
     this.files.name = baseUrl.split('/').pop()
     $('#title').innerHTML = `${this.files.name}`
   }
+  @action queryDirs = async (dir) => {
+    const { isError, data } = await get('/workbench/file/getdirs', {
+      dir
+    })
+    if (!isError) {
+      return data
+    } else {
+      message.warning('查询目录异常.')
+      return []
+    }
+  }
   @action queryFiles = async () => {
-    if(this.baseUrl === ''){
+    if (this.baseUrl === '') {
       loader.addStepInfos({
         isError: false,
         message: '暂无加载项目.'
@@ -106,7 +122,7 @@ class FileSystem {
       fileNode.color = nodeStatus.color
       let node = new FileNode(fileNode, false, '', gitignores, children)
       if (['.ts', '.tsx'].indexOf(fileNode.extension) > -1) {
-        this.modelNumber ++
+        this.modelNumber++
       }
       return node
     })
@@ -409,7 +425,7 @@ class FileSystem {
     let status = git.getStatusFiles().find(item => item.path === fileNode.path)
     console.log('status', status)
     if (status) { // 有记录才打开
-      fileNode.prefix =  status.isStaged ? ' (Staged)' : status.status === 'U' ? ' (Untracked)' : ' (WorkTree)'
+      fileNode.prefix = status.isStaged ? ' (Staged)' : status.status === 'U' ? ' (Untracked)' : ' (WorkTree)'
       fileNode.diffEditor = true
       await git.queryStagedText(fileNode)
       await this.openFile(fileNode)
