@@ -26,7 +26,6 @@ class OpenFolder extends React.Component<any, any> {
         }
       })
     })
-    console.log(data)
   }
   componentWillMount() {
     this.init('/')
