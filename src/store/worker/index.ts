@@ -2,7 +2,7 @@ import { monacoService } from '../monaco/index'
 import { fileSystem } from '../filesystem/index'
 import { loader } from '../loader/index'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import { fromCode } from '../../axios/util'
+import { fromCode, getCookie } from '../../axios/util'
 class WorkerStore {
   worker: Worker
   loadModelNumber:number
@@ -15,7 +15,7 @@ class WorkerStore {
           data.map(file => {
             if (file.type === 'file') {
               if (['.ts', '.tsx'].indexOf(file.extension) > -1) {
-                axios.open("GET", `${location.origin}/workbench/file/getfile?path=${file.path}`, false);
+                axios.open("GET", `${location.origin}/workbench/file/getfile?path=${file.path}&token=${getCookie('token')}`, false);
                 axios.send();
                 const { data, isError } = JSON.parse(axios.responseText)
                 if (!isError) {

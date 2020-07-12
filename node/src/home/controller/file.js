@@ -22,7 +22,7 @@ export default class extends Base {
       this.json({
         code: 403,
         isError: true,
-        message: User.token === this.cookie('token') ? '不支持外部请求' : '需要登录',
+        message: User.token === this.cookie('token') ? '无效的token' : '需要登录',
         data: []
       })
     }
