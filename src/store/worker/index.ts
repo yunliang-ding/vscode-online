@@ -5,17 +5,17 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { fromCode, getCookie } from '../../axios/util'
 class WorkerStore {
   worker: Worker
-  loadModelNumber:number
+  loadModelNumber: number
   init = async () => {
     return fileSystem.modelNumber > 0 ? new Promise(resolve => {
       this.loadModelNumber = 0
       this.worker = this.createWorker(() => {
         const axios = new XMLHttpRequest();
-        const createModel = (data) => {
-          data.map(file => {
+        const createModel = (params) => {
+          params.data.map(file => {
             if (file.type === 'file') {
               if (['.ts', '.tsx'].indexOf(file.extension) > -1) {
-                axios.open("GET", `${location.origin}/workbench/file/getfile?path=${file.path}&token=${getCookie('token')}`, false);
+                axios.open("GET", `${location.origin}/workbench/file/getfile?path=${file.path}&token=${params.token}`, false);
                 axios.send();
                 const { data, isError } = JSON.parse(axios.responseText)
                 if (!isError) {
@@ -23,7 +23,10 @@ class WorkerStore {
                 }
               }
             } else {
-              createModel(file.children)
+              createModel({
+                data: file.children,
+                token: params.token
+              })
             }
           })
         }
@@ -32,13 +35,13 @@ class WorkerStore {
         }
       })
       this.worker.onmessage = (event: any) => {
-        this.loadModelNumber ++
-        if(this.loadModelNumber === fileSystem.modelNumber){
+        this.loadModelNumber++
+        if (this.loadModelNumber === fileSystem.modelNumber) {
           resolve(true) // 告诉外面结束了，不用等待了
         }
         const { content, path } = JSON.parse(event.data)
-        if(this.loadModelNumber === 1){
-          loader.addStepInfos({isError: false, message: `加载:${path}`})
+        if (this.loadModelNumber === 1) {
+          loader.addStepInfos({ isError: false, message: `加载:${path}` })
         } else {
           loader.setLastStepInfos({
             isError: false,
@@ -47,7 +50,10 @@ class WorkerStore {
         }
         monaco.editor.createModel(fromCode(content), 'typescript', monacoService.getUri(path))
       }
-      this.worker.postMessage(JSON.stringify(fileSystem.files.children))
+      this.worker.postMessage(JSON.stringify({
+        data: fileSystem.files.children,
+        token: getCookie('token')
+      }))
     }) : null
   }
   createWorker = (f) => {
