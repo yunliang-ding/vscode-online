@@ -22,12 +22,12 @@
 2020/05/15 项目初步搭建UI框架换成react-ryui
 ```
 # 预览图
-![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench6.jpeg)
-![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench7.jpeg)
-![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench8.jpeg)
-![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench1.jpeg)
-![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench3.jpeg)
-![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench2.jpeg)
-![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench4.jpeg)
-![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench5.jpeg)
-![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench9.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fpreview1.jpeg.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fpreview2.jpeg.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fpreview3.jpeg.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fpreview4.jpeg.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fpreview5.jpeg.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fpreview6.jpeg.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fpreview7.jpeg.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fpreview8.jpeg.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fpreview9.jpeg.jpeg)
