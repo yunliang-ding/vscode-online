@@ -1,12 +1,15 @@
 import axios from 'axios'
 import store from '../store/index'
-import { fromCode } from './util'
+import { fromCode, getCookie } from './util'
 const qs = require('qs')
 const get = async (url, params) => {
   store.UI.setLoading(true)
   let response = null
   let options = {
     params,
+    headers: {
+      'Csrf-Token': getCookie('token')
+    },
     timeout: 60000
   }
   try {
@@ -39,7 +42,8 @@ const post = async (url, data, headers) => {
   try {
     response = await axios.post(url, qs.stringify(data), { // 控制允许接受的状态码范围
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Csrf-Token': getCookie('token')
       },
       withCredentials: true
     })

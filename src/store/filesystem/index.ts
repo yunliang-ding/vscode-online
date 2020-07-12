@@ -1,5 +1,6 @@
 import { observable, action, runInAction, toJS } from 'mobx'
 import { get, post } from '../../axios/index'
+import { getCookie } from '../../axios/util'
 import { FileNode } from './file'
 import { monacoService as Monaco } from '../monaco/index'
 import { git } from '../git/index'
@@ -435,7 +436,7 @@ class FileSystem {
     download
   */
   @action downloadFile = async (fileNode) => {
-    window.open(`/workbench/file/download?path=${fileNode.path}&type=${fileNode.type === 'file' ? 'file' : 'dir'}`)
+    window.open(`/workbench/file/download?path=${fileNode.path}&type=${fileNode.type === 'file' ? 'file' : 'dir'}&token=${getCookie('token')}`)
     // 删除压缩文件
     fileNode.name += '.zip'
     fileNode.path += `/${fileNode.name}`
