@@ -21,3 +21,12 @@
 2020/05/20 整体完成 三大模块 fileSystem/search/git
 2020/05/15 项目初步搭建UI框架换成react-ryui
 ```
+# 预览图
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench6.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench7.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench8.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench1.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench3.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench2.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench4.jpeg)
+![Image text](https://yun-static.cdn.bcebos.com/workbench%2Fimages%2Fworkbench5.jpeg)
